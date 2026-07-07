@@ -77,23 +77,28 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     />
                   </button>
                   {isExpanded && (
-                    <div className="mt-0.5 ml-9 space-y-0.5">
-                      {item.children.map((child) => (
-                        <NavLink
-                          key={child.href}
-                          to={child.href}
-                          className={({ isActive }) =>
-                            [
-                              "block px-3 py-2 rounded-md text-sm transition-colors",
-                              isActive
-                                ? "bg-white/15 text-white"
-                                : "text-white/65 hover:text-white hover:bg-white/10",
-                            ].join(" ")
-                          }
-                        >
-                          {child.label}
-                        </NavLink>
-                      ))}
+                    <div className="mt-0.5 ml-4 space-y-0.5">
+                      {item.children.map((child) => {
+                        const ChildIcon = child.icon;
+                        return (
+                          <NavLink
+                            key={child.href}
+                            to={child.href}
+                            end
+                            className={({ isActive }) =>
+                              [
+                                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                                isActive
+                                  ? "bg-white/15 text-white"
+                                  : "text-white/65 hover:text-white hover:bg-white/10",
+                              ].join(" ")
+                            }
+                          >
+                            {ChildIcon && <ChildIcon size={16} className="shrink-0 text-white/70" />}
+                            <span className="flex-1 text-left">{child.label}</span>
+                          </NavLink>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -104,6 +109,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <NavLink
                 key={item.label}
                 to={item.href!}
+                end
                 className={({ isActive }) =>
                   [
                     "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",

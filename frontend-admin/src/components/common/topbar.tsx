@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Menu, Search, Globe, Bell, Wrench, ChevronDown, User, KeyRound, LogOut } from "lucide-react";
 import CommandPalette from "./command-paletter";
 
@@ -98,27 +99,27 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
 
             {dropdownOpen && (
               <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-lg shadow-xl py-1 z-50">
-                <a
-                  href="/profile"
+                <Link
+                  to="/profile"
                   className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <User size={15} className="text-gray-500" />
                   Profile
-                </a>
-                <a
-                  href="/password"
+                </Link>
+                <Link
+                  to="/password"
                   className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <KeyRound size={15} className="text-gray-500" />
                   Password
-                </a>
-                <a
-                  href="/logout"
+                </Link>
+                <Link
+                  to="/logout"
                   className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <LogOut size={15} className="text-gray-500" />
                   Logout
-                </a>
+                </Link>
               </div>
             )}
           </div>
