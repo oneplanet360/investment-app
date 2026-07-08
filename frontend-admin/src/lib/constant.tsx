@@ -1,15 +1,18 @@
 import {
-  LayoutDashboard,
-  UserCog,
-  Package,
-  TrendingUp,
-  Wallet,
+  Home,
+  Users,
+  UserPlus,
+  KeyRound,
+  ThumbsUp,
+  BarChart2,
+  Receipt,
   Landmark,
-  FileText,
-  ShieldCheck,
-  Bell,
-  Settings,
-  ShieldAlert,
+  List,
+  Clock,
+  CheckCircle,
+  CheckSquare,
+  XCircle,
+  PlayCircle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -18,113 +21,62 @@ export type SidebarMenuItem = {
   icon: LucideIcon;
   href?: string;
   badge?: number;
-  children?: { label: string; href: string }[];
+  children?: { label: string; href: string; icon?: LucideIcon }[];
 };
 
 export const sidebarMenu: SidebarMenuItem[] = [
   {
     label: "Dashboard",
-    icon: LayoutDashboard,
+    icon: Home,
     href: "/dashboard",
   },
   {
-    label: "Member Management",
-    icon: UserCog,
+    label: "Agent Management",
+    icon: Users,
     children: [
-      { label: "All Members", href: "/members" },
-      { label: "Add Member", href: "/members/add" },
-      { label: "Sponsor Details", href: "/members/sponsor-details" },
-      { label: "Reset Password", href: "/members/reset-password" },
-      { label: "Genealogy Tree", href: "/members/genealogy" },
+      { label: "All Agents", href: "/agents", icon: Users },
+      { label: "Add Agent", href: "/agents/add", icon: UserPlus },
+      { label: "Password Reset", href: "/agents/password-reset", icon: KeyRound },
     ],
   },
   {
-    label: "Package Management",
-    icon: Package,
+    label: "Investor Management",
+    icon: Users,
     children: [
-      { label: "Create Packages", href: "/packages" },
-      { label: "Assign / Upgrade", href: "/packages/assign" },
+      { label: "All Investors", href: "/investors", icon: Users },
+      { label: "Password Reset", href: "/investors/password-reset", icon: KeyRound },
     ],
   },
   {
-    label: "Income Management",
-    icon: TrendingUp,
+    label: "Subscribers",
+    icon: ThumbsUp,
+    href: "/subscribers",
+  },
+  {
+    label: "Investment Report",
+    icon: BarChart2,
+    href: "/investment-report",
+  },
+  {
+    label: "Deposits",
+    icon: Receipt,
     children: [
-      { label: "Direct Referral Bonus", href: "/income/direct-referral" },
-      { label: "Level Income", href: "/income/level-income" },
-      { label: "Manual Credit / Debit", href: "/income/manual-credit" },
-      { label: "Income History", href: "/income/history" },
+      { label: "All Deposits", href: "/deposits", icon: List },
+      { label: "Pending Deposits", href: "/deposits/pending", icon: Clock },
+      { label: "Approved Deposits", href: "/deposits/approved", icon: CheckCircle },
+      { label: "Successful Deposits", href: "/deposits/successful", icon: CheckSquare },
+      { label: "Rejected Deposits", href: "/deposits/rejected", icon: XCircle },
+      { label: "Initiated Deposits", href: "/deposits/initiated", icon: PlayCircle },
     ],
   },
   {
-    label: "Wallet Management",
-    icon: Wallet,
-    children: [
-      { label: "Wallet Balance", href: "/wallet/balance" },
-      { label: "Fund Credit / Debit", href: "/wallet/fund-credit" },
-      { label: "Wallet Transactions", href: "/wallet/transactions" },
-    ],
-  },
-  {
-    label: "Withdrawal Management",
+    label: "Withdrawals",
     icon: Landmark,
     children: [
-      { label: "Pending Withdrawals", href: "/withdrawals/pending" },
-      { label: "Approved Withdrawals", href: "/withdrawals/approved" },
-      { label: "Rejected Withdrawals", href: "/withdrawals/rejected" },
-      { label: "All Withdrawals", href: "/withdrawals/all" },
-    ],
-  },
-  {
-    label: "Reports",
-    icon: FileText,
-    children: [
-      { label: "Member Report", href: "/reports/members" },
-      { label: "Income Report", href: "/reports/income" },
-      { label: "Business Report", href: "/reports/business" },
-      { label: "Package Report", href: "/reports/packages" },
-      { label: "Withdrawal Report", href: "/reports/withdrawals" },
-      { label: "Transaction History", href: "/reports/transactions" },
-      { label: "Login History", href: "/reports/login" },
-      { label: "Export Reports", href: "/reports/export" },
-    ],
-  },
-  {
-    label: "KYC",
-    icon: ShieldCheck,
-    children: [
-      { label: "Document Verification", href: "/kyc/documents" },
-      { label: "Bank Details", href: "/kyc/bank-details" },
-      { label: "PAN / Aadhaar", href: "/kyc/pan-aadhaar" },
-    ],
-  },
-  {
-    label: "Communication",
-    icon: Bell,
-    children: [
-      { label: "Send Notifications", href: "/communication/notifications" },
-      { label: "Announcements", href: "/communication/announcements" },
-    ],
-  },
-  {
-    label: "Settings",
-    icon: Settings,
-    children: [
-      { label: "Company Information", href: "/settings/company" },
-      { label: "Level Commission", href: "/settings/level-commission" },
-      { label: "Withdrawal Settings", href: "/settings/withdrawal" },
-      { label: "Payment Gateway", href: "/settings/payment-gateway" },
-      { label: "System Setting", href: "/settings/system" },
-    ],
-  },
-  {
-    label: "Admin & Security",
-    icon: ShieldAlert,
-    children: [
-      { label: "Admin Users & Roles", href: "/admin/users" },
-      { label: "Activity Logs", href: "/admin/activity-logs" },
-      { label: "Login History", href: "/admin/login-history" },
-      { label: "Backup & Restore", href: "/admin/backup" },
+      { label: "All Withdrawals", href: "/withdrawals", icon: List },
+      { label: "Pending Withdrawals", href: "/withdrawals/pending", icon: Clock },
+      { label: "Approved Withdrawals", href: "/withdrawals/approved", icon: CheckCircle },
+      { label: "Rejected Withdrawals", href: "/withdrawals/rejected", icon: XCircle },
     ],
   },
 ];
