@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Search } from "lucide-react";
-import { investments } from "../../lib/data";
-import Pagination from "../../components/common/pagination";
+import { investments } from "../../../lib/data";
+import Pagination from "../../../components/common/pagination";
 
 const PER_PAGE = 10;
 

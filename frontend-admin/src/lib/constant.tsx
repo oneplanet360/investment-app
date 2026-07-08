@@ -3,9 +3,7 @@ import {
   Users,
   UserPlus,
   KeyRound,
-  ThumbsUp,
-  BarChart2,
-  Receipt,
+  TrendingUp,
   Landmark,
   List,
   Clock,
@@ -13,6 +11,16 @@ import {
   CheckSquare,
   XCircle,
   PlayCircle,
+  ShieldCheck,
+  Briefcase,
+  ArrowUpCircle,
+  ArrowDownCircle,
+  Percent,
+  Coins,
+  PieChart,
+  Mail,
+  Settings,
+  Palette,
   type LucideIcon,
 } from "lucide-react";
 
@@ -31,35 +39,26 @@ export const sidebarMenu: SidebarMenuItem[] = [
     href: "/dashboard",
   },
   {
-    label: "Agent Management",
-    icon: Users,
+    label: "Investments",
+    icon: TrendingUp,
     children: [
-      { label: "All Agents", href: "/agents", icon: Users },
-      { label: "Add Agent", href: "/agents/add", icon: UserPlus },
-      { label: "Password Reset", href: "/agents/password-reset", icon: KeyRound },
+      { label: "All Investments", href: "/investments", icon: List },
+      { label: "Active Investments", href: "/investments/active", icon: CheckCircle },
+      { label: "Completed Investments", href: "/investments/completed", icon: CheckSquare },
+      { label: "Closed Investments", href: "/investments/closed", icon: XCircle },
+      { label: "Close Requests", href: "/investments/close-requests", icon: Clock },
     ],
   },
   {
-    label: "Investor Management",
-    icon: Users,
+    label: "Top-ups",
+    icon: ArrowUpCircle,
     children: [
-      { label: "All Investors", href: "/investors", icon: Users },
-      { label: "Password Reset", href: "/investors/password-reset", icon: KeyRound },
+      { label: "All Top-ups", href: "/topups", icon: List },
     ],
-  },
-  {
-    label: "Subscribers",
-    icon: ThumbsUp,
-    href: "/subscribers",
-  },
-  {
-    label: "Investment Report",
-    icon: BarChart2,
-    href: "/investment-report",
   },
   {
     label: "Deposits",
-    icon: Receipt,
+    icon: ArrowDownCircle,
     children: [
       { label: "All Deposits", href: "/deposits", icon: List },
       { label: "Pending Deposits", href: "/deposits/pending", icon: Clock },
@@ -77,6 +76,73 @@ export const sidebarMenu: SidebarMenuItem[] = [
       { label: "Pending Withdrawals", href: "/withdrawals/pending", icon: Clock },
       { label: "Approved Withdrawals", href: "/withdrawals/approved", icon: CheckCircle },
       { label: "Rejected Withdrawals", href: "/withdrawals/rejected", icon: XCircle },
+      { label: "Agent Withdrawals", href: "/withdrawals/agent", icon: Briefcase },
+    ],
+  },
+  {
+    label: "ROI",
+    icon: Percent,
+    children: [
+      { label: "ROI Log", href: "/roi", icon: List },
+      { label: "ROI Settings", href: "/roi/settings", icon: Settings },
+    ],
+  },
+  {
+    label: "Commissions",
+    icon: Coins,
+    children: [
+      { label: "Commission Log", href: "/commissions", icon: List },
+      { label: "Commission Settings", href: "/commissions/settings", icon: Settings },
+    ],
+  },
+  {
+    label: "KYC Management",
+    icon: ShieldCheck,
+    children: [
+      { label: "All KYC", href: "/kyc", icon: List },
+      { label: "Pending KYC", href: "/kyc/pending", icon: Clock },
+      { label: "Approved KYC", href: "/kyc/approved", icon: CheckCircle },
+      { label: "Rejected KYC", href: "/kyc/rejected", icon: XCircle },
+    ],
+  },
+  {
+    label: "Agent Management",
+    icon: Briefcase,
+    children: [
+      { label: "All Agents", href: "/agents", icon: Briefcase },
+      { label: "Add Agent", href: "/agents/add", icon: UserPlus },
+      { label: "Password Reset", href: "/agents/password-reset", icon: KeyRound },
+    ],
+  },
+  {
+    label: "Investor Management",
+    icon: Users,
+    children: [
+      { label: "All Investors", href: "/investors", icon: Users },
+      { label: "Password Reset", href: "/investors/password-reset", icon: KeyRound },
+    ],
+  },
+  {
+    label: "Reports",
+    icon: PieChart,
+    children: [
+      { label: "Investment Report", href: "/reports/investments", icon: TrendingUp },
+      { label: "ROI Report", href: "/reports/roi", icon: Percent },
+      { label: "Commissions Report", href: "/reports/commissions", icon: Coins },
+      { label: "Withdrawals Report", href: "/reports/withdrawals", icon: Landmark },
+    ],
+  },
+  {
+    label: "Subscribers",
+    icon: Mail,
+    href: "/subscribers",
+  },
+  {
+    label: "System Settings",
+    icon: Settings,
+    children: [
+      { label: "General Settings", href: "/settings", icon: Settings },
+      { label: "Appearance", href: "/settings/appearance", icon: Palette },
     ],
   },
 ];

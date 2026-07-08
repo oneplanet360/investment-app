@@ -8,11 +8,9 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         {/* authentication routes */}
-        <Route>
-          {authenticationRoutePaths.map((route) => (
-            <Route path={route.path} key={route.path} element={route.element} />
-          ))}
-        </Route>
+        {authenticationRoutePaths.map((route) => (
+          <Route path={route.path} key={route.path} element={route.element} />
+        ))}
 
         {/* protected routes */}
         <Route element={<AdminLayout />}>
