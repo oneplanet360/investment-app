@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { sidebarMenu } from "../../lib/constant";
+import { appearanceSettings } from "../../lib/data";
 
 
 type SidebarProps = {
@@ -36,13 +37,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         ].join(" ")}
       >
         <div className="flex items-center justify-between px-6 py-5">
-          <a href="/" className="flex items-center gap-2 select-none">
-            <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white text-sm">
-              H
-            </div>
-            <span className="text-xl font-bold">
-              Fin<span className="text-orange-400">zip</span>
-            </span>
+          <a href="/" className="flex items-center gap-2 select-none h-9">
+            {appearanceSettings.logoUrl ? (
+              <img src={appearanceSettings.logoUrl} alt={appearanceSettings.appName} className="max-h-full object-contain" />
+            ) : (
+              <span className="text-xl font-bold truncate">
+                {appearanceSettings.appName}
+              </span>
+            )}
           </a>
           <button
             onClick={onClose}
@@ -127,8 +129,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         <div className="px-6 py-4 border-t border-white/10 text-center">
-          <span className="text-xs tracking-widest text-orange-400 font-semibold uppercase">
-            Finzip
+          <span className="text-xs tracking-widest text-indigo-400 font-semibold uppercase">
+            {appearanceSettings.appName}
           </span>
           <span className="text-xs text-white/50 ml-1">V2.0</span>
         </div>

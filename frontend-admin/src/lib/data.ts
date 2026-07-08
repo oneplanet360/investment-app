@@ -80,23 +80,7 @@ export const recentTransactions: Transaction[] = [
   { id: 8, user: "Vulner Clow", username: "tamarin", type: "investment", amount: 100.00, status: "completed", date: "2026-06-27T07:39:00" },
 ];
 
-export const dashboardStats = {
-  totalMembers: 567,
-  activeMembers: 23,
-  newRegistrations: 12,
-  totalBusiness: 62493.00,
-  totalIncomePaid: 2395.00,
-  pendingWithdrawals: 11,
-  totalDeposited: 62493.00,
-  pendingDeposits: 4,
-  rejectedDeposits: 4,
-  depositedCharge: 673.93,
-  totalWithdrawn: 2395.00,
-  rejectedWithdrawals: 2,
-  withdrawalCharge: 53.90,
-  emailUnverified: 541,
-  mobileUnverified: 537,
-};
+// dashboardStats is defined at the bottom of this file (with MLM-specific fields)
 
 export type InvestmentStatus = "active" | "completed" | "closed";
 
@@ -399,3 +383,207 @@ export const notificationLogs: NotificationLog[] = [
   { id: "19", fullName: "Britanney Gomezhgg",   username: "sucaqu",      sentAt: "2026-05-25T08:30:00", sender: "Email via php", subject: "Investment Return Processed Successfully." },
   { id: "20", fullName: "Elvis Singoma",        username: "admin26",     sentAt: "2026-05-24T07:50:00", sender: "Email via php", subject: "Email Verification Code" },
 ];
+
+// ─── KYC ─────────────────────────────────────────────────────────────────────
+
+export type KycStatus = "pending" | "approved" | "rejected";
+
+export type KycSubmission = {
+  id: string;
+  username: string;
+  fullName: string;
+  userType: "agent" | "investor";
+  submittedAt: string;
+  reviewedAt?: string;
+  status: KycStatus;
+  docType: "National ID" | "Passport" | "Driver's License";
+  docNumber: string;
+  frontImage: string;
+  backImage: string;
+  address: string;
+  country: string;
+  rejectionReason?: string;
+};
+
+export const kycSubmissions: KycSubmission[] = [
+  { id: "1",  username: "mkelly",        fullName: "Michael Kelly",      userType: "investor", submittedAt: "2026-06-28T09:00:00", status: "pending",  docType: "Passport",          docNumber: "P1234567",  frontImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Front", backImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Back", address: "5th Ave, New York", country: "United States" },
+  { id: "2",  username: "annasmith",     fullName: "Anna Smith",         userType: "investor", submittedAt: "2026-06-27T10:30:00", status: "pending",  docType: "National ID",       docNumber: "NID8901234",frontImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Front", backImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Back", address: "Baker St, London",  country: "United Kingdom" },
+  { id: "3",  username: "tanaka_j",      fullName: "Jiro Tanaka",        userType: "investor", submittedAt: "2026-06-26T07:15:00", status: "pending",  docType: "Driver's License",  docNumber: "DL5672341", frontImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Front", backImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Back", address: "Shibuya, Tokyo",   country: "Japan" },
+  { id: "4",  username: "nepxora",       fullName: "Gertrude Tanner",    userType: "investor", submittedAt: "2026-06-25T14:00:00", status: "pending",  docType: "National ID",       docNumber: "NID4523110",frontImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Front", backImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Back", address: "Abuja Blvd, Abuja",country: "Nigeria" },
+  { id: "5",  username: "dreekfink00903",fullName: "Derek Fink",         userType: "agent",    submittedAt: "2026-06-22T08:00:00", reviewedAt: "2026-06-23T10:00:00", status: "approved", docType: "Passport", docNumber: "P9876543", frontImage: "https://placehold.co/400x260/dcfce7/16a34a?text=Front", backImage: "https://placehold.co/400x260/dcfce7/16a34a?text=Back", address: "5th Ave, New York", country: "United States" },
+  { id: "6",  username: "fatima99",      fullName: "Fatima Al-Rashid",   userType: "investor", submittedAt: "2026-06-20T11:00:00", reviewedAt: "2026-06-21T09:00:00", status: "approved", docType: "National ID", docNumber: "NID7712345", frontImage: "https://placehold.co/400x260/dcfce7/16a34a?text=Front", backImage: "https://placehold.co/400x260/dcfce7/16a34a?text=Back", address: "Olaya St, Riyadh", country: "Saudi Arabia" },
+  { id: "7",  username: "mwangi_k",      fullName: "Kamau Mwangi",       userType: "investor", submittedAt: "2026-06-18T12:00:00", reviewedAt: "2026-06-19T08:00:00", status: "approved", docType: "Passport", docNumber: "P5512378", frontImage: "https://placehold.co/400x260/dcfce7/16a34a?text=Front", backImage: "https://placehold.co/400x260/dcfce7/16a34a?text=Back", address: "Westlands, Nairobi", country: "Kenya" },
+  { id: "8",  username: "lucas_br",      fullName: "Lucas Ferreira",     userType: "investor", submittedAt: "2026-06-15T09:00:00", reviewedAt: "2026-06-16T11:00:00", status: "rejected", docType: "Driver's License", docNumber: "DL1029384", frontImage: "https://placehold.co/400x260/fee2e2/dc2626?text=Front", backImage: "https://placehold.co/400x260/fee2e2/dc2626?text=Back", address: "Av Paulista, São Paulo", country: "Brazil", rejectionReason: "Document image is blurry and unreadable." },
+  { id: "9",  username: "pierre_f",      fullName: "Pierre Fontaine",    userType: "agent",    submittedAt: "2026-06-12T10:00:00", reviewedAt: "2026-06-13T14:00:00", status: "rejected", docType: "Passport", docNumber: "P3382910", frontImage: "https://placehold.co/400x260/fee2e2/dc2626?text=Front", backImage: "https://placehold.co/400x260/fee2e2/dc2626?text=Back", address: "Champs-Elysees, Paris", country: "France", rejectionReason: "Passport is expired. Please upload a valid document." },
+  { id: "10", username: "sucaqu",        fullName: "Britanney Gomezhgg", userType: "investor", submittedAt: "2026-07-01T08:30:00", status: "pending",  docType: "National ID",       docNumber: "NID3390021",frontImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Front", backImage: "https://placehold.co/400x260/e0e7ff/4f46e5?text=Back", address: "Balaza St",        country: "Gambia" },
+];
+
+// ─── ROI ──────────────────────────────────────────────────────────────────────
+
+export type RoiLog = {
+  id: string;
+  trxId: string;
+  investmentTrxId: string;
+  username: string;
+  fullName: string;
+  amount: number;
+  roiRate: number;
+  creditedAt: string;
+  status: "credited" | "pending";
+};
+
+export const roiLogs: RoiLog[] = [
+  { id: "1",  trxId: "ROI001XQWM", investmentTrxId: "TIWMR2WQ3LXQ", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 250.00, roiRate: 5.0, creditedAt: "2026-07-01T08:00:00", status: "credited" },
+  { id: "2",  trxId: "ROI002KLPN", investmentTrxId: "CKUN66RXZTUU", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 50.00,  roiRate: 5.0, creditedAt: "2026-07-01T08:01:00", status: "credited" },
+  { id: "3",  trxId: "ROI003MNBV", investmentTrxId: "9OEZCCQ8ELVX", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 70.00,  roiRate: 7.0, creditedAt: "2026-07-01T08:02:00", status: "credited" },
+  { id: "4",  trxId: "ROI004ZXCV", investmentTrxId: "TMLK4BIWQAC1", username: "user55",        fullName: "User55 Name55",      amount: 6.00,   roiRate: 6.0, creditedAt: "2026-07-01T08:03:00", status: "credited" },
+  { id: "5",  trxId: "ROI005ASDF", investmentTrxId: "A868RK98BQ1C", username: "username",      fullName: "User Name",          amount: 60.00,  roiRate: 6.0, creditedAt: "2026-07-01T08:04:00", status: "credited" },
+  { id: "6",  trxId: "ROI006QWER", investmentTrxId: "TIWMR2WQ3LXQ", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 250.00, roiRate: 5.0, creditedAt: "2026-06-01T08:00:00", status: "credited" },
+  { id: "7",  trxId: "ROI007TYUI", investmentTrxId: "GTDU5QA3QEB4", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 0.60,   roiRate: 6.0, creditedAt: "2026-06-01T08:05:00", status: "credited" },
+  { id: "8",  trxId: "ROI008OPAS", investmentTrxId: "N5QLEJY4UDK1", username: "dipety",        fullName: "My Name",            amount: 16.00,  roiRate: 8.0, creditedAt: "2026-06-01T08:06:00", status: "credited" },
+  { id: "9",  trxId: "ROI009DFGH", investmentTrxId: "USXLZ7WAVWOE", username: "username",      fullName: "User Name",          amount: 0.50,   roiRate: 5.0, creditedAt: "2026-06-01T08:07:00", status: "credited" },
+  { id: "10", trxId: "ROI010JKLZ", investmentTrxId: "ZMMXDBDTY5NW", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 70.00,  roiRate: 7.0, creditedAt: "2026-06-01T08:08:00", status: "credited" },
+  { id: "11", trxId: "ROI011XCVB", investmentTrxId: "CKUN66RXZTUU", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 50.00,  roiRate: 5.0, creditedAt: "2026-05-01T08:00:00", status: "credited" },
+  { id: "12", trxId: "ROI012BNMW", investmentTrxId: "ATMYJ28F1R83", username: "username",      fullName: "User Name",          amount: 60.00,  roiRate: 6.0, creditedAt: "2026-05-01T08:02:00", status: "credited" },
+  { id: "13", trxId: "ROI013PQRS", investmentTrxId: "6PZOL5BMA5B8", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 70.00,  roiRate: 7.0, creditedAt: "2026-05-01T08:03:00", status: "credited" },
+  { id: "14", trxId: "ROI014LMNO", investmentTrxId: "QHTEMNVKZZZF", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 6.00,   roiRate: 6.0, creditedAt: "2026-05-01T08:04:00", status: "credited" },
+  { id: "15", trxId: "ROI015UVWX", investmentTrxId: "TKLQWOPBDMTB", username: "sucaqu",        fullName: "Britanney Gomezhgg", amount: 0.25,   roiRate: 5.0, creditedAt: "2026-04-01T08:00:00", status: "credited" },
+];
+
+export const roiSettings = {
+  minRate: 5,
+  maxRate: 7,
+  currentRate: 6,
+  cycleDays: 30,
+};
+
+// ─── COMMISSIONS ──────────────────────────────────────────────────────────────
+
+export type CommissionLog = {
+  id: string;
+  trxId: string;
+  agentUsername: string;
+  agentFullName: string;
+  fromInvestorUsername: string;
+  investmentTrxId: string;
+  level: 1 | 2 | 3 | 4;
+  rate: number;
+  amount: number;
+  creditedAt: string;
+};
+
+export const commissionLogs: CommissionLog[] = [
+  { id: "1",  trxId: "COM001XQWM", agentUsername: "username",      agentFullName: "User Name",     fromInvestorUsername: "sucaqu",        investmentTrxId: "TIWMR2WQ3LXQ", level: 1, rate: 2.00, amount: 100.00, creditedAt: "2026-06-15T08:01:00" },
+  { id: "2",  trxId: "COM002KLPN", agentUsername: "dreekfink00903",agentFullName: "Derek Fink",    fromInvestorUsername: "sucaqu",        investmentTrxId: "TIWMR2WQ3LXQ", level: 2, rate: 0.50, amount: 25.00,  creditedAt: "2026-06-15T08:01:00" },
+  { id: "3",  trxId: "COM003MNBV", agentUsername: "mkelly",        agentFullName: "Michael Kelly", fromInvestorUsername: "sucaqu",        investmentTrxId: "TIWMR2WQ3LXQ", level: 3, rate: 0.75, amount: 37.50,  creditedAt: "2026-06-15T08:01:00" },
+  { id: "4",  trxId: "COM004ZXCV", agentUsername: "annasmith",     agentFullName: "Anna Smith",    fromInvestorUsername: "sucaqu",        investmentTrxId: "TIWMR2WQ3LXQ", level: 4, rate: 0.75, amount: 37.50,  creditedAt: "2026-06-15T08:01:00" },
+  { id: "5",  trxId: "COM005ASDF", agentUsername: "username",      agentFullName: "User Name",     fromInvestorUsername: "sucaqu",        investmentTrxId: "CKUN66RXZTUU", level: 1, rate: 2.00, amount: 20.00,  creditedAt: "2026-05-30T04:00:00" },
+  { id: "6",  trxId: "COM006QWER", agentUsername: "dreekfink00903",agentFullName: "Derek Fink",    fromInvestorUsername: "sucaqu",        investmentTrxId: "CKUN66RXZTUU", level: 2, rate: 0.50, amount: 5.00,   creditedAt: "2026-05-30T04:00:00" },
+  { id: "7",  trxId: "COM007TYUI", agentUsername: "username",      agentFullName: "User Name",     fromInvestorUsername: "sucaqu",        investmentTrxId: "TKLQWOPBDMTB", level: 1, rate: 2.00, amount: 0.10,   creditedAt: "2026-05-08T11:11:00" },
+  { id: "8",  trxId: "COM008OPAS", agentUsername: "username",      agentFullName: "User Name",     fromInvestorUsername: "sucaqu",        investmentTrxId: "ZMMXDBDTY5NW", level: 1, rate: 2.00, amount: 20.00,  creditedAt: "2026-05-04T01:20:00" },
+  { id: "9",  trxId: "COM009DFGH", agentUsername: "dreekfink00903",agentFullName: "Derek Fink",    fromInvestorUsername: "user55",        investmentTrxId: "TMLK4BIWQAC1", level: 1, rate: 2.00, amount: 2.00,   creditedAt: "2026-05-08T10:38:00" },
+  { id: "10", trxId: "COM010JKLZ", agentUsername: "mkelly",        agentFullName: "Michael Kelly", fromInvestorUsername: "user55",        investmentTrxId: "TMLK4BIWQAC1", level: 2, rate: 0.50, amount: 0.50,   creditedAt: "2026-05-08T10:38:00" },
+  { id: "11", trxId: "COM011XCVB", agentUsername: "annasmith",     agentFullName: "Anna Smith",    fromInvestorUsername: "mkelly",        investmentTrxId: "USXLZ7WAVWOE", level: 1, rate: 2.00, amount: 0.20,   creditedAt: "2025-10-28T02:20:00" },
+  { id: "12", trxId: "COM012BNMW", agentUsername: "tanaka_j",      agentFullName: "Jiro Tanaka",   fromInvestorUsername: "dipety",        investmentTrxId: "N5QLEJY4UDK1", level: 1, rate: 2.00, amount: 4.00,   creditedAt: "2025-08-05T07:39:00" },
+];
+
+export const commissionSettings = {
+  level1Rate: 2.00,
+  level2Rate: 0.50,
+  level3Rate: 0.75,
+  level4Rate: 0.75,
+};
+
+// ─── TOP-UPS ──────────────────────────────────────────────────────────────────
+
+export type TopUp = {
+  id: string;
+  trxId: string;
+  username: string;
+  fullName: string;
+  investmentTrxId: string;
+  amount: number;
+  roiCycleStart: string;
+  createdAt: string;
+  status: "completed" | "pending" | "rejected";
+};
+
+export const topUps: TopUp[] = [
+  { id: "1",  trxId: "TPU001XQWM", username: "sucaqu",        fullName: "Britanney Gomezhgg", investmentTrxId: "CKUN66RXZTUU", amount: 500,  roiCycleStart: "2026-07-01T09:00:00", createdAt: "2026-07-01T09:00:00", status: "completed" },
+  { id: "2",  trxId: "TPU002KLPN", username: "mkelly",        fullName: "Michael Kelly",      investmentTrxId: "TIWMR2WQ3LXQ", amount: 1000, roiCycleStart: "2026-06-20T10:00:00", createdAt: "2026-06-20T10:00:00", status: "completed" },
+  { id: "3",  trxId: "TPU003MNBV", username: "tanaka_j",      fullName: "Jiro Tanaka",        investmentTrxId: "9OEZCCQ8ELVX", amount: 250,  roiCycleStart: "2026-06-15T11:00:00", createdAt: "2026-06-15T11:00:00", status: "completed" },
+  { id: "4",  trxId: "TPU004ZXCV", username: "annasmith",     fullName: "Anna Smith",         investmentTrxId: "ATMYJ28F1R83", amount: 300,  roiCycleStart: "2026-06-10T14:00:00", createdAt: "2026-06-10T14:00:00", status: "completed" },
+  { id: "5",  trxId: "TPU005ASDF", username: "fatima99",      fullName: "Fatima Al-Rashid",   investmentTrxId: "ZMMXDBDTY5NW", amount: 200,  roiCycleStart: "2026-06-05T07:00:00", createdAt: "2026-06-05T07:00:00", status: "completed" },
+  { id: "6",  trxId: "TPU006QWER", username: "sucaqu",        fullName: "Britanney Gomezhgg", investmentTrxId: "GTDU5QA3QEB4", amount: 150,  roiCycleStart: "2026-07-05T08:00:00", createdAt: "2026-07-05T08:00:00", status: "pending"   },
+  { id: "7",  trxId: "TPU007TYUI", username: "user55",        fullName: "User55 Name55",      investmentTrxId: "TMLK4BIWQAC1", amount: 100,  roiCycleStart: "2026-07-04T09:00:00", createdAt: "2026-07-04T09:00:00", status: "pending"   },
+  { id: "8",  trxId: "TPU008OPAS", username: "dreekfink00903",fullName: "Derek Fink",         investmentTrxId: "4ONNY28QJ2D4", amount: 800,  roiCycleStart: "2026-05-20T10:00:00", createdAt: "2026-05-20T10:00:00", status: "rejected"  },
+];
+
+// ─── AGENT COMMISSION WITHDRAWALS ─────────────────────────────────────────────
+
+export type AgentWithdrawalStatus = "pending" | "approved" | "rejected";
+
+export type AgentWithdrawal = {
+  id: string;
+  trxId: string;
+  agentUsername: string;
+  agentFullName: string;
+  amount: number;
+  charge: number;
+  netAmount: number;
+  method: string;
+  status: AgentWithdrawalStatus;
+  requestedAt: string;
+  reviewedAt?: string;
+};
+
+export const agentWithdrawals: AgentWithdrawal[] = [
+  { id: "1",  trxId: "AWD001XQWM", agentUsername: "username",      agentFullName: "User Name",     amount: 200.00, charge: 4.00,  netAmount: 196.00, method: "Bank Transfer", status: "pending",  requestedAt: "2026-07-01T08:00:00" },
+  { id: "2",  trxId: "AWD002KLPN", agentUsername: "dreekfink00903",agentFullName: "Derek Fink",    amount: 150.00, charge: 3.00,  netAmount: 147.00, method: "Bank Transfer", status: "pending",  requestedAt: "2026-07-01T09:00:00" },
+  { id: "3",  trxId: "AWD003MNBV", agentUsername: "mkelly",        agentFullName: "Michael Kelly", amount: 300.00, charge: 6.00,  netAmount: 294.00, method: "Mobile Money",  status: "pending",  requestedAt: "2026-07-02T10:00:00" },
+  { id: "4",  trxId: "AWD004ZXCV", agentUsername: "annasmith",     agentFullName: "Anna Smith",    amount: 80.00,  charge: 1.60,  netAmount: 78.40,  method: "Bank Transfer", status: "approved", requestedAt: "2026-06-01T08:00:00", reviewedAt: "2026-06-02T10:00:00" },
+  { id: "5",  trxId: "AWD005ASDF", agentUsername: "username",      agentFullName: "User Name",     amount: 50.00,  charge: 1.00,  netAmount: 49.00,  method: "Bank Transfer", status: "approved", requestedAt: "2026-05-01T08:00:00", reviewedAt: "2026-05-02T09:00:00" },
+  { id: "6",  trxId: "AWD006QWER", agentUsername: "tanaka_j",      agentFullName: "Jiro Tanaka",   amount: 40.00,  charge: 0.80,  netAmount: 39.20,  method: "Bank Transfer", status: "rejected", requestedAt: "2026-04-01T08:00:00", reviewedAt: "2026-04-02T11:00:00" },
+];
+
+// ─── SYSTEM SETTINGS ──────────────────────────────────────────────────────────
+
+export const systemSettings = {
+  minInvestment: 5,
+  maxInvestment: 100000,
+  withdrawalPerMonth: 1,
+  kycRequired: true,
+  siteName: "Finzip",
+  siteEmail: "admin@finzip.com",
+  currency: "USD",
+  currencySymbol: "$",
+  maintenanceMode: false,
+};
+
+export const appearanceSettings = {
+  appName: "Finzip",
+  logoUrl: "https://via.placeholder.com/150x50?text=Finzip+Logo",
+  faviconUrl: "https://via.placeholder.com/32x32?text=F",
+  primaryColor: "#4f46e5", // Default indigo-600
+};
+
+export const dashboardStats = {
+  totalMembers: 29,
+  activeMembers: 12,
+  newRegistrations: 5,
+  totalBusiness: 68420.50,
+  totalIncomePaid: 14230.75,
+  pendingWithdrawals: 11,
+  totalDeposited: 62493.00,
+  pendingDeposits: 4,
+  rejectedDeposits: 3,
+  depositedCharge: 1240.55,
+  totalWithdrawn: 2395.00,
+  rejectedWithdrawals: 3,
+  withdrawalCharge: 48.10,
+  totalKycPending: 5,
+  totalAgents: 6,
+  totalInvestors: 23,
+  totalCommissionPaid: 251.80,
+  totalRoiPaid: 1039.45,
+};

@@ -1,4 +1,5 @@
-import InvestmentTable from "../../components/common/investment-table";
+import InvestmentTable from "../../../components/common/investment-table";
+
 
 export default function CloseRequests() {
   return (
