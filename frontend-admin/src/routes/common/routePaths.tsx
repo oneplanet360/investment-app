@@ -43,8 +43,9 @@ const RoiLog = lazy(() => import('../../pages/admin/roi'));
 const RoiSettings = lazy(() => import('../../pages/admin/roi/settings'));
 const CommissionsLog = lazy(() => import('../../pages/admin/commissions'));
 const CommissionSettings = lazy(() => import('../../pages/admin/commissions/settings'));
-const Settings = lazy(() => import('../../pages/admin/settings'));
-const AppearanceSettings = lazy(() => import('../../pages/admin/appearance'));
+const InvestmentSettings = lazy(() => import('../../pages/admin/investment-settings'));
+const AdminSettings = lazy(() => import('../../pages/admin/admin-settings'));
+const ClientSettings = lazy(() => import('../../pages/admin/client-settings'));
 const InvestmentReportModule = lazy(() => import('../../pages/admin/reports/investments'));
 
 const RoiReport = lazy(() => import('../../pages/admin/reports/roi'));
@@ -124,8 +125,9 @@ export const protectedRoutesPaths = [
   { path: PROTECTED_ROUTES.ADMINCOMMISSIONSSETTINGS, element: <CommissionSettings /> },
 
   // System Settings
-  { path: PROTECTED_ROUTES.ADMINSETTINGS, element: <Settings /> },
-  { path: PROTECTED_ROUTES.ADMINAPPEARANCESETTINGS, element: <AppearanceSettings /> },
+  { path: PROTECTED_ROUTES.ADMINSETTINGSINVESTMENT, element: <InvestmentSettings /> },
+  { path: PROTECTED_ROUTES.ADMINSETTINGSADMIN, element: <AdminSettings /> },
+  { path: PROTECTED_ROUTES.ADMINSETTINGSCLIENT, element: <ClientSettings /> },
 
   // Reports
   { path: PROTECTED_ROUTES.ADMINREPORTINVESTMENTS, element: <InvestmentReportModule /> },

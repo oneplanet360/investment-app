@@ -21,7 +21,7 @@ const Field = ({ label, desc, children }: { label: string; desc?: string; childr
   </div>
 );
 
-export default function Settings() {
+export default function InvestmentSettings() {
   const [sys, setSys] = useState({ ...systemSettings });
   const [roi, setRoi] = useState({ ...roiSettings });
   const [com, setCom] = useState({ ...commissionSettings });
@@ -37,10 +37,10 @@ export default function Settings() {
   const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-400 transition-colors";
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6">
-      <h1 className="text-base font-semibold text-gray-700 mb-5">System Settings</h1>
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6">
+      <h1 className="text-base font-semibold text-gray-700 mb-5">Investment Settings</h1>
 
-      <form onSubmit={handleSave} className="space-y-5 max-w-2xl">
+      <form onSubmit={handleSave} className="space-y-5 w-full">
         {/* General */}
         <Section icon={<Globe size={16} />} title="General Settings">
           <div className="grid grid-cols-2 gap-4">

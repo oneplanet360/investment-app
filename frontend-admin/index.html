@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      try {
+        const theme = localStorage.getItem("admin-theme");
+        if (theme) {
+          const parsed = JSON.parse(theme);
+          const root = document.documentElement;
+          root.style.setProperty('--theme-bg', parsed.backgroundColor);
+          root.style.setProperty('--theme-sidebar', parsed.sidebarColor);
+          root.style.setProperty('--color-indigo-500', parsed.primaryColor);
+          root.style.setProperty('--color-indigo-600', parsed.primaryColor);
+          root.style.setProperty('--color-indigo-700', parsed.primaryColor);
+          root.style.fontFamily = parsed.fontFamily;
+        }
+      } catch (e) {}
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

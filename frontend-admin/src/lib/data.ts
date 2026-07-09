@@ -565,6 +565,10 @@ export const appearanceSettings = {
   logoUrl: "https://via.placeholder.com/150x50?text=Finzip+Logo",
   faviconUrl: "https://via.placeholder.com/32x32?text=F",
   primaryColor: "#4f46e5", // Default indigo-600
+  backgroundColor: "#f0f2f8",
+  sidebarColor: "#ffffff",
+  fontFamily: "Inter, sans-serif",
+  frontendUrl: "https://client.finzip.com",
 };
 
 export const dashboardStats = {

@@ -24,7 +24,7 @@ export default function AgentWithdrawalDetail() {
 
   if (!withdrawal) {
     return (
-      <div className="min-h-full bg-[#f0f2f8] p-6 flex flex-col items-center justify-center gap-3">
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
         <p className="text-gray-500">Withdrawal not found.</p>
         <Link to="/withdrawals/agent" className="text-sm text-indigo-600 hover:underline">← Back to Agent Withdrawals</Link>
       </div>
@@ -42,7 +42,7 @@ export default function AgentWithdrawalDetail() {
   };
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
       <div className="flex items-center gap-3">
         <Link to="/withdrawals/agent" className="flex items-center gap-1 text-sm text-indigo-600 hover:underline">
           <ArrowLeft size={14} /> Back

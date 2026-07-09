@@ -141,8 +141,9 @@ export const sidebarMenu: SidebarMenuItem[] = [
     label: "System Settings",
     icon: Settings,
     children: [
-      { label: "General Settings", href: "/settings", icon: Settings },
-      { label: "Appearance", href: "/settings/appearance", icon: Palette },
+      { label: "Investment Settings", href: "/settings/investment", icon: TrendingUp },
+      { label: "Admin Settings", href: "/settings/admin", icon: ShieldCheck },
+      { label: "Client Settings", href: "/settings/client", icon: Users },
     ],
   },
 ];

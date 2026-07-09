@@ -22,7 +22,7 @@ const topInvestors = Object.entries(
 
 export default function InvestmentReport() {
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
       <h1 className="text-base font-semibold text-gray-700">Investment Report</h1>
 
       {/* Stats */}

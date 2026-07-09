@@ -24,7 +24,7 @@ function StatCard({ label, value, icon, bg }: StatCard) {
 
 export default function InvestmentReport() {
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
       <h1 className="text-base font-semibold text-gray-700">Investment Report</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">

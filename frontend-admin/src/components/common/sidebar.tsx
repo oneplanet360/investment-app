@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { sidebarMenu } from "../../lib/constant";
-import { appearanceSettings } from "../../lib/data";
+import { useAdminSettingsQuery } from "../../services/adminSettings/adminSettings.query";
 
 
 type SidebarProps = {
@@ -12,6 +12,7 @@ type SidebarProps = {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const { data: settings } = useAdminSettingsQuery();
 
   const toggleMenu = (label: string) => {
     setOpenMenus((prev) =>
@@ -31,18 +32,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         className={[
           "fixed top-0 left-0 h-full w-65 z-30 flex flex-col",
-          "bg-[#0d1b4b] text-white transition-transform duration-300",
+          "bg-(--theme-sidebar) text-white transition-transform duration-300",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0 lg:static lg:z-auto",
         ].join(" ")}
       >
         <div className="flex items-center justify-between px-6 py-5">
           <a href="/" className="flex items-center gap-2 select-none h-9">
-            {appearanceSettings.logoUrl ? (
-              <img src={appearanceSettings.logoUrl} alt={appearanceSettings.appName} className="max-h-full object-contain" />
+            {settings?.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.appName} className="max-h-full object-contain" />
             ) : (
               <span className="text-xl font-bold truncate">
-                {appearanceSettings.appName}
+                {settings?.appName}
               </span>
             )}
           </a>
@@ -130,7 +131,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         <div className="px-6 py-4 border-t border-white/10 text-center">
           <span className="text-xs tracking-widest text-indigo-400 font-semibold uppercase">
-            {appearanceSettings.appName}
+            {settings?.appName}
           </span>
           <span className="text-xs text-white/50 ml-1">V2.0</span>
         </div>

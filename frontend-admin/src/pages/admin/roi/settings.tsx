@@ -23,7 +23,7 @@ export default function RoiSettings() {
   };
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6">
       <div className="max-w-xl">
         <h1 className="text-base font-semibold text-gray-700 mb-5">ROI Settings</h1>
 

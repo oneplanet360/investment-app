@@ -36,7 +36,7 @@ export default function AgentWithdrawals() {
   const slice = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-4">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {[
           { label: "Total Pending",  value: agentWithdrawals.filter(w => w.status === "pending").reduce((s, w) => s + w.netAmount, 0),  color: "text-yellow-600" },

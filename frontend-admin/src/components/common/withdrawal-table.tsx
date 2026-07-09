@@ -62,7 +62,7 @@ export default function WithdrawalTable({ title, filter }: Props) {
   const slice = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-4">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
           <h1 className="text-base font-semibold text-gray-700">{title}</h1>

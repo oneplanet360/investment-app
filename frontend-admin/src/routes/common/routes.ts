@@ -69,8 +69,9 @@ export const PROTECTED_ROUTES = {
   ADMINCOMMISSIONSSETTINGS: '/commissions/settings',
 
   // System Settings
-  ADMINSETTINGS: '/settings',
-  ADMINAPPEARANCESETTINGS: '/settings/appearance',
+  ADMINSETTINGSINVESTMENT: '/settings/investment',
+  ADMINSETTINGSADMIN: '/settings/admin',
+  ADMINSETTINGSCLIENT: '/settings/client',
 
   // Reports
   ADMINREPORTINVESTMENTS: '/reports/investments',

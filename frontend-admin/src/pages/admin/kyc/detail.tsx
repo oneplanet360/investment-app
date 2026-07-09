@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { CheckCircle, XCircle, ArrowLeft, User, FileText, MapPin } from "lucide-react";
-import { kycSubmissions } from "../../../lib/data";
+import { CheckCircle, XCircle, ArrowLeft, User, FileText, MapPin, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useKycDetailQuery } from "../../../services/adminKyc/adminKyc.query";
+import { useUpdateKycStatusMutation } from "../../../services/adminKyc/adminKyc.mutation";
 
 const statusStyle: Record<string, string> = {
-  pending:  "text-yellow-600 bg-yellow-50 border-yellow-400",
-  approved: "text-green-600 bg-green-50 border-green-500",
-  rejected: "text-red-500 bg-red-50 border-red-400",
+  PENDING: "text-yellow-600 bg-yellow-50 border-yellow-400",
+  APPROVED: "text-green-600 bg-green-50 border-green-500",
+  REJECTED: "text-red-500 bg-red-50 border-red-400",
+  UNVERIFIED: "text-gray-500 bg-gray-50 border-gray-400",
 };
 
 function fmt(d: string) {
@@ -19,24 +21,36 @@ function fmt(d: string) {
 
 export default function KycDetail() {
   const { id } = useParams<{ id: string }>();
-  const kyc = kycSubmissions.find((k) => k.id === id);
-  const [status, setStatus] = useState(kyc?.status ?? "pending");
-  const [rejectReason, setRejectReason] = useState(kyc?.rejectionReason ?? "");
+  const { data: kyc, isLoading, error } = useKycDetailQuery(id || "");
+  const { mutate: updateStatus, isPending } = useUpdateKycStatusMutation();
+  
+  const [rejectReason, setRejectReason] = useState("");
   const [showRejectForm, setShowRejectForm] = useState(false);
 
-  if (!kyc) {
+  if (isLoading) {
     return (
-      <div className="min-h-full bg-[#f0f2f8] p-6 flex flex-col items-center justify-center gap-3">
-        <p className="text-gray-500">KYC submission not found.</p>
-        <Link to="/kyc" className="text-sm text-indigo-600 hover:underline">← Back to KYC</Link>
+      <div className="min-h-full bg-(--theme-bg) p-6 flex flex-col items-center justify-center gap-3">
+        <Loader2 size={24} className="animate-spin text-indigo-500" />
+        <p className="text-gray-500 text-sm">Loading KYC details...</p>
+      </div>
+    );
+  }
+
+  if (error || !kyc) {
+    return (
+      <div className="min-h-full bg-(--theme-bg) p-6 flex flex-col items-center justify-center gap-3">
+        <p className="text-gray-500">KYC submission not found or failed to load.</p>
+        <Link to="/admin/kyc/all" className="text-sm text-indigo-600 hover:underline">← Back to KYC</Link>
       </div>
     );
   }
 
   const handleApprove = () => {
-    setStatus("approved");
-    setShowRejectForm(false);
-    toast.success("KYC approved successfully.");
+    updateStatus({ id: kyc._id, status: 'APPROVED' }, {
+      onSuccess: () => {
+        setShowRejectForm(false);
+      }
+    });
   };
 
   const handleReject = () => {
@@ -44,15 +58,17 @@ export default function KycDetail() {
       toast.error("Please provide a rejection reason.");
       return;
     }
-    setStatus("rejected");
-    setShowRejectForm(false);
-    toast.error("KYC rejected.");
+    updateStatus({ id: kyc._id, status: 'REJECTED', remarks: rejectReason }, {
+      onSuccess: () => {
+        setShowRejectForm(false);
+      }
+    });
   };
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-5">
       <div className="flex items-center gap-3">
-        <Link to="/kyc" className="flex items-center gap-1 text-sm text-indigo-600 hover:underline">
+        <Link to="/admin/kyc/all" className="flex items-center gap-1 text-sm text-indigo-600 hover:underline">
           <ArrowLeft size={14} /> Back
         </Link>
         <h1 className="text-base font-semibold text-gray-700">KYC Review</h1>
@@ -67,23 +83,23 @@ export default function KycDetail() {
           </div>
           <div className="divide-y divide-gray-50 text-sm">
             {[
-              ["Full Name", kyc.fullName],
-              ["Username", `@${kyc.username}`],
-              ["User Type", kyc.userType],
-              ["Country", kyc.country],
-              ["Address", kyc.address],
-              ["Submitted", fmt(kyc.submittedAt)],
-              ...(kyc.reviewedAt ? [["Reviewed", fmt(kyc.reviewedAt)]] : []),
+              ["Full Name", kyc.userId.name],
+              ["Username", `@${kyc.userId.username}`],
+              ["User Type", kyc.userId.role.toLowerCase()],
+              ["Country", kyc.userId.country || "—"],
+              ["Address", kyc.userId.address || "—"],
+              ["Submitted", fmt(kyc.createdAt)],
+              ...(kyc.status !== "PENDING" ? [["Reviewed", fmt(kyc.updatedAt)]] : []),
             ].map(([label, value]) => (
               <div key={label} className="flex items-start justify-between py-2.5 gap-2">
                 <span className="text-gray-500 shrink-0">{label}</span>
-                <span className="font-medium text-gray-800 text-right">{value}</span>
+                <span className="font-medium text-gray-800 text-right capitalize">{value}</span>
               </div>
             ))}
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Status</span>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[status]}`}>
-                {status}
+              <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[kyc.status] || statusStyle.UNVERIFIED}`}>
+                {kyc.status.toLowerCase()}
               </span>
             </div>
           </div>
@@ -97,34 +113,37 @@ export default function KycDetail() {
           </div>
           <div className="divide-y divide-gray-50 text-sm">
             {[
-              ["Document Type", kyc.docType],
-              ["Document Number", kyc.docNumber],
+              ["Document Type", kyc.documentType],
+              ["Document Number", kyc.documentNumber || "—"],
             ].map(([label, value]) => (
               <div key={label} className="flex items-start justify-between py-2.5 gap-2">
                 <span className="text-gray-500 shrink-0">{label}</span>
                 <span className="font-medium text-gray-800 font-mono text-xs text-right">{value}</span>
               </div>
             ))}
-            {kyc.rejectionReason && (
+            {kyc.adminRemarks && (
               <div className="py-2.5">
-                <p className="text-gray-500 mb-1">Rejection Reason</p>
-                <p className="text-red-500 text-xs bg-red-50 rounded p-2">{kyc.rejectionReason}</p>
+                <p className="text-gray-500 mb-1">Rejection Reason / Remarks</p>
+                <p className="text-red-500 text-xs bg-red-50 rounded p-2">{kyc.adminRemarks}</p>
               </div>
             )}
           </div>
 
           {/* Action Buttons */}
-          {status === "pending" && (
+          {kyc.status === "PENDING" && (
             <div className="pt-2 space-y-2">
               <button
                 onClick={handleApprove}
-                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors"
+                disabled={isPending}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
               >
-                <CheckCircle size={16} /> Approve KYC
+                {isPending ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                Approve KYC
               </button>
               <button
                 onClick={() => setShowRejectForm((p) => !p)}
-                className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-300 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-red-100 transition-colors"
+                disabled={isPending}
+                className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-300 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
               >
                 <XCircle size={16} /> Reject KYC
               </button>
@@ -139,8 +158,10 @@ export default function KycDetail() {
                   />
                   <button
                     onClick={handleReject}
-                    className="w-full bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                    disabled={isPending}
+                    className="w-full bg-red-600 flex items-center justify-center gap-2 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
+                    {isPending && <Loader2 size={15} className="animate-spin" />}
                     Confirm Rejection
                   </button>
                 </div>
@@ -159,19 +180,21 @@ export default function KycDetail() {
             <div>
               <p className="text-xs text-gray-500 mb-1.5 font-medium">Front Side</p>
               <img
-                src={kyc.frontImage}
+                src={kyc.documentFrontUrl}
                 alt="Document Front"
                 className="w-full rounded-lg border border-gray-100 object-cover"
               />
             </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1.5 font-medium">Back Side</p>
-              <img
-                src={kyc.backImage}
-                alt="Document Back"
-                className="w-full rounded-lg border border-gray-100 object-cover"
-              />
-            </div>
+            {kyc.documentBackUrl && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1.5 font-medium">Back Side</p>
+                <img
+                  src={kyc.documentBackUrl}
+                  alt="Document Back"
+                  className="w-full rounded-lg border border-gray-100 object-cover"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

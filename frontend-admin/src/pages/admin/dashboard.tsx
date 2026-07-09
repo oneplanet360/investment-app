@@ -74,10 +74,10 @@ export default function Dashboard() {
   const s = dashboardStats;
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-6">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-6">
       <h1 className="text-lg font-semibold text-gray-700">Dashboard</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <StatCard
           label="Total Members"
           value={s.totalMembers}

@@ -37,7 +37,7 @@ export default function AllTopUps() {
   const totalAmount = topUps.filter(t => t.status === "completed").reduce((s, t) => s + t.amount, 0);
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-4">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total Top-up Volume", value: `$${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`, color: "text-emerald-600" },

@@ -30,7 +30,7 @@ export default function RoiLog() {
   const totalPaid = roiLogs.filter(r => r.status === "credited").reduce((s, r) => s + r.amount, 0);
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-4">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[

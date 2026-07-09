@@ -1,14 +1,29 @@
 import { useState } from "react";
-import { Eye, EyeOff, Lock, User, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { adminSignInSchema, type AdminSignInSchemaType } from "../../services/adminAuth/adminAuth.types";
+import { useAdminSignIn } from "../../services/adminAuth/adminAuth.query";
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({ username: "", password: "" });
+  const { mutate: signIn, isPending } = useAdminSignIn();
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    // TODO: wire up auth
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AdminSignInSchemaType>({
+    resolver: zodResolver(adminSignInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (data: AdminSignInSchemaType) => {
+    signIn(data);
+  };
 
   return (
     <div className="min-h-screen bg-[#0a1535] flex items-center justify-center p-4 relative overflow-hidden">
@@ -40,27 +55,28 @@ export default function SignInPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-8 pt-10 pb-8 space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="px-8 pt-10 pb-8 space-y-5">
 
-            {/* Username */}
+            {/* Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-white/60 uppercase tracking-widest">
-                Username
+                Email Address
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                 <input
-                  type="text"
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  placeholder="Enter username"
-                  required
-                  autoComplete="username"
+                  type="email"
+                  placeholder="Enter email"
+                  autoComplete="email"
+                  {...register("email")}
                   className="w-full bg-[#0a1535] border border-[#1e3a6e]/60 text-white placeholder-white/25
                     rounded-lg pl-10 pr-4 py-2.5 text-sm outline-none
                     focus:border-[#3b5fc0] focus:ring-1 focus:ring-[#3b5fc0]/40 transition-colors"
                 />
               </div>
+              {errors.email && (
+                <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
+              )}
             </div>
 
             {/* Password */}
@@ -72,11 +88,9 @@ export default function SignInPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
                   placeholder="Enter password"
-                  required
                   autoComplete="current-password"
+                  {...register("password")}
                   className="w-full bg-[#0a1535] border border-[#1e3a6e]/60 text-white placeholder-white/25
                     rounded-lg pl-10 pr-10 py-2.5 text-sm outline-none
                     focus:border-[#3b5fc0] focus:ring-1 focus:ring-[#3b5fc0]/40 transition-colors"
@@ -90,6 +104,9 @@ export default function SignInPage() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Remember me */}
@@ -106,12 +123,13 @@ export default function SignInPage() {
             {/* Submit */}
             <button
               type="submit"
+              disabled={isPending}
               className="w-full bg-linear-to-r from-[#2a4aad] to-[#3b5fc0] hover:from-[#3355c0] hover:to-[#4a6fd0]
                 text-white font-semibold text-sm tracking-widest uppercase rounded-lg py-3
                 transition-all duration-200 shadow-lg shadow-[#2a4aad]/30 mt-1
-                active:scale-[0.98]"
+                active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Sign In
+              {isPending ? "Signing In..." : "Sign In"}
             </button>
           </form>
         </div>

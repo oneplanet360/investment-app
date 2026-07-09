@@ -40,7 +40,7 @@ export default function CommissionsLog() {
   const totalPaid = commissionLogs.reduce((s, c) => s + c.amount, 0);
 
   return (
-    <div className="min-h-full bg-[#f0f2f8] p-4 sm:p-6 space-y-4">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {([1,2,3,4] as const).map((lvl) => {

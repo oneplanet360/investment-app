@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, Search, Globe, Bell, Wrench, ChevronDown, User, KeyRound, LogOut } from "lucide-react";
 import CommandPalette from "./command-paletter";
+import { useAdminSignOut } from "../../services/adminAuth/adminAuth.query";
 
 
 type TopbarProps = {
@@ -12,6 +13,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { mutate: signOut } = useAdminSignOut();
 
   // Close user dropdown on outside click
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
 
   return (
     <>
-      <header className="h-14 bg-[#0d1b4b] flex items-center px-4 gap-3 sticky top-0 z-10">
+      <header className="h-14 bg-[var(--theme-sidebar)] flex items-center px-4 gap-3 sticky top-0 z-10">
         <button
           onClick={onMenuClick}
           className="lg:hidden text-white/70 hover:text-white p-1"
@@ -113,13 +115,13 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                   <KeyRound size={15} className="text-gray-500" />
                   Password
                 </Link>
-                <Link
-                  to="/logout"
-                  className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                <button
+                  onClick={() => signOut()}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
                 >
                   <LogOut size={15} className="text-gray-500" />
                   Logout
-                </Link>
+                </button>
               </div>
             )}
           </div>
