@@ -20,7 +20,6 @@ import {
   PieChart,
   Mail,
   Settings,
-  Palette,
   type LucideIcon,
 } from "lucide-react";
 
