@@ -6,10 +6,12 @@ export enum CommissionStatus {
 }
 
 export interface ICommission extends Document {
+  trxId: string;
   agentId: Types.ObjectId;
   investorId: Types.ObjectId;
   investmentId: Types.ObjectId;
   level: number;
+  rate: number;
   amount: number;
   status: CommissionStatus;
   createdAt: Date;
@@ -18,6 +20,7 @@ export interface ICommission extends Document {
 
 const commissionSchema = new Schema<ICommission>(
   {
+    trxId: { type: String, required: true, unique: true },
     agentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     investorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     investmentId: {
@@ -26,6 +29,7 @@ const commissionSchema = new Schema<ICommission>(
       required: true,
     },
     level: { type: Number, required: true },
+    rate: { type: Number, required: true },
     amount: { type: Number, required: true },
     status: {
       type: String,

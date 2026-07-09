@@ -12,8 +12,14 @@ export enum WithdrawalStatus {
 }
 
 export interface IWithdrawal extends Document {
+  trxId: string;
   userId: Types.ObjectId; // Can be Agent or Investor (refers to User)
   amount: number;
+  gateway: string;
+  charge: number;
+  conversionCurrency: string;
+  conversionRate: number;
+  convertedAmount: number;
   type: WithdrawalType;
   status: WithdrawalStatus;
   adminRemarks?: string;
@@ -23,8 +29,14 @@ export interface IWithdrawal extends Document {
 
 const withdrawalSchema = new Schema<IWithdrawal>(
   {
+    trxId: { type: String, required: true, unique: true },
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     amount: { type: Number, required: true, min: 0 },
+    gateway: { type: String, required: true },
+    charge: { type: Number, required: true, min: 0 },
+    conversionCurrency: { type: String, required: true },
+    conversionRate: { type: Number, required: true },
+    convertedAmount: { type: Number, required: true },
     type: { type: String, enum: Object.values(WithdrawalType), required: true },
     status: {
       type: String,

@@ -11,7 +11,8 @@ export const getInvestorsController = customAsyncWrapper(
     const pageParam = req.query.page;
     const page = parseInt(typeof pageParam === 'string' ? pageParam : '1') || 1;
     const limitParam = req.query.limit;
-    const limit = parseInt(typeof limitParam === 'string' ? limitParam : '20') || 20;
+    const limit =
+      parseInt(typeof limitParam === 'string' ? limitParam : '20') || 20;
     const searchParam = req.query.search;
     const search = typeof searchParam === 'string' ? searchParam : undefined;
 

@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import { customApiResponse, customApiResponseWithPagination, customAsyncWrapper } from '../utils';
+import {
+  customApiResponse,
+  customApiResponseWithPagination,
+  customAsyncWrapper,
+} from '../utils';
 import { HttpStatusCode } from '../constants';
 import {
   createAgentService,
