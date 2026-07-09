@@ -8,6 +8,14 @@ import morgan from 'morgan';
 import path from 'path';
 import { ParsedEnvVariables, corsOptions } from './configs';
 import { errorMiddleware } from './middlewares';
+import {
+  authRoutes,
+  adminSettingsRoute,
+  adminProfileRoute,
+  adminAgentsRoute,
+  adminKycRoute,
+  adminInvestorsRoute,
+} from './routes';
 
 const app: Application = express();
 
@@ -32,6 +40,13 @@ app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/admin-settings', adminSettingsRoute);
+app.use('/api/v1/admin/profile', adminProfileRoute);
+app.use('/api/v1/agents', adminAgentsRoute);
+app.use('/api/v1/kyc', adminKycRoute);
+app.use('/api/v1/investors', adminInvestorsRoute);
 
 /** error middleware. */
 app.use(errorMiddleware);
