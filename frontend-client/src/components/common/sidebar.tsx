@@ -5,15 +5,15 @@ import {
   Coins,
   CreditCard,
   ArrowDownToLine,
-  ArrowLeftRight,
   Users,
-  Ticket,
   User,
   Key,
   ShieldCheck,
   LogOut,
   ChevronRight,
   X,
+  ArrowUpCircle,
+  TrendingUp,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -44,78 +44,43 @@ export default function Sidebar({
   // Track which submenus are expanded
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
-  const menuItems: MenuItem[] = [
+  // Agent Menu
+  const agentMenuItems: MenuItem[] = [
+    { label: "Dashboard", icon: Gauge, path: "dashboard" },
     {
-      label: "Dashboard",
-      icon: Gauge,
-      path: "dashboard",
-    },
-    {
-      label: "Investment",
-      icon: Coins,
-      children: [
-        { label: "Invest Now", path: "invest-now" },
-        { label: "All Investments", path: "all-investments" },
-        { label: "Active Investments", path: "active-investments" },
-        { label: "Completed Investments", path: "completed-investments" },
-        { label: "Closed Investments", path: "closed-investments" },
-      ],
-    },
-    {
-      label: "Deposit",
-      icon: CreditCard,
-      children: [
-        { label: "Deposit Money", path: "deposit-money" },
-        { label: "Deposit Log", path: "deposit-log" },
-      ],
-    },
-    {
-      label: "Withdraw",
-      icon: ArrowDownToLine,
-      children: [
-        { label: "Withdraw Money", path: "withdraw-money" },
-        { label: "Withdraw Log", path: "withdraw-log" },
-      ],
-    },
-    {
-      label: "Transactions",
-      icon: ArrowLeftRight,
-      path: "transactions",
-    },
-    {
-      label: "Referrals",
+      label: "Investors",
       icon: Users,
-      path: "referrals",
-    },
-    {
-      label: "Support Ticket",
-      icon: Ticket,
       children: [
-        { label: "Open New Ticket", path: "open-ticket" },
-        { label: "My Tickets", path: "my-tickets" },
+        { label: "All Investors", path: "all-investors" },
+        { label: "Add Investor", path: "add-investor" },
       ],
     },
-    {
-      label: "Profile Setting",
-      icon: User,
-      path: "profile-setting",
-    },
-    {
-      label: "Change Password",
-      icon: Key,
-      path: "change-password",
-    },
-    {
-      label: "2FA Security",
-      icon: ShieldCheck,
-      path: "2fa-security",
-    },
-    {
-      label: "Log Out",
-      icon: LogOut,
-      path: "logout",
-    },
+    { label: "Team", icon: Users, path: "team" },
+    { label: "Commissions", icon: Coins, path: "commissions" },
+    { label: "Wallet", icon: CreditCard, path: "wallet" },
+    { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },
+    { label: "Profile Setting", icon: User, path: "profile-setting" },
+    { label: "Change Password", icon: Key, path: "change-password" },
+    { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
+    { label: "Log Out", icon: LogOut, path: "logout" },
   ];
+
+  // Investor Menu
+  const investorMenuItems: MenuItem[] = [
+    { label: "Dashboard", icon: Gauge, path: "dashboard" },
+    { label: "Investments", icon: Coins, path: "investments" },
+    { label: "Top-ups", icon: ArrowUpCircle, path: "top-ups" },
+    { label: "ROI History", icon: TrendingUp, path: "roi-history" },
+    { label: "Wallet", icon: CreditCard, path: "wallet" },
+    { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },
+    { label: "KYC", icon: ShieldCheck, path: "kyc" },
+    { label: "Profile Setting", icon: User, path: "profile-setting" },
+    { label: "Change Password", icon: Key, path: "change-password" },
+    { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
+    { label: "Log Out", icon: LogOut, path: "logout" },
+  ];
+
+  const menuItems = role === "agent" ? agentMenuItems : investorMenuItems;
 
   // Automatically expand the submenu that contains the active child route on navigation
   useEffect(() => {
@@ -164,7 +129,7 @@ export default function Sidebar({
         {/* Brand Header */}
         <div className="flex items-center justify-between px-6 py-6 border-b border-[#222]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-orange-500/20">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-orange-500/20">
               F
             </div>
             <span className="text-xl font-extrabold tracking-wide text-white font-sans">
@@ -243,7 +208,7 @@ export default function Sidebar({
                               ${
                                 isSubActive
                                   ? "text-orange-500"
-                                  : "text-zinc-400 hover:text-white hover:bg-white/[0.02]"
+                                  : "text-zinc-400 hover:text-white hover:bg-white/2"
                               }
                             `.trim()}
                           >

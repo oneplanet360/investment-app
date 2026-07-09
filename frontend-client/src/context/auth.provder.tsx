@@ -1,13 +1,25 @@
+import { createContext, useContext, ReactNode } from "react";
 
+interface AuthContextType {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
 
-import type { ReactNode } from "react";
-
-//TODO: implement auth context later.
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  isLoading: false,
+});
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
+  // TODO: implement actual auth context logic
+  const isAuthenticated = false; // Mock value
+  const isLoading = false; // Mock value
+
   return (
-    <>
-     {children}
-    </>
-  )
+    <AuthContext.Provider value={{ isAuthenticated, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
+
+export const useAuth = () => useContext(AuthContext);
