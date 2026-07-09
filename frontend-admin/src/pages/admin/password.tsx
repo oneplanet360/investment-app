@@ -61,7 +61,7 @@ export default function Password() {
   }
 
   return (
-    <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-lg font-semibold text-gray-700">
           Password Setting

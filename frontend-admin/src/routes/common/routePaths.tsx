@@ -40,9 +40,7 @@ const KycDetail = lazy(() => import('../../pages/admin/kyc/detail'));
 const AllTopUps = lazy(() => import('../../pages/admin/topups/all'));
 const TopUpDetail = lazy(() => import('../../pages/admin/topups/detail'));
 const RoiLog = lazy(() => import('../../pages/admin/roi'));
-const RoiSettings = lazy(() => import('../../pages/admin/roi/settings'));
 const CommissionsLog = lazy(() => import('../../pages/admin/commissions'));
-const CommissionSettings = lazy(() => import('../../pages/admin/commissions/settings'));
 const InvestmentSettings = lazy(() => import('../../pages/admin/investment-settings'));
 const AdminSettings = lazy(() => import('../../pages/admin/admin-settings'));
 const ClientSettings = lazy(() => import('../../pages/admin/client-settings'));
@@ -118,11 +116,9 @@ export const protectedRoutesPaths = [
 
   // ROI
   { path: PROTECTED_ROUTES.ADMINROILOG, element: <RoiLog /> },
-  { path: PROTECTED_ROUTES.ADMINROISETTINGS, element: <RoiSettings /> },
 
   // Commissions
   { path: PROTECTED_ROUTES.ADMINCOMMISSIONSLOG, element: <CommissionsLog /> },
-  { path: PROTECTED_ROUTES.ADMINCOMMISSIONSSETTINGS, element: <CommissionSettings /> },
 
   // System Settings
   { path: PROTECTED_ROUTES.ADMINSETTINGSINVESTMENT, element: <InvestmentSettings /> },

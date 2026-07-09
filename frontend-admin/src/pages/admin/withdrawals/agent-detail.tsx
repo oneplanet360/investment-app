@@ -1,13 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
-import { agentWithdrawals } from "../../../lib/data";
-import { toast } from "sonner";
-import { useState } from "react";
+import { useAdminWithdrawalDetail } from "../../../services/adminWithdrawals/adminWithdrawals.query";
+import { useUpdateWithdrawalStatusMutation } from "../../../services/adminWithdrawals/adminWithdrawals.mutation";
 
 const statusStyle: Record<string, string> = {
-  pending:  "text-yellow-600 bg-yellow-50 border-yellow-400",
-  approved: "text-green-600 bg-green-50 border-green-500",
-  rejected: "text-red-500 bg-red-50 border-red-400",
+  PENDING:  "text-yellow-600 bg-yellow-50 border-yellow-400",
+  APPROVED: "text-green-600 bg-green-50 border-green-500",
+  REJECTED: "text-red-500 bg-red-50 border-red-400",
 };
 
 function fmt(d: string) {
@@ -18,9 +17,19 @@ function fmt(d: string) {
 }
 
 export default function AgentWithdrawalDetail() {
-  const { id } = useParams<{ id: string }>();
-  const withdrawal = agentWithdrawals.find((w) => w.id === id);
-  const [status, setStatus] = useState(withdrawal?.status ?? "pending");
+  const { trxId } = useParams<{ trxId: string }>();
+  const { data, isLoading } = useAdminWithdrawalDetail(trxId || "");
+  const { mutate: updateStatus, isPending } = useUpdateWithdrawalStatusMutation(trxId || "");
+
+  const withdrawal = data?.data;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!withdrawal) {
     return (
@@ -32,13 +41,11 @@ export default function AgentWithdrawalDetail() {
   }
 
   const handleApprove = () => {
-    setStatus("approved");
-    toast.success("Agent withdrawal approved.");
+    updateStatus({ status: "APPROVED" });
   };
 
   const handleReject = () => {
-    setStatus("rejected");
-    toast.error("Agent withdrawal rejected.");
+    updateStatus({ status: "REJECTED" });
   };
 
   return (
@@ -57,14 +64,15 @@ export default function AgentWithdrawalDetail() {
           <div className="divide-y divide-gray-50 text-sm">
             {[
               ["Trx ID", <span className="font-mono text-indigo-500 font-semibold text-xs">{withdrawal.trxId}</span>],
-              ["Agent Name", withdrawal.agentFullName],
-              ["Agent Username", `@${withdrawal.agentUsername}`],
+              ["Agent Name", withdrawal.userId?.firstName || withdrawal.userId?.lastName ? `${withdrawal.userId?.firstName} ${withdrawal.userId?.lastName}` : withdrawal.userId?.name],
+              ["Agent Username", `@${withdrawal.userId?.username}`],
+              ["Email", withdrawal.userId?.email || "-"],
               ["Requested Amount", `$${withdrawal.amount.toFixed(2)}`],
-              ["Charge", <span className="text-orange-500">-${withdrawal.charge.toFixed(2)}</span>],
-              ["Net Payable", <span className="font-semibold text-emerald-600">${withdrawal.netAmount.toFixed(2)}</span>],
-              ["Payment Method", withdrawal.method],
-              ["Requested At", fmt(withdrawal.requestedAt)],
-              ...(withdrawal.reviewedAt ? [["Reviewed At", fmt(withdrawal.reviewedAt)]] : []),
+              ["Charge", <span className="text-orange-500">-${withdrawal.charge?.toFixed(2) || 0}</span>],
+              ["Net Payable", <span className="font-semibold text-emerald-600">${(withdrawal.amount - (withdrawal.charge || 0)).toFixed(2)}</span>],
+              ["Payment Method", withdrawal.gateway],
+              ["Requested At", fmt(withdrawal.createdAt)],
+              ...(withdrawal.updatedAt && withdrawal.status !== 'PENDING' ? [["Reviewed At", fmt(withdrawal.updatedAt)]] : []),
             ].map(([label, value]) => (
               <div key={label as string} className="flex items-center justify-between py-2.5 gap-2">
                 <span className="text-gray-500 shrink-0">{label}</span>
@@ -73,31 +81,33 @@ export default function AgentWithdrawalDetail() {
             ))}
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Status</span>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[status]}`}>
-                {status}
+              <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[withdrawal.status]}`}>
+                {withdrawal.status}
               </span>
             </div>
           </div>
         </div>
 
         {/* Action Card */}
-        {status === "pending" && (
+        {withdrawal.status === "PENDING" && (
           <div className="bg-white rounded-lg shadow-sm p-5 space-y-4">
             <h2 className="text-sm font-semibold text-gray-700 mb-2">Action Required</h2>
             <p className="text-sm text-gray-500">
-              Please review this commission withdrawal request for <strong>{withdrawal.agentFullName}</strong>.
-              Upon approval, the net amount of <strong>${withdrawal.netAmount.toFixed(2)}</strong> should be paid out via <strong>{withdrawal.method}</strong>.
+              Please review this commission withdrawal request.
+              Upon approval, the net amount of <strong>${(withdrawal.amount - (withdrawal.charge || 0)).toFixed(2)}</strong> should be paid out via <strong>{withdrawal.gateway}</strong>.
             </p>
             <div className="flex flex-col gap-3 pt-2">
               <button
                 onClick={handleApprove}
-                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors"
+                disabled={isPending}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
               >
                 <CheckCircle size={16} /> Approve Withdrawal
               </button>
               <button
                 onClick={handleReject}
-                className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-300 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-red-100 transition-colors"
+                disabled={isPending}
+                className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-300 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
               >
                 <XCircle size={16} /> Reject Withdrawal
               </button>

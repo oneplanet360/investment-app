@@ -40,7 +40,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
 
   return (
     <>
-      <header className="h-14 bg-[var(--theme-sidebar)] flex items-center px-4 gap-3 sticky top-0 z-10">
+      <header className="h-14 bg-(--theme-sidebar) flex items-center px-4 gap-3 sticky top-0 z-10">
         <button
           onClick={onMenuClick}
           className="lg:hidden text-white/70 hover:text-white p-1"

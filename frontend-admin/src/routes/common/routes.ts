@@ -62,11 +62,9 @@ export const PROTECTED_ROUTES = {
 
   // ROI
   ADMINROILOG: '/roi',
-  ADMINROISETTINGS: '/roi/settings',
 
   // Commissions
   ADMINCOMMISSIONSLOG: '/commissions',
-  ADMINCOMMISSIONSSETTINGS: '/commissions/settings',
 
   // System Settings
   ADMINSETTINGSINVESTMENT: '/settings/investment',

@@ -1,10 +1,7 @@
-import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import Pagination from "./pagination";
-import { withdrawals, type Withdrawal } from "../../lib/data";
-
-const PER_PAGE = 20;
+import type { IWithdrawal } from "../../services/adminWithdrawals/adminWithdrawals.types";
 
 function fmtDate(d: string) {
   return new Date(d).toLocaleString("en-US", {
@@ -31,35 +28,35 @@ function timeAgo(dateStr: string) {
 
 type Props = {
   title: string;
-  filter: (w: Withdrawal) => boolean;
-  showSummary?: boolean;
+  withdrawals: IWithdrawal[];
+  totalPages: number;
+  currentPage: number;
+  totalResults: number;
+  perPage: number;
+  searchQuery: string;
+  onPageChange: (page: number) => void;
+  onSearchChange: (search: string) => void;
+  isLoading?: boolean;
 };
 
 const statusStyle: Record<string, string> = {
-  pending:    "text-yellow-600 bg-yellow-50 border-yellow-400",
-  approved:   "text-green-600 bg-green-50 border-green-500",
-  rejected:   "text-red-500 bg-red-50 border-red-400",
+  PENDING:    "text-yellow-600 bg-yellow-50 border-yellow-400",
+  APPROVED:   "text-green-600 bg-green-50 border-green-500",
+  REJECTED:   "text-red-500 bg-red-50 border-red-400",
 };
 
-export default function WithdrawalTable({ title, filter }: Props) {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-
-  const filtered = useMemo(() => {
-    const base = withdrawals.filter(filter);
-    const q = query.toLowerCase().trim();
-    if (!q) return base;
-    return base.filter(
-      (w) =>
-        w.username.toLowerCase().includes(q) ||
-        w.trxId.toLowerCase().includes(q) ||
-        w.fullName.toLowerCase().includes(q)
-    );
-  }, [filter, query]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const slice = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+export default function WithdrawalTable({
+  title,
+  withdrawals,
+  totalPages,
+  currentPage,
+  totalResults,
+  perPage,
+  searchQuery,
+  onPageChange,
+  onSearchChange,
+  isLoading
+}: Props) {
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
@@ -69,8 +66,8 @@ export default function WithdrawalTable({ title, filter }: Props) {
           <div className="flex items-center gap-2 border border-gray-200 rounded px-3 py-1.5 w-full sm:w-64 focus-within:border-indigo-400 transition-colors">
             <input
               type="text"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               placeholder="TrxID / Username"
               className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent min-w-0"
             />
@@ -80,8 +77,13 @@ export default function WithdrawalTable({ title, filter }: Props) {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[800px]">
+        <div className="overflow-x-auto relative">
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+              <span className="text-sm text-indigo-600 font-medium">Loading...</span>
+            </div>
+          )}
+          <table className="w-full text-sm min-w-150">
             <thead>
               <tr className="bg-indigo-600 text-white">
                 <th className="text-left px-5 py-3 font-medium">Method | Trx</th>
@@ -94,26 +96,28 @@ export default function WithdrawalTable({ title, filter }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {slice.length === 0 ? (
+              {withdrawals.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-12 text-gray-400 text-sm">
-                    Data not found
+                    {isLoading ? "Fetching data..." : "Data not found"}
                   </td>
                 </tr>
               ) : (
-                slice.map((w) => (
-                  <tr key={w.id} className="hover:bg-gray-50 transition-colors">
+                withdrawals.map((w) => (
+                  <tr key={w._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3.5">
-                      <p className="font-semibold text-gray-800 text-sm">{w.method}</p>
+                      <p className="font-semibold text-gray-800 text-sm">{w.gateway}</p>
                       <p className="text-xs font-mono text-indigo-500">{w.trxId}</p>
                     </td>
                     <td className="px-5 py-3.5 text-xs text-gray-600 whitespace-nowrap">
-                      <p>{fmtDate(w.initiatedAt)}</p>
-                      <p className="text-gray-400">{timeAgo(w.initiatedAt)}</p>
+                      <p>{fmtDate(w.createdAt)}</p>
+                      <p className="text-gray-400">{timeAgo(w.createdAt)}</p>
                     </td>
                     <td className="px-5 py-3.5">
-                      <p className="font-semibold text-gray-800 text-sm">{w.fullName}</p>
-                      <p className="text-xs text-indigo-500">@{w.username}</p>
+                      <p className="font-semibold text-gray-800 text-sm">
+                        {w.userId?.firstName || w.userId?.lastName ? `${w.userId.firstName} ${w.userId.lastName}` : w.userId?.name}
+                      </p>
+                      <p className="text-xs text-indigo-500">@{w.userId?.username}</p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm">
                       <p className="font-semibold text-gray-700">${w.amount.toFixed(2)}</p>
@@ -146,9 +150,9 @@ export default function WithdrawalTable({ title, filter }: Props) {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          totalResults={filtered.length}
-          perPage={PER_PAGE}
-          onPageChange={setPage}
+          totalResults={totalResults}
+          perPage={perPage}
+          onPageChange={onPageChange}
         />
       </div>
     </div>

@@ -94,7 +94,7 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
       <h1 className="text-base font-semibold text-gray-700 mb-5">Admin Settings</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">

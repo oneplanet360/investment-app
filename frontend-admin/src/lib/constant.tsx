@@ -79,20 +79,14 @@ export const sidebarMenu: SidebarMenuItem[] = [
     ],
   },
   {
-    label: "ROI",
+    label: "ROI Log",
+    href: "/roi",
     icon: Percent,
-    children: [
-      { label: "ROI Log", href: "/roi", icon: List },
-      { label: "ROI Settings", href: "/roi/settings", icon: Settings },
-    ],
   },
   {
-    label: "Commissions",
+    label: "Commission Log",
+    href: "/commissions",
     icon: Coins,
-    children: [
-      { label: "Commission Log", href: "/commissions", icon: List },
-      { label: "Commission Settings", href: "/commissions/settings", icon: Settings },
-    ],
   },
   {
     label: "KYC Management",

@@ -12,7 +12,7 @@ import {
   Landmark,
   ArrowUpDown,
 } from "lucide-react";
-import { dashboardStats, recentTransactions } from "../../lib/data";
+import { useAdminDashboard } from "../../services/adminDashboard/adminDashboard.query";
 
 type StatCardProps = {
   label: string;
@@ -71,7 +71,18 @@ const typeColors: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const s = dashboardStats;
+  const { data, isLoading, isError } = useAdminDashboard();
+
+  if (isLoading) {
+    return <div className="min-h-full bg-[var(--theme-bg)] p-6 text-center text-gray-500">Loading dashboard...</div>;
+  }
+
+  if (isError || !data) {
+    return <div className="min-h-full bg-[var(--theme-bg)] p-6 text-center text-red-500">Failed to load dashboard data</div>;
+  }
+
+  const s = data.stats;
+  const recentTransactions = data.recentTransactions;
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-6">

@@ -1,10 +1,11 @@
 import { useParams, Link } from "react-router-dom";
-import { withdrawals, type WithdrawalStatus } from "../../../lib/data";
+import { useAdminWithdrawalDetail } from "../../../services/adminWithdrawals/adminWithdrawals.query";
+import { useUpdateWithdrawalStatusMutation } from "../../../services/adminWithdrawals/adminWithdrawals.mutation";
 
-const statusStyle: Record<WithdrawalStatus, string> = {
-  pending:  "border border-yellow-400 text-yellow-600 bg-yellow-50",
-  approved: "border border-green-500 text-green-600 bg-green-50",
-  rejected: "border border-red-400 text-red-500 bg-red-50",
+const statusStyle: Record<string, string> = {
+  PENDING:  "border border-yellow-400 text-yellow-600 bg-yellow-50",
+  APPROVED: "border border-green-500 text-green-600 bg-green-50",
+  REJECTED: "border border-red-400 text-red-500 bg-red-50",
 };
 
 function fmtDate(d: string) {
@@ -25,7 +26,18 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 
 export default function WithdrawalDetail() {
   const { trxId } = useParams<{ trxId: string }>();
-  const w = withdrawals.find((x) => x.trxId === trxId);
+  const { data, isLoading } = useAdminWithdrawalDetail(trxId || "");
+  const { mutate: updateStatus, isPending } = useUpdateWithdrawalStatusMutation(trxId || "");
+  
+  const w = data?.data;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!w) {
     return (
@@ -54,8 +66,8 @@ export default function WithdrawalDetail() {
         <div className="bg-white rounded-lg shadow-sm p-5">
           <h2 className="text-sm font-semibold text-gray-700 mb-3">Transaction Info</h2>
           <Row label="Transaction ID" value={<span className="font-mono text-xs tracking-wide">{w.trxId}</span>} />
-          <Row label="Method" value={<span className="text-indigo-600 font-medium">{w.method}</span>} />
-          <Row label="Initiated At" value={fmtDate(w.initiatedAt)} />
+          <Row label="Method" value={<span className="text-indigo-600 font-medium">{w.gateway}</span>} />
+          <Row label="Initiated At" value={fmtDate(w.createdAt)} />
           <Row
             label="Status"
             value={
@@ -68,9 +80,9 @@ export default function WithdrawalDetail() {
 
         <div className="bg-white rounded-lg shadow-sm p-5">
           <h2 className="text-sm font-semibold text-gray-700 mb-3">User Info</h2>
-          <Row label="Full Name" value={<span className="font-semibold">{w.fullName}</span>} />
-          <Row label="Username" value={<span className="text-indigo-500">@{w.username}</span>} />
-          <Row label="Email" value={<span className="text-gray-400 text-xs">[Email is protected for the demo]</span>} />
+          <Row label="Full Name" value={<span className="font-semibold">{w.userId?.firstName || w.userId?.lastName ? `${w.userId?.firstName} ${w.userId?.lastName}` : w.userId?.name}</span>} />
+          <Row label="Username" value={<span className="text-indigo-500">@{w.userId?.username}</span>} />
+          <Row label="Email" value={<span className="font-semibold text-gray-800">{w.userId?.email || "-"}</span>} />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-5">
@@ -91,7 +103,7 @@ export default function WithdrawalDetail() {
             label="Net Amount"
             value={
               <span className="font-bold text-gray-900">
-                ${w.netAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                ${(w.amount - (w.charge || 0)).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
               </span>
             }
           />
@@ -108,12 +120,20 @@ export default function WithdrawalDetail() {
         </div>
       </div>
 
-      {w.status === "pending" && (
+      {w.status === "PENDING" && (
         <div className="bg-white rounded-lg shadow-sm p-5 flex flex-wrap gap-3">
-          <button className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors">
+          <button 
+            disabled={isPending}
+            onClick={() => updateStatus({ status: "APPROVED" })}
+            className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+          >
             Approve
           </button>
-          <button className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-2 rounded transition-colors">
+          <button 
+            disabled={isPending}
+            onClick={() => updateStatus({ status: "REJECTED" })}
+            className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+          >
             Reject
           </button>
         </div>

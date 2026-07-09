@@ -1,10 +1,7 @@
-import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import Pagination from "./pagination";
-import { investments, type Investment } from "../../lib/data";
-
-const PER_PAGE = 20;
+import type { IInvestment } from "../../services/adminInvestments/adminInvestments.types";
 
 function fmtDate(d: string) {
   return new Date(d)
@@ -20,35 +17,37 @@ function fmtDate(d: string) {
 }
 
 const statusStyle: Record<string, string> = {
-  active:    "text-indigo-600 bg-indigo-50 border-indigo-400",
-  completed: "text-green-600 bg-green-50 border-green-500",
-  closed:    "text-gray-500 bg-gray-50 border-gray-400",
+  ACTIVE:    "text-indigo-600 bg-indigo-50 border-indigo-400",
+  COMPLETED: "text-green-600 bg-green-50 border-green-500",
+  CLOSE_REQUEST: "text-orange-600 bg-orange-50 border-orange-400",
+  CLOSED:    "text-gray-500 bg-gray-50 border-gray-400",
 };
 
 type Props = {
   title: string;
-  filter: (inv: Investment) => boolean;
+  investments: IInvestment[];
+  totalPages: number;
+  currentPage: number;
+  totalResults: number;
+  perPage: number;
+  searchQuery: string;
+  onPageChange: (page: number) => void;
+  onSearchChange: (search: string) => void;
+  isLoading?: boolean;
 };
 
-export default function InvestmentTable({ title, filter }: Props) {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-
-  const filtered = useMemo(() => {
-    const base = investments.filter(filter);
-    const q = query.toLowerCase().trim();
-    if (!q) return base;
-    return base.filter(
-      (inv) =>
-        inv.username.toLowerCase().includes(q) ||
-        inv.trxId.toLowerCase().includes(q) ||
-        inv.fullName.toLowerCase().includes(q)
-    );
-  }, [filter, query]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const slice = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+export default function InvestmentTable({
+  title,
+  investments,
+  totalPages,
+  currentPage,
+  totalResults,
+  perPage,
+  searchQuery,
+  onPageChange,
+  onSearchChange,
+  isLoading
+}: Props) {
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-4">
@@ -58,8 +57,8 @@ export default function InvestmentTable({ title, filter }: Props) {
           <div className="flex items-center gap-2 border border-gray-200 rounded px-3 py-1.5 w-full sm:w-64 focus-within:border-indigo-400 transition-colors">
             <input
               type="text"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               placeholder="TrxID / Username"
               className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent min-w-0"
             />
@@ -69,7 +68,12 @@ export default function InvestmentTable({ title, filter }: Props) {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto relative">
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+              <span className="text-sm text-indigo-600 font-medium">Loading...</span>
+            </div>
+          )}
           <table className="w-full text-sm min-w-225">
             <thead>
               <tr className="bg-indigo-600 text-white">
@@ -84,27 +88,29 @@ export default function InvestmentTable({ title, filter }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {slice.length === 0 ? (
+              {investments.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
-                    Data not found
+                    {isLoading ? "Fetching data..." : "Data not found"}
                   </td>
                 </tr>
               ) : (
-                slice.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-gray-50 transition-colors">
+                investments.map((inv) => (
+                  <tr key={inv._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3.5 font-mono text-xs font-semibold text-indigo-500 tracking-wide">
                       {inv.trxId}
                     </td>
                     <td className="px-5 py-3.5 text-xs text-gray-600 whitespace-nowrap">
-                      {fmtDate(inv.startDate)}
+                      {fmtDate(inv.createdAt)}
                     </td>
                     <td className="px-5 py-3.5">
-                      <p className="font-semibold text-gray-800 text-sm">{inv.fullName}</p>
-                      <p className="text-xs text-indigo-500">@{inv.username}</p>
+                      <p className="font-semibold text-gray-800 text-sm">
+                        {inv.userId?.firstName || inv.userId?.lastName ? `${inv.userId.firstName} ${inv.userId.lastName}` : inv.userId?.name}
+                      </p>
+                      <p className="text-xs text-indigo-500">@{inv.userId?.username}</p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-700">
-                      ${inv.initialDeposit.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                      ${(inv.amount || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm text-gray-600">
                       <p>${inv.contributionAmount.toFixed(2)}</p>
@@ -138,9 +144,9 @@ export default function InvestmentTable({ title, filter }: Props) {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          totalResults={filtered.length}
-          perPage={PER_PAGE}
-          onPageChange={setPage}
+          totalResults={totalResults}
+          perPage={perPage}
+          onPageChange={onPageChange}
         />
       </div>
     </div>

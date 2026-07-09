@@ -29,7 +29,7 @@ export default function KycDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-full bg-(--theme-bg) p-6 flex flex-col items-center justify-center gap-3">
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
         <Loader2 size={24} className="animate-spin text-indigo-500" />
         <p className="text-gray-500 text-sm">Loading KYC details...</p>
       </div>
@@ -38,7 +38,7 @@ export default function KycDetail() {
 
   if (error || !kyc) {
     return (
-      <div className="min-h-full bg-(--theme-bg) p-6 flex flex-col items-center justify-center gap-3">
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
         <p className="text-gray-500">KYC submission not found or failed to load.</p>
         <Link to="/admin/kyc/all" className="text-sm text-indigo-600 hover:underline">← Back to KYC</Link>
       </div>
@@ -66,7 +66,7 @@ export default function KycDetail() {
   };
 
   return (
-    <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
       <div className="flex items-center gap-3">
         <Link to="/admin/kyc/all" className="flex items-center gap-1 text-sm text-indigo-600 hover:underline">
           <ArrowLeft size={14} /> Back

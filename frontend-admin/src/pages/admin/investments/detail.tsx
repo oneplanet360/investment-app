@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Search } from "lucide-react";
-import { investments } from "../../../lib/data";
+import { useAdminInvestmentDetail } from "../../../services/adminInvestments/adminInvestments.query";
+import { useUpdateInvestmentStatusMutation } from "../../../services/adminInvestments/adminInvestments.mutation";
+import type { IInvestment } from "../../../services/adminInvestments/adminInvestments.types";
 import Pagination from "../../../components/common/pagination";
 
 const PER_PAGE = 10;
@@ -15,10 +17,11 @@ type Contribution = {
   contributedAt: string;
 };
 
-function buildContributions(inv: (typeof investments)[0]): Contribution[] {
-  if (inv.totalPaidContributions === 0) return [];
-  return Array.from({ length: inv.totalPaidContributions }, (_, i) => {
-    const d = new Date(inv.startDate);
+function buildContributions(inv: IInvestment): Contribution[] {
+  const totalPaidContributions: number = 12; // mock value
+  if (totalPaidContributions === 0) return [];
+  return Array.from({ length: totalPaidContributions }, (_, i) => {
+    const d = new Date(inv.createdAt);
     d.setDate(d.getDate() + i + 1);
     return {
       id: String(i + 1),
@@ -38,9 +41,10 @@ const statusStyle: Record<string, string> = {
 };
 
 const invStatusStyle: Record<string, string> = {
-  active: "border border-indigo-400 text-indigo-600",
-  completed: "border border-green-500 text-green-600",
-  closed: "border border-gray-400 text-gray-500",
+  ACTIVE: "border border-indigo-400 text-indigo-600",
+  COMPLETED: "border border-green-500 text-green-600",
+  CLOSE_REQUEST: "border border-orange-400 text-orange-600",
+  CLOSED: "border border-gray-400 text-gray-500",
 };
 
 function fmt(d: string) {
@@ -56,10 +60,20 @@ function fmt(d: string) {
 
 export default function InvestmentDetail() {
   const { trxId } = useParams<{ trxId: string }>();
-  const inv = investments.find((i) => i.trxId === trxId);
+  const { data, isLoading } = useAdminInvestmentDetail(trxId || "");
+  const { mutate: updateStatus, isPending } = useUpdateInvestmentStatusMutation(trxId || "");
+  const inv = data?.data;
 
   const [cTrxQuery, setCTrxQuery] = useState("");
   const [page, setPage] = useState(1);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!inv) {
     return (
@@ -101,15 +115,17 @@ export default function InvestmentDetail() {
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Full Name</span>
-              <span className="font-semibold text-gray-800">{inv.fullName}</span>
+              <span className="font-semibold text-gray-800">
+                {inv.userId?.firstName || inv.userId?.lastName ? `${inv.userId?.firstName} ${inv.userId?.lastName}` : inv.userId?.name}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Username</span>
-              <span className="text-indigo-500 font-medium">@{inv.username}</span>
+              <span className="text-indigo-500 font-medium">@{inv.userId?.username}</span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-indigo-500 font-medium">Email</span>
-              <span className="text-gray-400 text-xs">[Email is protected for the demo]</span>
+              <span className="font-semibold text-gray-800">{inv.userId?.email || "-"}</span>
             </div>
           </div>
         </div>
@@ -120,7 +136,7 @@ export default function InvestmentDetail() {
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Initial Deposit</span>
               <span className="font-semibold text-gray-800">
-                ${inv.initialDeposit.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                ${(inv.amount || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
@@ -135,11 +151,11 @@ export default function InvestmentDetail() {
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Next Contribution Date</span>
-              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.nextContributionDate)}</span>
+              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.nextRoiDate || inv.createdAt)}</span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Years to Grow</span>
-              <span className="font-semibold text-gray-800">{inv.yearsToGrow} years</span>
+              <span className="font-semibold text-gray-800">1 years</span>
             </div>
           </div>
         </div>
@@ -149,7 +165,7 @@ export default function InvestmentDetail() {
           <div className="divide-y divide-gray-50 text-sm">
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Annual Return Rate</span>
-              <span className="font-semibold text-indigo-600">{inv.annualReturnRate}%</span>
+              <span className="font-semibold text-indigo-600">8.0%</span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Total Return Amount</span>
@@ -159,22 +175,34 @@ export default function InvestmentDetail() {
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Start Date</span>
-              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.startDate)}</span>
+              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.createdAt)}</span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">End Date</span>
-              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.endDate)}</span>
+              <span className="font-semibold text-gray-800 text-xs">-</span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Total Paid Contributions</span>
               <span className="font-semibold text-gray-800">
-                {inv.totalPaidContributions}{" "}
-                <span className="text-gray-400 font-normal text-xs">(Out of {inv.totalContributionSlots})</span>
+                12{" "}
+                <span className="text-gray-400 font-normal text-xs">(Out of 12)</span>
               </span>
             </div>
           </div>
         </div>
       </div>
+
+      {inv.status === "CLOSE_REQUEST" && (
+        <div className="bg-white rounded-lg shadow-sm p-5 flex flex-wrap gap-3">
+          <button 
+            disabled={isPending}
+            onClick={() => updateStatus({ status: "CLOSED" })}
+            className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+          >
+            Approve Close Request
+          </button>
+        </div>
+      )}
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
@@ -206,7 +234,7 @@ export default function InvestmentDetail() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[600px]">
+          <table className="w-full text-sm min-w-150">
             <thead>
               <tr className="bg-indigo-600 text-white">
                 <th className="text-left px-5 py-3 font-medium">Transaction ID</th>

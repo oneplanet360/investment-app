@@ -1,12 +1,13 @@
 import { useParams, Link } from "react-router-dom";
-import { deposits, type DepositStatus } from "../../../lib/data";
+import { useAdminDepositDetail } from "../../../services/adminDeposits/adminDeposits.query";
+import { useUpdateDepositStatusMutation } from "../../../services/adminDeposits/adminDeposits.mutation";
 
-const statusStyle: Record<DepositStatus, string> = {
-  pending:    "border border-yellow-400 text-yellow-600 bg-yellow-50",
-  approved:   "border border-green-500 text-green-600 bg-green-50",
-  successful: "border border-blue-500 text-blue-600 bg-blue-50",
-  rejected:   "border border-red-400 text-red-500 bg-red-50",
-  initiated:  "border border-gray-400 text-gray-500 bg-gray-50",
+const statusStyle: Record<string, string> = {
+  PENDING:    "border border-yellow-400 text-yellow-600 bg-yellow-50",
+  APPROVED:   "border border-green-500 text-green-600 bg-green-50",
+  SUCCESSFUL: "border border-blue-500 text-blue-600 bg-blue-50",
+  REJECTED:   "border border-red-400 text-red-500 bg-red-50",
+  INITIATED:  "border border-gray-400 text-gray-500 bg-gray-50",
 };
 
 function fmtDate(d: string) {
@@ -27,7 +28,18 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 
 export default function DepositDetail() {
   const { trxId } = useParams<{ trxId: string }>();
-  const dep = deposits.find((d) => d.trxId === trxId);
+  const { data, isLoading } = useAdminDepositDetail(trxId || "");
+  const { mutate: updateStatus, isPending } = useUpdateDepositStatusMutation(trxId || "");
+  
+  const dep = data?.data;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!dep) {
     return (
@@ -57,7 +69,7 @@ export default function DepositDetail() {
           <h2 className="text-sm font-semibold text-gray-700 mb-3">Transaction Info</h2>
           <Row label="Transaction ID" value={<span className="font-mono text-xs tracking-wide">{dep.trxId}</span>} />
           <Row label="Gateway" value={<span className="text-indigo-600 font-medium">{dep.gateway}</span>} />
-          <Row label="Initiated At" value={fmtDate(dep.initiatedAt)} />
+          <Row label="Initiated At" value={fmtDate(dep.createdAt)} />
           <Row
             label="Status"
             value={
@@ -70,9 +82,9 @@ export default function DepositDetail() {
 
         <div className="bg-white rounded-lg shadow-sm p-5">
           <h2 className="text-sm font-semibold text-gray-700 mb-3">User Info</h2>
-          <Row label="Full Name" value={<span className="font-semibold">{dep.fullName}</span>} />
-          <Row label="Username" value={<span className="text-indigo-500">@{dep.username}</span>} />
-          <Row label="Email" value={<span className="text-gray-400 text-xs">[Email is protected for the demo]</span>} />
+          <Row label="Full Name" value={<span className="font-semibold">{dep.userId?.firstName || dep.userId?.lastName ? `${dep.userId?.firstName} ${dep.userId?.lastName}` : dep.userId?.name}</span>} />
+          <Row label="Username" value={<span className="text-indigo-500">@{dep.userId?.username}</span>} />
+          <Row label="Email" value={<span className="font-semibold text-gray-800">{dep.userId?.email || "-"}</span>} />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-5">
@@ -87,7 +99,7 @@ export default function DepositDetail() {
           />
           <Row
             label="Total Amount"
-            value={<span className="font-bold text-gray-900">${dep.totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD</span>}
+            value={<span className="font-bold text-gray-900">${(dep.amount + (dep.charge || 0)).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD</span>}
           />
         </div>
 
@@ -102,12 +114,20 @@ export default function DepositDetail() {
         </div>
       </div>
 
-      {dep.status === "pending" && (
+      {dep.status === "PENDING" && (
         <div className="bg-white rounded-lg shadow-sm p-5 flex flex-wrap gap-3">
-          <button className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors">
+          <button 
+            disabled={isPending}
+            onClick={() => updateStatus({ status: "APPROVED" })}
+            className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+          >
             Approve
           </button>
-          <button className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-2 rounded transition-colors">
+          <button 
+            disabled={isPending}
+            onClick={() => updateStatus({ status: "REJECTED" })}
+            className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+          >
             Reject
           </button>
         </div>

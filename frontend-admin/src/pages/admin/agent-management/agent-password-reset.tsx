@@ -63,7 +63,7 @@ export default function AgentResetPassword() {
   }`;
 
   return (
-    <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6">
+    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6">
       <h1 className="text-base font-semibold text-gray-700 mb-5">Reset Agent Password</h1>
       
       <div className="bg-white rounded-lg shadow-sm p-5 sm:p-6 space-y-5">
