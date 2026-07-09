@@ -42,7 +42,30 @@ export const getAgentsController = customAsyncWrapper(
   }
 );
 
-export const resetAgentPasswordController = customAsyncWrapper(
+import { getAdminUserDetailService } from '../services/adminUsers.service';
+
+        export const getAgentDetailController = customAsyncWrapper(
+          async (req: Request, res: Response) => {
+            const { username } = req.params;
+            const data = await getAdminUserDetailService(username, 'agent');
+            if (!data) {
+              return customApiResponse({
+                response: res,
+                statusCode: 404,
+                message: 'Agent not found',
+                data: null,
+              });
+            }
+            return customApiResponse({
+              response: res,
+              statusCode: HttpStatusCode.OK,
+              message: 'Agent detail retrieved successfully',
+              data,
+            });
+          }
+        );
+
+        export const resetAgentPasswordController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const agentId = req.params.id as string;
     const { newPassword } = req.body;

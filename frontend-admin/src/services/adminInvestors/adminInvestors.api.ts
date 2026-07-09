@@ -14,7 +14,7 @@ export const getInvestorsFn = async (
   if (search) {
     params.append("search", search);
   }
-  
+
   const response = await axiosInstance.get(`${ADMIN_INVESTORS_URL}?${params.toString()}`);
   return { data: response.data.data, meta: response.data.meta };
 };
@@ -23,4 +23,10 @@ export const resetInvestorPasswordFn = async (payload: ResetInvestorPasswordPayl
   await axiosInstance.put(`${ADMIN_INVESTORS_URL}/${payload.investorId}/password-reset`, {
     newPassword: payload.newPassword,
   });
+};
+
+import type { IUserDetailResponse } from "../adminUsers.types";
+export const getAdminInvestorDetailApi = async (username: string): Promise<IUserDetailResponse> => {
+  const { data } = await axiosInstance.get(`/investors/${username}`);
+  return data.data;
 };

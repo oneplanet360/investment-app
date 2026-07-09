@@ -124,7 +124,7 @@ export default function AgentsTable({
                     <td className="px-5 py-3.5 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Link
-                          to={`/admin/agents/${agent._id}`}
+                          to={`/agents/${agent.username}`}
                           className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 border border-indigo-300 rounded px-3 py-1.5 hover:bg-indigo-50 transition-colors"
                         >
                           Details

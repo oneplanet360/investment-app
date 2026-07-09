@@ -13,7 +13,9 @@ import {
   Bell,
   Ban,
 } from "lucide-react";
-import { users } from "../../lib/data";
+import { useAdminAgentDetail } from "../../services/adminAgents/adminAgents.query";
+import { useAdminInvestorDetail } from "../../services/adminInvestors/adminInvestors.query";
+import { useEffect } from "react";
 
 type ColorCard = {
   label: string;
@@ -59,6 +61,7 @@ const countries = [
   "Venezuela", "Vietnam", "Zambia", "Zimbabwe",
 ];
 
+
 export default function UserDetail() {
   const { username } = useParams<{ username: string }>();
   const location = useLocation();
@@ -66,12 +69,73 @@ export default function UserDetail() {
   const typeLabel = isAgent ? "Agent" : "Investor";
   const backLink = isAgent ? "/agents" : "/investors";
   
-  const user = users.find((u) => u.username === username);
+  const { data: agentRes, isLoading: agentLoading } = useAdminAgentDetail(username || "", { enabled: isAgent && !!username });
+  const { data: invRes, isLoading: invLoading } = useAdminInvestorDetail(username || "", { enabled: !isAgent && !!username });
+
+  const isLoading = isAgent ? agentLoading : invLoading;
+  const res = isAgent ? agentRes : invRes;
+  const user = res?.user;
+  const stats = res?.stats || {
+    balance: 0,
+    totalInvestments: 0,
+    totalContribution: 0,
+    closeRequests: 0,
+    completedInvestments: 0,
+    deposits: 0,
+    withdrawals: 0,
+    transactions: 0
+  };
+
   const [activeTab, setActiveTab] = useState<Tab>("logins");
 
-  if (!user) {
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
+    emailVerified: false,
+    mobileVerified: false,
+    twoFa: false,
+    kyc: "unverified",
+  });
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        mobile: user.mobile || "",
+        address: user.address || "",
+        city: user.city || "",
+        state: user.state || "",
+        zip: user.zip || "",
+        country: user.country || "",
+        emailVerified: user.emailVerified || false,
+        mobileVerified: user.mobileVerified || false,
+        twoFa: user.twoFa || false,
+        kyc: user.kyc || "unverified",
+      });
+    }
+  }, [user]);
+
+  if (isLoading) {
     return (
-      <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
+      <div className="min-h-full bg-(--theme-bg) p-6 flex flex-col items-center justify-center gap-3">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+
+    return (
+      <div className="min-h-full bg-(--theme-bg) p-6 flex flex-col items-center justify-center gap-3">
         <p className="text-gray-500">{typeLabel} not found.</p>
         <Link to={backLink} className="text-sm text-indigo-600 hover:underline">
           ← Back to All {typeLabel}s
@@ -80,24 +144,9 @@ export default function UserDetail() {
     );
   }
 
-  const [form, setForm] = useState({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    mobile: user.mobile,
-    address: user.address,
-    city: user.city,
-    state: user.state,
-    zip: user.zip,
-    country: user.country,
-    emailVerified: user.emailVerified,
-    mobileVerified: user.mobileVerified,
-    twoFa: user.twoFa,
-    kyc: user.kyc,
-  });
 
   return (
-    <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
+    <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-5">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-base font-semibold text-gray-700">
           {typeLabel} Detail &ndash; {user.username}
@@ -113,49 +162,49 @@ export default function UserDetail() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <ColorCard
           label="Balance"
-          value={`$${user.balance.toFixed(2)} USD`}
+          value={`$${stats.balance.toFixed(2)} USD`}
           bg="bg-sky-500"
           icon={<DollarSign size={22} className="text-white" />}
         />
         <ColorCard
           label="Total Investments"
-          value={user.totalInvestments}
+          value={stats.totalInvestments}
           bg="bg-indigo-700"
           icon={<Briefcase size={22} className="text-white" />}
         />
         <ColorCard
           label="Total Contribution"
-          value={`$${user.totalContribution.toFixed(2)} USD`}
+          value={`$${stats.totalContribution.toFixed(2)} USD`}
           bg="bg-purple-600"
           icon={<ArrowDownToLine size={22} className="text-white" />}
         />
         <ColorCard
           label="Investment Close Requests"
-          value={user.closeRequests}
+          value={stats.closeRequests}
           bg="bg-red-700"
           icon={<Hand size={22} className="text-white" />}
         />
         <ColorCard
           label="Completed Investments"
-          value={user.completedInvestments}
+          value={stats.completedInvestments}
           bg="bg-green-600"
           icon={<CheckCircle size={22} className="text-white" />}
         />
         <ColorCard
           label="Deposits"
-          value={`$${user.deposits.toFixed(2)} USD`}
+          value={`$${stats.deposits.toFixed(2)} USD`}
           bg="bg-teal-600"
           icon={<Wallet size={22} className="text-white" />}
         />
         <ColorCard
           label="Withdrawals"
-          value={`$${user.withdrawals.toFixed(2)} USD`}
+          value={`$${stats.withdrawals.toFixed(2)} USD`}
           bg="bg-yellow-600"
           icon={<Landmark size={22} className="text-white" />}
         />
         <ColorCard
           label="Transactions"
-          value={user.transactions}
+          value={stats.transactions}
           bg="bg-cyan-600"
           icon={<ArrowUpDown size={22} className="text-white" />}
         />

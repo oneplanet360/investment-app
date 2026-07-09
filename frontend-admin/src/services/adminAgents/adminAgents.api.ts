@@ -19,7 +19,7 @@ export const getAgentsFn = async (
   if (search) {
     params.append("search", search);
   }
-  
+
   const response = await axiosInstance.get(`${ADMIN_AGENTS_URL}?${params.toString()}`);
   return { data: response.data.data, meta: response.data.meta };
 };
@@ -32,4 +32,10 @@ export const resetAgentPasswordFn = async ({
   newPassword?: string;
 }): Promise<void> => {
   await axiosInstance.put(`${ADMIN_AGENTS_URL}/${agentId}/password-reset`, { newPassword });
+};
+
+import type { IUserDetailResponse } from "../adminUsers.types";
+export const getAdminAgentDetailApi = async (username: string): Promise<IUserDetailResponse> => {
+  const { data } = await axiosInstance.get(`/agents/${username}`);
+  return data.data;
 };

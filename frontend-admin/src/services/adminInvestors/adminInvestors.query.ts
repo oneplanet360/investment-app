@@ -7,3 +7,11 @@ export const useInvestorsQuery = (page: number, limit: number, search: string = 
     queryFn: () => getInvestorsFn(page, limit, search),
   });
 };
+
+export const useAdminInvestorDetail = (username: string, options?: any) => {
+  return useQuery({
+    queryKey: ["adminInvestorDetail", username],
+    queryFn: () => getAdminInvestorDetailApi(username),
+    ...options
+  });
+};

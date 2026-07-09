@@ -27,7 +27,30 @@ export const getInvestorsController = customAsyncWrapper(
   }
 );
 
-export const resetInvestorPasswordController = customAsyncWrapper(
+import { getAdminUserDetailService } from '../services/adminUsers.service';
+
+        export const getInvestorDetailController = customAsyncWrapper(
+          async (req: Request, res: Response) => {
+            const { username } = req.params;
+            const data = await getAdminUserDetailService(username, 'user');
+            if (!data) {
+              return customApiResponse({
+                response: res,
+                statusCode: 404,
+                message: 'Investor not found',
+                data: null,
+              });
+            }
+            return customApiResponse({
+              response: res,
+              statusCode: HttpStatusCode.OK,
+              message: 'Investor detail retrieved successfully',
+              data,
+            });
+          }
+        );
+
+        export const resetInvestorPasswordController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const { newPassword } = req.body;

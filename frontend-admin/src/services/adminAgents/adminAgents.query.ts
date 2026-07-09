@@ -7,3 +7,11 @@ export const useAgentsQuery = (page: number, limit: number, search: string) => {
     queryFn: () => getAgentsFn(page, limit, search),
   });
 };
+
+export const useAdminAgentDetail = (username: string, options?: any) => {
+  return useQuery({
+    queryKey: ["adminAgentDetail", username],
+    queryFn: () => getAdminAgentDetailApi(username),
+    ...options
+  });
+};
