@@ -1,4 +1,6 @@
-import AdminSetting, { IAdminSetting } from '../models/admin-setting.model';
+import AdminSetting, {
+  IAdminSetting,
+} from '../database/models/admin-setting.model';
 
 export const getAdminSettingsService = async (): Promise<IAdminSetting> => {
   let settings = await AdminSetting.findOne();

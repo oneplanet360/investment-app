@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
 import { ParsedEnvVariables } from '../../configs';
 import { ApiSuccessMessages, HttpStatusCode } from '../../constants';
-import { signInAdminServices } from '../../services/auth.service';
+import {
+  signInAdminServices,
+  signInClientServices,
+} from '../../services/auth.service';
 import { customApiResponse, customAsyncWrapper } from '../../utils';
-import { adminSignInSchema } from '../../validations/auth.schema';
+import {
+  adminSignInSchema,
+  clientSignInSchema,
+} from '../../validations/auth.schema';
 
 export const signInAdminController = customAsyncWrapper(
   async (request: Request, response: Response) => {
@@ -56,6 +62,61 @@ export const verifyController = customAsyncWrapper(
       response,
       statusCode: HttpStatusCode.OK,
       data: admin,
+    });
+  }
+);
+
+export const signInClientController = customAsyncWrapper(
+  async (request: Request, response: Response) => {
+    const body = clientSignInSchema.parse(request.body);
+
+    const { user, token } = await signInClientServices(body);
+
+    const cookieMaxAge = 24 * 60 * 60 * 1000;
+
+    response.cookie('clientAccessToken', token, {
+      httpOnly: true,
+      secure: ParsedEnvVariables.NODE_ENV === 'production',
+      sameSite:
+        ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: cookieMaxAge,
+    });
+
+    customApiResponse({
+      response,
+      statusCode: HttpStatusCode.OK,
+      message: ApiSuccessMessages.SIGN_IN_SUCCESS,
+      data: user,
+    });
+  }
+);
+
+export const signOutClientController = customAsyncWrapper(
+  async (request: Request, response: Response) => {
+    response.clearCookie('clientAccessToken', {
+      httpOnly: true,
+      secure: ParsedEnvVariables.NODE_ENV === 'production',
+      sameSite:
+        ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+    });
+
+    customApiResponse({
+      response,
+      statusCode: HttpStatusCode.OK,
+      message: ApiSuccessMessages.SIGN_OUT_SUCCESS || 'Sign out successfully',
+      data: null,
+    });
+  }
+);
+
+export const verifyClientController = customAsyncWrapper(
+  async (request: Request, response: Response) => {
+    const user = (request as any).user;
+
+    customApiResponse({
+      response,
+      statusCode: HttpStatusCode.OK,
+      data: user,
     });
   }
 );
