@@ -1,8 +1,9 @@
 import { ParsedEnvVariables } from '../configs';
 import { ApiErrorMessages, HttpStatusCode } from '../constants';
 import { Admin } from '../database/models/admin.model';
+import { User } from '../database/models/user.model';
 import { customError } from '../utils';
-import { adminSignInSchemaType } from '../validations/auth.schema';
+import { adminSignInSchemaType, clientSignInSchemaType } from '../validations/auth.schema';
 import jwt from 'jsonwebtoken';
 
 export const signInAdminServices = async (body: adminSignInSchemaType) => {
@@ -39,4 +40,41 @@ export const signInAdminServices = async (body: adminSignInSchemaType) => {
   );
 
   return { admin: adminData, token };
+};
+
+export const signInClientServices = async (body: clientSignInSchemaType) => {
+  const { email, password } = body;
+
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser) {
+    throw new customError(
+      'User not found.',
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
+  if (existingUser.password !== password) {
+    throw new customError(
+      ApiErrorMessages.INVALID_CREDENTIALS,
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
+  const userData = {
+    _id: existingUser._id,
+    name: existingUser.name,
+    email: existingUser.email,
+    role: existingUser.role,
+  };
+
+  const token = await jwt.sign(
+    { _id: existingUser._id, role: existingUser.role },
+    ParsedEnvVariables.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: '7d',
+    }
+  );
+
+  return { user: userData, token };
 };

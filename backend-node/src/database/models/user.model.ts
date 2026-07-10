@@ -26,13 +26,18 @@ export interface IUser extends Document {
   state?: string;
   zip?: string;
   role: UserRole;
-  referredBy?: Types.ObjectId; // Reference to Agent for Investors, or Sponsor for Agent
   isActive: boolean;
   kycStatus: KycStatus;
   walletBalance: number;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const baseOptions = {
+  discriminatorKey: 'role', // our discriminator key
+  collection: 'users',
+  timestamps: true,
+};
 
 const userSchema = new Schema<IUser>(
   {
@@ -48,8 +53,6 @@ const userSchema = new Schema<IUser>(
     city: { type: String },
     state: { type: String },
     zip: { type: String },
-    role: { type: String, enum: Object.values(UserRole), required: true },
-    referredBy: { type: Schema.Types.ObjectId, ref: 'User' },
     isActive: { type: Boolean, default: true },
     kycStatus: {
       type: String,
@@ -58,9 +61,41 @@ const userSchema = new Schema<IUser>(
     },
     walletBalance: { type: Number, default: 0 },
   },
-  {
-    timestamps: true,
-  }
+  baseOptions
 );
 
 export const User = model<IUser>('User', userSchema);
+
+// ==========================================
+// Agent Discriminator
+// ==========================================
+export interface IAgent extends IUser {
+  sponsor?: Types.ObjectId;
+  downlineCount: number;
+  commissionBalance: number;
+}
+
+const agentSchema = new Schema<IAgent>({
+  sponsor: { type: Schema.Types.ObjectId, ref: 'User' },
+  downlineCount: { type: Number, default: 0 },
+  commissionBalance: { type: Number, default: 0 },
+});
+
+export const Agent = User.discriminator<IAgent>(UserRole.AGENT, agentSchema);
+
+// ==========================================
+// Investor Discriminator
+// ==========================================
+export interface IInvestor extends IUser {
+  referredBy?: Types.ObjectId;
+  investmentBalance: number;
+  roiBalance: number;
+}
+
+const investorSchema = new Schema<IInvestor>({
+  referredBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  investmentBalance: { type: Number, default: 0 },
+  roiBalance: { type: Number, default: 0 },
+});
+
+export const Investor = User.discriminator<IInvestor>(UserRole.INVESTOR, investorSchema);
