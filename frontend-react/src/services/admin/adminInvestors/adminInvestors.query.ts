@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getInvestorsFn } from "./adminInvestors.api";
+import { getInvestorsFn, getAdminInvestorDetailApi } from "./adminInvestors.api";
 
 export const useInvestorsQuery = (page: number, limit: number, search: string = "") => {
   return useQuery({

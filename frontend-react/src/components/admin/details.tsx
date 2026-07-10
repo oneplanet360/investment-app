@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useAdminAgentDetail } from "../../services/admin/adminAgents/adminAgents.query";
 import { useAdminInvestorDetail } from "../../services/admin/adminInvestors/adminInvestors.query";
+import type { IUserDetailResponse } from "../../services/admin/adminUsers.types";
 import { useEffect } from "react";
 
 type ColorCard = {
@@ -73,7 +74,7 @@ export default function UserDetail() {
   const { data: invRes, isLoading: invLoading } = useAdminInvestorDetail(username || "", { enabled: !isAgent && !!username });
 
   const isLoading = isAgent ? agentLoading : invLoading;
-  const res = isAgent ? agentRes : invRes;
+  const res = (isAgent ? agentRes : invRes) as IUserDetailResponse | undefined;
   const user = res?.user;
   const stats = res?.stats || {
     balance: 0,
