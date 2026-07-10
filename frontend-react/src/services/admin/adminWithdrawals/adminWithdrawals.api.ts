@@ -1,4 +1,4 @@
-import { axiosInstance } from "../../lib/axios";
+import { axiosInstance } from "../../../lib/axios";
 import type { IWithdrawalListResponse, IWithdrawalResponse, IUpdateWithdrawalStatusPayload } from "./adminWithdrawals.types";
 
 export const getAdminWithdrawals = async (
