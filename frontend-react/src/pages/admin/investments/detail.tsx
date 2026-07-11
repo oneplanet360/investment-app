@@ -48,20 +48,24 @@ const invStatusStyle: Record<string, string> = {
 };
 
 function fmt(d: string) {
-  return new Date(d).toLocaleString("en-US", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).replace(",", "");
+  return new Date(d)
+    .toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(",", "");
 }
 
 export default function InvestmentDetail() {
   const { trxId } = useParams<{ trxId: string }>();
   const { data, isLoading } = useAdminInvestmentDetail(trxId || "");
-  const { mutate: updateStatus, isPending } = useUpdateInvestmentStatusMutation(trxId || "");
+  const { mutate: updateStatus, isPending } = useUpdateInvestmentStatusMutation(
+    trxId || "",
+  );
   const inv = data?.data;
 
   const [cTrxQuery, setCTrxQuery] = useState("");
@@ -79,7 +83,10 @@ export default function InvestmentDetail() {
     return (
       <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
         <p className="text-gray-500">Investment not found.</p>
-        <Link to="/investments/all" className="text-sm text-indigo-600 hover:underline">
+        <Link
+          to="/investments/all"
+          className="text-sm text-indigo-600 hover:underline"
+        >
           ← Back to Investments
         </Link>
       </div>
@@ -88,70 +95,106 @@ export default function InvestmentDetail() {
 
   const allContributions = buildContributions(inv);
   const filteredContributions = cTrxQuery.trim()
-    ? allContributions.filter((c) => c.trxId.toLowerCase().includes(cTrxQuery.toLowerCase()))
+    ? allContributions.filter((c) =>
+        c.trxId.toLowerCase().includes(cTrxQuery.toLowerCase()),
+      )
     : allContributions;
 
-  const totalPages = Math.max(1, Math.ceil(filteredContributions.length / PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredContributions.length / PER_PAGE),
+  );
   const currentPage = Math.min(page, totalPages);
-  const slice = filteredContributions.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+  const slice = filteredContributions.slice(
+    (currentPage - 1) * PER_PAGE,
+    currentPage * PER_PAGE,
+  );
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
-      <h1 className="text-base font-semibold text-gray-700">Investment Details</h1>
+      <h1 className="text-base font-semibold text-gray-700">
+        Investment Details
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg shadow-sm p-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">User & Investment Info</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            User & Investment Info
+          </h2>
           <div className="divide-y divide-gray-50 text-sm">
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Transaction ID</span>
-              <span className="font-mono font-semibold text-gray-800 text-xs">{inv.trxId}</span>
+              <span className="font-mono font-semibold text-gray-800 text-xs">
+                {inv.trxId}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Status</span>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium ${invStatusStyle[inv.status]}`}>
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium ${invStatusStyle[inv.status]}`}
+              >
                 {inv.status}
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Full Name</span>
               <span className="font-semibold text-gray-800">
-                {inv.userId?.firstName || inv.userId?.lastName ? `${inv.userId?.firstName} ${inv.userId?.lastName}` : inv.userId?.name}
+                {inv.userId?.firstName || inv.userId?.lastName
+                  ? `${inv.userId?.firstName} ${inv.userId?.lastName}`
+                  : inv.userId?.name}
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Username</span>
-              <span className="text-indigo-500 font-medium">@{inv.userId?.username}</span>
+              <span className="text-indigo-500 font-medium">
+                @{inv.userId?.username}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-indigo-500 font-medium">Email</span>
-              <span className="font-semibold text-gray-800">{inv.userId?.email || "-"}</span>
+              <span className="font-semibold text-gray-800">
+                {inv.userId?.email || "-"}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">Contribution Details</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            Contribution Details
+          </h2>
           <div className="divide-y divide-gray-50 text-sm">
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Initial Deposit</span>
               <span className="font-semibold text-gray-800">
-                ${(inv.amount || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                $
+                {(inv.amount || 0).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                USD
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Recurring Contribution</span>
               <span className="font-semibold text-gray-800">
-                ${inv.contributionAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                $
+                {inv.contributionAmount.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                USD
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Contribution Frequency</span>
-              <span className="font-semibold text-indigo-600">{inv.contributionFrequency}</span>
+              <span className="font-semibold text-indigo-600">
+                {inv.contributionFrequency}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Next Contribution Date</span>
-              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.nextRoiDate || inv.createdAt)}</span>
+              <span className="font-semibold text-gray-800 text-xs">
+                {fmt(inv.nextRoiDate || inv.createdAt)}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Years to Grow</span>
@@ -161,7 +204,9 @@ export default function InvestmentDetail() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">Returns & Growth</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+            Returns & Growth
+          </h2>
           <div className="divide-y divide-gray-50 text-sm">
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Annual Return Rate</span>
@@ -170,12 +215,18 @@ export default function InvestmentDetail() {
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Total Return Amount</span>
               <span className="font-semibold text-gray-800">
-                ${inv.totalReturn.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                $
+                {inv.totalReturn.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                USD
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Start Date</span>
-              <span className="font-semibold text-gray-800 text-xs">{fmt(inv.createdAt)}</span>
+              <span className="font-semibold text-gray-800 text-xs">
+                {fmt(inv.createdAt)}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">End Date</span>
@@ -185,7 +236,9 @@ export default function InvestmentDetail() {
               <span className="text-gray-500">Total Paid Contributions</span>
               <span className="font-semibold text-gray-800">
                 12{" "}
-                <span className="text-gray-400 font-normal text-xs">(Out of 12)</span>
+                <span className="text-gray-400 font-normal text-xs">
+                  (Out of 12)
+                </span>
               </span>
             </div>
           </div>
@@ -194,7 +247,7 @@ export default function InvestmentDetail() {
 
       {inv.status === "CLOSE_REQUEST" && (
         <div className="bg-white rounded-lg shadow-sm p-5 flex flex-wrap gap-3">
-          <button 
+          <button
             disabled={isPending}
             onClick={() => updateStatus({ status: "CLOSED" })}
             className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
@@ -206,13 +259,18 @@ export default function InvestmentDetail() {
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-700">All Contributions</h2>
+          <h2 className="text-sm font-semibold text-gray-700">
+            All Contributions
+          </h2>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex items-center gap-2 border border-gray-200 rounded px-3 py-1.5 w-full sm:w-48 focus-within:border-indigo-400 transition-colors">
               <input
                 type="text"
                 value={cTrxQuery}
-                onChange={(e) => { setCTrxQuery(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                  setCTrxQuery(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Transaction Id"
                 className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent min-w-0"
               />
@@ -237,17 +295,28 @@ export default function InvestmentDetail() {
           <table className="w-full text-sm min-w-150">
             <thead>
               <tr className="bg-indigo-600 text-white">
-                <th className="text-left px-5 py-3 font-medium">Transaction ID</th>
-                <th className="text-right px-4 py-3 font-medium">Contribution Amount</th>
-                <th className="text-right px-4 py-3 font-medium">Penalty Amount</th>
+                <th className="text-left px-5 py-3 font-medium">
+                  Transaction ID
+                </th>
+                <th className="text-right px-4 py-3 font-medium">
+                  Contribution Amount
+                </th>
+                <th className="text-right px-4 py-3 font-medium">
+                  Penalty Amount
+                </th>
                 <th className="text-center px-4 py-3 font-medium">Status</th>
-                <th className="text-left px-5 py-3 font-medium">Contributed At</th>
+                <th className="text-left px-5 py-3 font-medium">
+                  Contributed At
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {slice.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-400 text-sm">
+                  <td
+                    colSpan={5}
+                    className="text-center py-10 text-gray-400 text-sm"
+                  >
                     Data not found
                   </td>
                 </tr>
@@ -264,7 +333,9 @@ export default function InvestmentDetail() {
                       ${c.penalty.toFixed(2)} USD
                     </td>
                     <td className="px-4 py-3.5 text-center">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium ${statusStyle[c.status]}`}>
+                      <span
+                        className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium ${statusStyle[c.status]}`}
+                      >
                         {c.status}
                       </span>
                     </td>

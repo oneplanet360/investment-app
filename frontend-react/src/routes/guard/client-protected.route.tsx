@@ -1,8 +1,12 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import LoadingSpinner from '../../components/common/loading-spinner';
-import useClientAuth from '../../hooks/useClientAuth';
+import { Navigate, Outlet } from "react-router-dom";
+import LoadingSpinner from "../../components/common/loading-spinner";
+import useClientAuth from "../../hooks/useClientAuth";
 
-export default function ClientProtectedRoute({ allowedRole }: { allowedRole?: 'AGENT' | 'INVESTOR' }) {
+export default function ClientProtectedRoute({
+  allowedRole,
+}: {
+  allowedRole?: "AGENT" | "INVESTOR";
+}) {
   const { isAuthenticated, isLoading, user } = useClientAuth();
 
   if (isLoading) {
@@ -14,7 +18,8 @@ export default function ClientProtectedRoute({ allowedRole }: { allowedRole?: 'A
   }
 
   if (allowedRole && user.role !== allowedRole) {
-    if (user.role === 'AGENT') return <Navigate to="/agent/dashboard" replace />;
+    if (user.role === "AGENT")
+      return <Navigate to="/agent/dashboard" replace />;
     return <Navigate to="/investor/dashboard" replace />;
   }
 

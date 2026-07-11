@@ -10,7 +10,9 @@ export const useUpdateWithdrawalStatusMutation = (trxId: string) => {
       updateAdminWithdrawalStatus(trxId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminWithdrawals"] });
-      queryClient.invalidateQueries({ queryKey: ["adminWithdrawalDetail", trxId] });
+      queryClient.invalidateQueries({
+        queryKey: ["adminWithdrawalDetail", trxId],
+      });
     },
   });
 };

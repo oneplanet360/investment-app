@@ -71,12 +71,14 @@ export const User = model<IUser>('User', userSchema);
 // ==========================================
 export interface IAgent extends IUser {
   sponsor?: Types.ObjectId;
+  level: number;
   downlineCount: number;
   commissionBalance: number;
 }
 
 const agentSchema = new Schema<IAgent>({
   sponsor: { type: Schema.Types.ObjectId, ref: 'User' },
+  level: { type: Number, default: 1 },
   downlineCount: { type: Number, default: 0 },
   commissionBalance: { type: Number, default: 0 },
 });

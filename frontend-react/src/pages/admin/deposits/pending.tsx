@@ -7,7 +7,12 @@ export default function PendingDeposits() {
   const [search, setSearch] = useState("");
   const perPage = 20;
 
-  const { data, isLoading } = useAdminDeposits(page, perPage, "PENDING", search);
+  const { data, isLoading } = useAdminDeposits(
+    page,
+    perPage,
+    "PENDING",
+    search,
+  );
 
   return (
     <DepositTable
@@ -19,7 +24,10 @@ export default function PendingDeposits() {
       perPage={perPage}
       searchQuery={search}
       onPageChange={setPage}
-      onSearchChange={(s) => { setSearch(s); setPage(1); }}
+      onSearchChange={(s) => {
+        setSearch(s);
+        setPage(1);
+      }}
       isLoading={isLoading}
     />
   );

@@ -49,3 +49,29 @@ export const getAdminAgentDetailApi = async (
   const { data } = await axiosInstance.get(`/agents/${username}`);
   return data.data;
 };
+
+export const impersonateAgentApi = async (username: string) => {
+  const { data } = await axiosInstance.post(`/agents/${username}/impersonate`);
+  return data;
+};
+
+export const toggleBanAgentApi = async (username: string) => {
+  const { data } = await axiosInstance.put(`/agents/${username}/ban`);
+  return data;
+};
+
+export const sendNotificationAgentApi = async ({
+  username,
+  title,
+  message,
+}: {
+  username: string;
+  title: string;
+  message: string;
+}) => {
+  const { data } = await axiosInstance.post(
+    `/agents/${username}/notification`,
+    { title, message },
+  );
+  return data;
+};

@@ -18,6 +18,8 @@ export const createAgentService = async (
   }
 
   let sponsorId = undefined;
+  let level = 1;
+
   if (payload.referredBy) {
     // payload.referredBy comes in as the sponsor's username from the UI (string)
     const sponsor = await User.findOne({
@@ -27,7 +29,14 @@ export const createAgentService = async (
     if (!sponsor) {
       throw new customError('Sponsor not found', HttpStatusCode.NOT_FOUND);
     }
+    // Typecast to IAgent to access level
+    const sponsorAgent = sponsor as any;
+    if (sponsorAgent.level >= 4) {
+      throw new customError('Cannot create agents under a level 4 agent', HttpStatusCode.BAD_REQUEST);
+    }
+
     sponsorId = sponsor._id;
+    level = (sponsorAgent.level || 1) + 1;
   }
 
   const name =
@@ -40,6 +49,7 @@ export const createAgentService = async (
     name,
     role: UserRole.AGENT,
     referredBy: sponsorId,
+    level,
   });
 
   await newAgent.save();

@@ -3,27 +3,33 @@ import { Trash2, Send } from "lucide-react";
 import { subscribers as initialSubscribers } from "../../lib/data";
 import Pagination from "../../components/common/pagination";
 
-
 const PER_PAGE = 20;
 
 function fmtDate(d: string) {
-  return new Date(d).toLocaleString("en-US", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", hour12: false,
-  }).replace(",", "");
+  return new Date(d)
+    .toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(",", "");
 }
 
 export default function Subscribers() {
   const [list, setList] = useState(initialSubscribers);
   const [page, setPage] = useState(1);
 
-  const remove = (id: string) => setList((prev) => prev.filter((s) => s.id !== id));
+  const remove = (id: string) =>
+    setList((prev) => prev.filter((s) => s.id !== id));
 
   const totalPages = Math.max(1, Math.ceil(list.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const slice = useMemo(
     () => list.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE),
-    [list, currentPage]
+    [list, currentPage],
   );
 
   return (
@@ -42,21 +48,32 @@ export default function Subscribers() {
             <thead>
               <tr className="bg-indigo-600 text-white">
                 <th className="text-left px-5 py-3 font-medium">Email</th>
-                <th className="text-center px-4 py-3 font-medium">Subscribe At</th>
+                <th className="text-center px-4 py-3 font-medium">
+                  Subscribe At
+                </th>
                 <th className="text-center px-5 py-3 font-medium">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {slice.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-12 text-gray-400">No subscribers found.</td>
+                  <td colSpan={3} className="text-center py-12 text-gray-400">
+                    No subscribers found.
+                  </td>
                 </tr>
               ) : (
                 slice.map((sub) => (
-                  <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3.5 text-sm text-gray-700">{sub.email}</td>
+                  <tr
+                    key={sub.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-5 py-3.5 text-sm text-gray-700">
+                      {sub.email}
+                    </td>
                     <td className="px-4 py-3.5 text-center">
-                      <span className={`text-sm ${new Date(sub.subscribedAt).getFullYear() >= 2026 ? "text-indigo-500" : "text-gray-600"}`}>
+                      <span
+                        className={`text-sm ${new Date(sub.subscribedAt).getFullYear() >= 2026 ? "text-indigo-500" : "text-gray-600"}`}
+                      >
                         {fmtDate(sub.subscribedAt)}
                       </span>
                     </td>

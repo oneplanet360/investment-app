@@ -18,7 +18,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function Profile() {
   const fileRef = React.useRef<HTMLInputElement>(null);
-  
+
   const { data: profile, isLoading } = useAdminProfileQuery();
   const { mutate: updateProfile, isPending } = useUpdateAdminProfileMutation();
 
@@ -48,7 +48,10 @@ export default function Profile() {
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64Str = event.target?.result as string;
-      setValue("avatarUrl", base64Str, { shouldValidate: true, shouldDirty: true });
+      setValue("avatarUrl", base64Str, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     };
     reader.readAsDataURL(file);
   };
@@ -84,7 +87,11 @@ export default function Profile() {
             <div className="bg-indigo-600 px-5 py-4 flex items-center gap-3">
               <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center shrink-0 overflow-hidden">
                 {formValues.avatarUrl ? (
-                  <img src={formValues.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                  <img
+                    src={formValues.avatarUrl}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
                     <path
@@ -97,23 +104,34 @@ export default function Profile() {
                   </svg>
                 )}
               </div>
-              <span className="text-white font-semibold text-base">{formValues.name || profile?.name}</span>
+              <span className="text-white font-semibold text-base">
+                {formValues.name || profile?.name}
+              </span>
             </div>
             <div className="bg-white divide-y divide-gray-100">
               <div className="flex items-center justify-between px-4 py-3 text-sm">
                 <span className="text-gray-500">Name</span>
-                <span className="font-semibold text-indigo-700">{formValues.name || profile?.name}</span>
+                <span className="font-semibold text-indigo-700">
+                  {formValues.name || profile?.name}
+                </span>
               </div>
               <div className="flex items-center justify-between px-4 py-3 text-sm">
                 <span className="text-indigo-500 font-medium">Email</span>
-                <span className="text-gray-700 truncate w-32 text-right">{formValues.email || profile?.email}</span>
+                <span className="text-gray-700 truncate w-32 text-right">
+                  {formValues.email || profile?.email}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 bg-white rounded-lg shadow-sm p-5 sm:p-6">
-          <h2 className="text-base font-semibold text-gray-700 mb-5">Profile Information</h2>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex-1 bg-white rounded-lg shadow-sm p-5 sm:p-6"
+        >
+          <h2 className="text-base font-semibold text-gray-700 mb-5">
+            Profile Information
+          </h2>
 
           <div className="flex flex-col sm:flex-row gap-6">
             <div className="shrink-0">
@@ -123,16 +141,33 @@ export default function Profile() {
                 onClick={() => fileRef.current?.click()}
               >
                 {formValues.avatarUrl ? (
-                  <img src={formValues.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                  <img
+                    src={formValues.avatarUrl}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                    <svg viewBox="0 0 120 100" className="w-32 text-blue-500" fill="currentColor">
-                      <path d="M20 80 Q30 40 60 35 Q90 30 100 80 Z" opacity="0.8" />
-                      <path d="M35 80 Q45 55 60 50 Q75 45 85 80 Z" opacity="0.5" />
+                    <svg
+                      viewBox="0 0 120 100"
+                      className="w-32 text-blue-500"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M20 80 Q30 40 60 35 Q90 30 100 80 Z"
+                        opacity="0.8"
+                      />
+                      <path
+                        d="M35 80 Q45 55 60 50 Q75 45 85 80 Z"
+                        opacity="0.5"
+                      />
                     </svg>
                   </div>
                 )}
-                <button type="button" className="absolute bottom-2 right-2 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition-colors">
+                <button
+                  type="button"
+                  className="absolute bottom-2 right-2 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition-colors"
+                >
                   <UploadCloud size={15} className="text-white" />
                 </button>
                 <input
@@ -144,7 +179,8 @@ export default function Profile() {
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2 max-w-55">
-                Supported Files: <strong>.png</strong>, <strong>.jpg</strong>, <strong>.jpeg</strong>.
+                Supported Files: <strong>.png</strong>, <strong>.jpg</strong>,{" "}
+                <strong>.jpeg</strong>.
               </p>
             </div>
 
@@ -157,10 +193,16 @@ export default function Profile() {
                   type="text"
                   {...register("name")}
                   className={`w-full border rounded px-3 py-2 text-sm outline-none transition-colors ${
-                    errors.name ? "border-red-500" : "border-gray-200 focus:border-indigo-400"
+                    errors.name
+                      ? "border-red-500"
+                      : "border-gray-200 focus:border-indigo-400"
                   }`}
                 />
-                {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+                {errors.name && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm text-gray-600 mb-1">
@@ -170,16 +212,22 @@ export default function Profile() {
                   type="email"
                   {...register("email")}
                   className={`w-full border rounded px-3 py-2 text-sm outline-none transition-colors ${
-                    errors.email ? "border-red-500" : "border-gray-200 focus:border-indigo-400"
+                    errors.email
+                      ? "border-red-500"
+                      : "border-gray-200 focus:border-indigo-400"
                   }`}
                 />
-                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isPending}
             className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 rounded transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >

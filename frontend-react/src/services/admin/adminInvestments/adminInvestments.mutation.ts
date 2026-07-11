@@ -10,7 +10,9 @@ export const useUpdateInvestmentStatusMutation = (trxId: string) => {
       updateAdminInvestmentStatus(trxId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminInvestments"] });
-      queryClient.invalidateQueries({ queryKey: ["adminInvestmentDetail", trxId] });
+      queryClient.invalidateQueries({
+        queryKey: ["adminInvestmentDetail", trxId],
+      });
     },
   });
 };

@@ -26,7 +26,8 @@ export default function AgentDashboard() {
                   value: "$4,250.50",
                   change: "+5.2%",
                   icon: Wallet,
-                  color: "from-orange-500/20 to-amber-500/10 border-orange-500/30",
+                  color:
+                    "from-orange-500/20 to-amber-500/10 border-orange-500/30",
                   iconColor: "text-orange-500",
                 },
                 {
@@ -34,7 +35,8 @@ export default function AgentDashboard() {
                   value: "42 Partners",
                   change: "+12.4%",
                   icon: TrendingUp,
-                  color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/30",
+                  color:
+                    "from-emerald-500/20 to-teal-500/10 border-emerald-500/30",
                   iconColor: "text-emerald-500",
                 },
                 {
@@ -50,7 +52,8 @@ export default function AgentDashboard() {
                   value: "$3,400.00",
                   change: "+8.1%",
                   icon: Percent,
-                  color: "from-purple-500/20 to-pink-500/10 border-purple-500/30",
+                  color:
+                    "from-purple-500/20 to-pink-500/10 border-purple-500/30",
                   iconColor: "text-purple-500",
                 },
               ].map((stat, i) => (
@@ -62,12 +65,16 @@ export default function AgentDashboard() {
                     <span className="text-zinc-400 text-xs font-medium uppercase tracking-wider">
                       {stat.label}
                     </span>
-                    <div className={`p-2 rounded-xl bg-white/[0.02] ${stat.iconColor}`}>
+                    <div
+                      className={`p-2 rounded-xl bg-white/[0.02] ${stat.iconColor}`}
+                    >
                       <stat.icon size={20} />
                     </div>
                   </div>
                   <div className="mt-4">
-                    <h3 className="text-2xl font-bold tracking-tight">{stat.value}</h3>
+                    <h3 className="text-2xl font-bold tracking-tight">
+                      {stat.value}
+                    </h3>
                     <div className="flex items-center gap-1 mt-1 text-xs text-emerald-400 font-medium">
                       <ArrowUpRight size={14} />
                       <span>{stat.change} this month</span>
@@ -111,7 +118,10 @@ export default function AgentDashboard() {
                       type: "out",
                     },
                   ].map((tx, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
+                    >
                       <div className="flex items-center gap-3">
                         <div
                           className={`p-2 rounded-xl ${
@@ -120,17 +130,27 @@ export default function AgentDashboard() {
                               : "bg-red-500/10 text-red-500"
                           }`}
                         >
-                          {tx.type === "in" ? <ArrowDownLeft size={16} /> : <ArrowUpRightIcon size={16} />}
+                          {tx.type === "in" ? (
+                            <ArrowDownLeft size={16} />
+                          ) : (
+                            <ArrowUpRightIcon size={16} />
+                          )}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-white leading-tight">{tx.desc}</p>
-                          <span className="text-[11px] text-zinc-500 mt-1 block">{tx.date}</span>
+                          <p className="text-sm font-semibold text-white leading-tight">
+                            {tx.desc}
+                          </p>
+                          <span className="text-[11px] text-zinc-500 mt-1 block">
+                            {tx.date}
+                          </span>
                         </div>
                       </div>
                       <div className="text-right">
                         <p
                           className={`text-sm font-bold ${
-                            tx.type === "in" ? "text-emerald-500" : "text-zinc-300"
+                            tx.type === "in"
+                              ? "text-emerald-500"
+                              : "text-zinc-300"
                           }`}
                         >
                           {tx.amount}
@@ -158,10 +178,13 @@ export default function AgentDashboard() {
                     Agency Level Up
                   </span>
                   <h4 className="text-lg font-bold text-white mt-4 leading-snug">
-                    Unlock <span className="text-orange-500">Tier-4 Commission</span> Rewards
+                    Unlock{" "}
+                    <span className="text-orange-500">Tier-4 Commission</span>{" "}
+                    Rewards
                   </h4>
                   <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-                    Refer 8 more active depositors to level up your agent rank and earn direct 12% bonuses from all downstream upgrades.
+                    Refer 8 more active depositors to level up your agent rank
+                    and earn direct 12% bonuses from all downstream upgrades.
                   </p>
                 </div>
                 <div className="mt-8">
@@ -179,9 +202,12 @@ export default function AgentDashboard() {
             <div className="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 mb-4">
               <TrendingUp size={28} />
             </div>
-            <h3 className="text-lg font-bold capitalize">{activeTab.replace("-", " ")}</h3>
+            <h3 className="text-lg font-bold capitalize">
+              {activeTab.replace("-", " ")}
+            </h3>
             <p className="text-sm text-zinc-400 max-w-sm mt-2">
-              This panel demonstrates active view selection from the sidebar. Navigated path:{" "}
+              This panel demonstrates active view selection from the sidebar.
+              Navigated path:{" "}
               <code className="text-orange-500 font-mono bg-zinc-800 px-1.5 py-0.5 rounded">
                 /{activeTab}
               </code>
@@ -197,10 +223,13 @@ export default function AgentDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight capitalize">
-            {activeTab === "dashboard" ? "Agent Dashboard" : activeTab.replace("-", " ")}
+            {activeTab === "dashboard"
+              ? "Agent Dashboard"
+              : activeTab.replace("-", " ")}
           </h2>
           <p className="text-sm text-zinc-400 mt-1">
-            Manage your asset packages, check logs, and monitor yields in real-time.
+            Manage your asset packages, check logs, and monitor yields in
+            real-time.
           </p>
         </div>
         {activeTab === "dashboard" && (

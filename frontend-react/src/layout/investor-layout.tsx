@@ -3,7 +3,6 @@ import { Outlet } from "react-router-dom";
 import Topbar from "../components/client/topbar";
 import Sidebar from "../components/client/sidebar";
 
-
 export default function InvestorLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -20,6 +19,7 @@ export default function InvestorLayout() {
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Header Topbar */}
         <Topbar
+          role="investor"
           onToggleSidebar={() => setSidebarOpen(true)}
           searchPlaceholder="Search investments..."
           user={{

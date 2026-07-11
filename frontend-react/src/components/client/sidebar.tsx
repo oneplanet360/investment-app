@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+import {
+  useClientSignOut,
+  useClientVerifyUser,
+} from "../../services/client/clientAuth/clientAuth.query";
 import { Link, useLocation } from "react-router-dom";
 import {
   Gauge,
@@ -11,9 +15,11 @@ import {
   ShieldCheck,
   LogOut,
   ChevronRight,
+  UserPlus,
   X,
   ArrowUpCircle,
   TrendingUp,
+  Network,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -40,25 +46,34 @@ export default function Sidebar({
   onClose,
 }: SidebarProps) {
   const location = useLocation();
+  const { mutate: signOut } = useClientSignOut();
 
   // Track which submenus are expanded
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
+  const { data: userData } = useClientVerifyUser();
+  const user = userData?.data;
+
   // Agent Menu
   const agentMenuItems: MenuItem[] = [
     { label: "Dashboard", icon: Gauge, path: "dashboard" },
-    {
-      label: "Investors",
-      icon: Users,
-      children: [
-        { label: "All Investors", path: "all-investors" },
-        { label: "Add Investor", path: "add-investor" },
-      ],
-    },
-    { label: "Team", icon: Users, path: "team" },
+    ...(user?.level === 4
+      ? [
+          {
+            label: "Investors",
+            icon: Users,
+            children: [
+              { label: "All Investors", path: "all-investors" },
+              { label: "Assign Investor", path: "assign-user" },
+            ],
+          },
+        ]
+      : [{ label: "Assign Sub-Agent", icon: UserPlus, path: "assign-user" }]),
+    { label: "Genealogy Tree", icon: Network, path: "tree" },
     { label: "Commissions", icon: Coins, path: "commissions" },
     { label: "Wallet", icon: CreditCard, path: "wallet" },
     { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },
+    { label: "KYC Verification", icon: ShieldCheck, path: "kyc" },
     { label: "Profile Setting", icon: User, path: "profile-setting" },
     { label: "Change Password", icon: Key, path: "change-password" },
     { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
@@ -73,7 +88,7 @@ export default function Sidebar({
     { label: "ROI History", icon: TrendingUp, path: "roi-history" },
     { label: "Wallet", icon: CreditCard, path: "wallet" },
     { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },
-    { label: "KYC", icon: ShieldCheck, path: "kyc" },
+    { label: "KYC Verification", icon: ShieldCheck, path: "kyc" },
     { label: "Profile Setting", icon: User, path: "profile-setting" },
     { label: "Change Password", icon: Key, path: "change-password" },
     { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
@@ -86,22 +101,24 @@ export default function Sidebar({
   useEffect(() => {
     const activeMenu = menuItems.find((item) =>
       item.children?.some(
-        (child) => location.pathname === `/${role}/${child.path}`
-      )
+        (child) => location.pathname === `/${role}/${child.path}`,
+      ),
     );
     if (activeMenu) {
       const menuLabel = activeMenu.label.toLowerCase();
+      // eslint-disable-next-line
       setExpandedMenus((prev) =>
-        prev.includes(menuLabel) ? prev : [...prev, menuLabel]
+        prev.includes(menuLabel) ? prev : [...prev, menuLabel],
       );
     }
+    // eslint-disable-next-line
   }, [location.pathname, role]);
 
   const toggleSubMenu = (label: string) => {
     setExpandedMenus((prev) =>
       prev.includes(label.toLowerCase())
         ? prev.filter((item) => item !== label.toLowerCase())
-        : [...prev, label.toLowerCase()]
+        : [...prev, label.toLowerCase()],
     );
   };
 
@@ -147,16 +164,20 @@ export default function Sidebar({
         {/* Navigation Area */}
         <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1.5 custom-scrollbar">
           {menuItems.map((item) => {
-            const isSubMenuOpen = expandedMenus.includes(item.label.toLowerCase());
+            const isSubMenuOpen = expandedMenus.includes(
+              item.label.toLowerCase(),
+            );
             const hasChildren = !!item.children;
 
             // Compute standard absolute paths for router Link elements
-            const targetPath = item.path === "logout" ? "/" : `/${role}/${item.path}`;
-            const isMainActive = !hasChildren && location.pathname === targetPath;
+            const targetPath =
+              item.path === "logout" ? "/" : `/${role}/${item.path}`;
+            const isMainActive =
+              !hasChildren && location.pathname === targetPath;
             const isChildActive =
               hasChildren &&
               item.children?.some(
-                (child) => location.pathname === `/${role}/${child.path}`
+                (child) => location.pathname === `/${role}/${child.path}`,
               );
             const isActive = isMainActive || isChildActive;
 
@@ -186,7 +207,9 @@ export default function Sidebar({
                     <ChevronRight
                       size={16}
                       className={`shrink-0 transition-transform duration-200 ${
-                        isSubMenuOpen ? "rotate-90 text-orange-500" : "text-zinc-500"
+                        isSubMenuOpen
+                          ? "rotate-90 text-orange-500"
+                          : "text-zinc-500"
                       }`}
                     />
                   </div>
@@ -230,6 +253,26 @@ export default function Sidebar({
             }
 
             // Normal Link item
+            if (item.path === "logout") {
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    if (onClose) onClose();
+                    signOut();
+                  }}
+                  className={headerClasses}
+                >
+                  <item.icon
+                    className={`w-5 h-5 shrink-0 ${
+                      isActive ? "text-orange-500" : "text-zinc-400"
+                    }`}
+                  />
+                  <span className="flex-1 text-left">{item.label}</span>
+                </button>
+              );
+            }
+
             return (
               <Link
                 key={item.label}

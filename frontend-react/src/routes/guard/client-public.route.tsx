@@ -1,6 +1,6 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import LoadingSpinner from '../../components/common/loading-spinner';
-import useClientAuth from '../../hooks/useClientAuth';
+import { Navigate, Outlet } from "react-router-dom";
+import LoadingSpinner from "../../components/common/loading-spinner";
+import useClientAuth from "../../hooks/useClientAuth";
 
 export default function ClientPublicRoute() {
   const { isAuthenticated, isLoading, user } = useClientAuth();
@@ -10,7 +10,8 @@ export default function ClientPublicRoute() {
   }
 
   if (isAuthenticated && user) {
-    if (user.role === 'AGENT') return <Navigate to="/agent/dashboard" replace />;
+    if (user.role === "AGENT")
+      return <Navigate to="/agent/dashboard" replace />;
     return <Navigate to="/investor/dashboard" replace />;
   }
 

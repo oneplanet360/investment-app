@@ -4,11 +4,17 @@ import Pagination from "./pagination";
 import type { IKyc } from "../../services/admin/adminKyc/adminKyc.types";
 
 function fmtDate(d: string) {
-  return new Date(d).toLocaleString("en-US", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", hour12: false,
-  }).replace(",", "");
-} 
+  return new Date(d)
+    .toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(",", "");
+}
 
 const statusStyle: Record<string, string> = {
   PENDING: "text-yellow-600 bg-yellow-50 border-yellow-400",
@@ -40,7 +46,7 @@ export default function KycTable({
   searchQuery,
   onPageChange,
   onSearchChange,
-  isLoading
+  isLoading,
 }: Props) {
   return (
     <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-4">
@@ -64,7 +70,9 @@ export default function KycTable({
         <div className="overflow-x-auto relative">
           {isLoading && (
             <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
-              <span className="text-sm text-indigo-600 font-medium">Loading...</span>
+              <span className="text-sm text-indigo-600 font-medium">
+                Loading...
+              </span>
             </div>
           )}
           <table className="w-full text-sm min-w-187.5">
@@ -82,7 +90,10 @@ export default function KycTable({
             <tbody className="divide-y divide-gray-50">
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-gray-400 text-sm">
+                  <td
+                    colSpan={7}
+                    className="text-center py-12 text-gray-400 text-sm"
+                  >
                     {isLoading ? "Fetching data..." : "Data not found"}
                   </td>
                 </tr>
@@ -90,26 +101,43 @@ export default function KycTable({
                 data.map((k) => {
                   const role = k.userId.role.toLowerCase();
                   return (
-                    <tr key={k._id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={k._id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="px-5 py-3.5">
-                        <p className="font-semibold text-gray-800 text-sm">{k.userId.name}</p>
-                        <p className="text-xs text-indigo-500">@{k.userId.username}</p>
+                        <p className="font-semibold text-gray-800 text-sm">
+                          {k.userId.name}
+                        </p>
+                        <p className="text-xs text-indigo-500">
+                          @{k.userId.username}
+                        </p>
                       </td>
                       <td className="px-5 py-3.5">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium border capitalize ${role === "agent" ? "text-violet-600 bg-violet-50 border-violet-400" : "text-sky-600 bg-sky-50 border-sky-400"}`}>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium border capitalize ${role === "agent" ? "text-violet-600 bg-violet-50 border-violet-400" : "text-sky-600 bg-sky-50 border-sky-400"}`}
+                        >
                           {role}
                         </span>
                       </td>
                       <td className="px-5 py-3.5">
-                        <p className="text-sm text-gray-700">{k.documentType}</p>
-                        <p className="text-xs font-mono text-gray-400">{k.documentNumber || "—"}</p>
+                        <p className="text-sm text-gray-700">
+                          {k.documentType}
+                        </p>
+                        <p className="text-xs font-mono text-gray-400">
+                          {k.documentNumber || "—"}
+                        </p>
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-gray-600">{k.userId.country || "—"}</td>
+                      <td className="px-5 py-3.5 text-sm text-gray-600">
+                        {k.userId.country || "—"}
+                      </td>
                       <td className="px-5 py-3.5 text-xs text-gray-500 whitespace-nowrap">
                         {fmtDate(k.createdAt)}
                       </td>
                       <td className="px-5 py-3.5 text-center">
-                        <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[k.status] || statusStyle.UNVERIFIED}`}>
+                        <span
+                          className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[k.status] || statusStyle.UNVERIFIED}`}
+                        >
                           {k.status.toLowerCase()}
                         </span>
                       </td>

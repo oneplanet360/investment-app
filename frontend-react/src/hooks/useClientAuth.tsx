@@ -1,5 +1,5 @@
-import { useContext } from 'react'
-import { ClientAuthContext } from '../context/client-auth.provider'
+import { useContext } from "react";
+import { ClientAuthContext } from "../context/client-auth.provider";
 
 export default function useClientAuth() {
   const context = useContext(ClientAuthContext);

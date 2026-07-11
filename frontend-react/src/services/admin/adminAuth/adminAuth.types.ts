@@ -8,7 +8,8 @@ export const adminSignInSchema = z.object({
 export type AdminSignInSchemaType = z.infer<typeof adminSignInSchema>;
 
 export interface IAdmin {
-  id: string;
+  _id: string;
+  name: string;
   email: string;
   // Add other fields as necessary
 }

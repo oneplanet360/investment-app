@@ -7,7 +7,12 @@ export default function ClosedInvestments() {
   const [search, setSearch] = useState("");
   const perPage = 20;
 
-  const { data, isLoading } = useAdminInvestments(page, perPage, "CLOSED", search);
+  const { data, isLoading } = useAdminInvestments(
+    page,
+    perPage,
+    "CLOSED",
+    search,
+  );
 
   return (
     <InvestmentTable
@@ -19,7 +24,10 @@ export default function ClosedInvestments() {
       perPage={perPage}
       searchQuery={search}
       onPageChange={setPage}
-      onSearchChange={(s) => { setSearch(s); setPage(1); }}
+      onSearchChange={(s) => {
+        setSearch(s);
+        setPage(1);
+      }}
       isLoading={isLoading}
     />
   );

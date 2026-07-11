@@ -21,8 +21,8 @@ export default function AllInvestors() {
   const meta = data?.meta || { total: 0, page: 1, limit: 20, totalPages: 1 };
 
   return (
-    <InvestorsTable 
-      title="All Investors" 
+    <InvestorsTable
+      title="All Investors"
       data={investorsData}
       totalPages={meta.totalPages}
       currentPage={meta.page}

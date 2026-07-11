@@ -8,7 +8,9 @@ interface ClientAuthContextType {
   isLoading: boolean;
 }
 
-const ClientAuthContext = createContext<ClientAuthContextType | undefined>(undefined);
+const ClientAuthContext = createContext<ClientAuthContextType | undefined>(
+  undefined,
+);
 
 function ClientAuthProvider({ children }: { children: React.ReactNode }) {
   const { data, isLoading, isError } = useClientVerifyUser();

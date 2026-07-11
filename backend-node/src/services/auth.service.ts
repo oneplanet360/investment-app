@@ -61,6 +61,13 @@ export const signInClientServices = async (body: clientSignInSchemaType) => {
     );
   }
 
+  if (!existingUser.isActive) {
+    throw new customError(
+      'Your account has been banned.',
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
   const userData = {
     _id: existingUser._id,
     name: existingUser.name,

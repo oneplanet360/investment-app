@@ -12,6 +12,15 @@ import adminCommissionsRoute from './adminCommissions.route';
 import adminReportsRoute from './adminReports.route';
 import adminDashboardRoute from './adminDashboard.route';
 
+// Client Routes
+import clientProfileRoute from './clientProfile.route';
+import clientWalletRoute from './clientWallet.route';
+import clientWithdrawalRoute from './clientWithdrawal.route';
+import clientAgentRoute from './clientAgent.route';
+import clientNotificationsRoute from './clientNotifications.route';
+import clientKycRoute from './clientKyc.route';
+import clientInvestmentsRoute from './clientInvestments.route';
+
 export {
   authRoutes,
   adminSettingsRoute,
@@ -26,4 +35,12 @@ export {
   adminCommissionsRoute,
   adminReportsRoute,
   adminDashboardRoute,
+  // Client Routes
+  clientProfileRoute,
+  clientWalletRoute,
+  clientWithdrawalRoute,
+  clientAgentRoute,
+  clientNotificationsRoute,
+  clientKycRoute,
+  clientInvestmentsRoute,
 };

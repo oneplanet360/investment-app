@@ -1,24 +1,39 @@
 import { axiosInstance } from "../../../lib/axios";
-import type { ClientSignInSchemaType, IClientUser, IApiResponse } from "./clientAuth.types";
+import type { ApiResponse, IUser } from "../../../types";
+import type { ClientSignInSchemaType } from "./clientAuth.types";
 
-export const clientSignInApi = async (data: ClientSignInSchemaType) => {
-  const response = await axiosInstance.post<IApiResponse<IClientUser>>(
-    "/auth/client/sign-in",
-    data,
+const CLIENT_AUTH_URL = `/auth/client`;
+
+export const clientLoginFn = async (
+  payload: ClientSignInSchemaType,
+): Promise<ApiResponse<{ token: string; user: IUser }>> => {
+  const response = await axiosInstance.post(
+    `${CLIENT_AUTH_URL}/login`,
+    payload,
   );
   return response.data;
 };
 
-export const clientSignOutApi = async () => {
-  const response = await axiosInstance.post<IApiResponse<null>>(
+export const clientRegisterFn = async (
+  payload: Record<string, unknown>,
+): Promise<ApiResponse<{ token: string; user: IUser }>> => {
+  const response = await axiosInstance.post(
+    `${CLIENT_AUTH_URL}/register`,
+    payload,
+  );
+  return response.data;
+};
+
+export const clientSignOutApi = async (): Promise<ApiResponse<null>> => {
+  const response = await axiosInstance.post<ApiResponse<null>>(
     "/auth/client/sign-out",
   );
   return response.data;
 };
 
-export const clientVerifyUserApi = async () => {
-  const response = await axiosInstance.get<IApiResponse<IClientUser>>(
-    "/auth/client/verify"
+export const clientVerifyUserApi = async (): Promise<ApiResponse<IUser>> => {
+  const response = await axiosInstance.get<ApiResponse<IUser>>(
+    "/auth/client/verify",
   );
   return response.data;
 };

@@ -7,7 +7,7 @@ export default function AllAgents() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
@@ -22,8 +22,8 @@ export default function AllAgents() {
   const meta = data?.meta || { total: 0, page: 1, limit: 20, totalPages: 1 };
 
   return (
-    <AgentsTable 
-      title="All Agents" 
+    <AgentsTable
+      title="All Agents"
       agents={agents}
       totalPages={meta.totalPages}
       currentPage={meta.page}

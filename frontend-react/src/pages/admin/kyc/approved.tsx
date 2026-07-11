@@ -15,14 +15,19 @@ export default function ApprovedKyc() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  const { data, isLoading } = useKycSubmissionsQuery(page, 20, "APPROVED", debouncedSearch);
+  const { data, isLoading } = useKycSubmissionsQuery(
+    page,
+    20,
+    "APPROVED",
+    debouncedSearch,
+  );
 
   const kycData = data?.data || [];
   const meta = data?.meta || { total: 0, page: 1, limit: 20, totalPages: 1 };
 
   return (
-    <KycTable 
-      title="Approved KYC Submissions" 
+    <KycTable
+      title="Approved KYC Submissions"
       data={kycData}
       totalPages={meta.totalPages}
       currentPage={meta.page}

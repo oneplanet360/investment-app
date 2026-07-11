@@ -17,10 +17,10 @@ function fmtDate(d: string) {
 }
 
 const statusStyle: Record<string, string> = {
-  ACTIVE:    "text-indigo-600 bg-indigo-50 border-indigo-400",
+  ACTIVE: "text-indigo-600 bg-indigo-50 border-indigo-400",
   COMPLETED: "text-green-600 bg-green-50 border-green-500",
   CLOSE_REQUEST: "text-orange-600 bg-orange-50 border-orange-400",
-  CLOSED:    "text-gray-500 bg-gray-50 border-gray-400",
+  CLOSED: "text-gray-500 bg-gray-50 border-gray-400",
 };
 
 type Props = {
@@ -46,9 +46,8 @@ export default function InvestmentTable({
   searchQuery,
   onPageChange,
   onSearchChange,
-  isLoading
+  isLoading,
 }: Props) {
-
   return (
     <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-4">
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -71,7 +70,9 @@ export default function InvestmentTable({
         <div className="overflow-x-auto relative">
           {isLoading && (
             <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
-              <span className="text-sm text-indigo-600 font-medium">Loading...</span>
+              <span className="text-sm text-indigo-600 font-medium">
+                Loading...
+              </span>
             </div>
           )}
           <table className="w-full text-sm min-w-225">
@@ -80,9 +81,15 @@ export default function InvestmentTable({
                 <th className="text-left px-5 py-3 font-medium">Trx ID</th>
                 <th className="text-left px-5 py-3 font-medium">Started</th>
                 <th className="text-left px-5 py-3 font-medium">User</th>
-                <th className="text-right px-5 py-3 font-medium">Initial Deposit</th>
-                <th className="text-right px-5 py-3 font-medium">Contribution</th>
-                <th className="text-right px-5 py-3 font-medium">Total Return</th>
+                <th className="text-right px-5 py-3 font-medium">
+                  Initial Deposit
+                </th>
+                <th className="text-right px-5 py-3 font-medium">
+                  Contribution
+                </th>
+                <th className="text-right px-5 py-3 font-medium">
+                  Total Return
+                </th>
                 <th className="text-center px-5 py-3 font-medium">Status</th>
                 <th className="text-center px-5 py-3 font-medium">Action</th>
               </tr>
@@ -90,13 +97,19 @@ export default function InvestmentTable({
             <tbody className="divide-y divide-gray-50">
               {investments.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
+                  <td
+                    colSpan={8}
+                    className="text-center py-12 text-gray-400 text-sm"
+                  >
                     {isLoading ? "Fetching data..." : "Data not found"}
                   </td>
                 </tr>
               ) : (
                 investments.map((inv) => (
-                  <tr key={inv._id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={inv._id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-5 py-3.5 font-mono text-xs font-semibold text-indigo-500 tracking-wide">
                       {inv.trxId}
                     </td>
@@ -105,19 +118,33 @@ export default function InvestmentTable({
                     </td>
                     <td className="px-5 py-3.5">
                       <p className="font-semibold text-gray-800 text-sm">
-                        {inv.userId?.firstName || inv.userId?.lastName ? `${inv.userId.firstName} ${inv.userId.lastName}` : inv.userId?.name}
+                        {inv.userId?.firstName || inv.userId?.lastName
+                          ? `${inv.userId.firstName} ${inv.userId.lastName}`
+                          : inv.userId?.name}
                       </p>
-                      <p className="text-xs text-indigo-500">@{inv.userId?.username}</p>
+                      <p className="text-xs text-indigo-500">
+                        @{inv.userId?.username}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-700">
-                      ${(inv.amount || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                      $
+                      {(inv.amount || 0).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      USD
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm text-gray-600">
                       <p>${inv.contributionAmount.toFixed(2)}</p>
-                      <p className="text-xs text-gray-400">{inv.contributionFrequency}</p>
+                      <p className="text-xs text-gray-400">
+                        {inv.contributionFrequency}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-emerald-600">
-                      ${inv.totalReturn.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                      $
+                      {inv.totalReturn.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      USD
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       <span

@@ -1,3 +1,5 @@
+import type { IAgent, IInvestor } from "../../types";
+
 export interface IUserDetailStats {
   balance: number;
   totalInvestments: number;
@@ -10,6 +12,6 @@ export interface IUserDetailStats {
 }
 
 export interface IUserDetailResponse {
-  user: any; // We can use exact IAgent or IInvestor later
+  user: IAgent | IInvestor;
   stats: IUserDetailStats;
 }

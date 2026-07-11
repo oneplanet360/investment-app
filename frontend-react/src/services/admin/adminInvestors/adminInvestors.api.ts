@@ -42,3 +42,31 @@ export const getAdminInvestorDetailApi = async (
   const { data } = await axiosInstance.get(`/investors/${username}`);
   return data.data;
 };
+
+export const impersonateInvestorApi = async (username: string) => {
+  const { data } = await axiosInstance.post(
+    `/investors/${username}/impersonate`,
+  );
+  return data;
+};
+
+export const toggleBanInvestorApi = async (username: string) => {
+  const { data } = await axiosInstance.put(`/investors/${username}/ban`);
+  return data;
+};
+
+export const sendNotificationInvestorApi = async ({
+  username,
+  title,
+  message,
+}: {
+  username: string;
+  title: string;
+  message: string;
+}) => {
+  const { data } = await axiosInstance.post(
+    `/investors/${username}/notification`,
+    { title, message },
+  );
+  return data;
+};

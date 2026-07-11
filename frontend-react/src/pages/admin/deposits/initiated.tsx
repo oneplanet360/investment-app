@@ -7,7 +7,12 @@ export default function InitiatedDeposits() {
   const [search, setSearch] = useState("");
   const perPage = 20;
 
-  const { data, isLoading } = useAdminDeposits(page, perPage, "INITIATED", search);
+  const { data, isLoading } = useAdminDeposits(
+    page,
+    perPage,
+    "INITIATED",
+    search,
+  );
 
   return (
     <DepositTable
@@ -19,7 +24,10 @@ export default function InitiatedDeposits() {
       perPage={perPage}
       searchQuery={search}
       onPageChange={setPage}
-      onSearchChange={(s) => { setSearch(s); setPage(1); }}
+      onSearchChange={(s) => {
+        setSearch(s);
+        setPage(1);
+      }}
       isLoading={isLoading}
     />
   );

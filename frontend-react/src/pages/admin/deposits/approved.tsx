@@ -7,7 +7,12 @@ export default function ApprovedDeposits() {
   const [search, setSearch] = useState("");
   const perPage = 20;
 
-  const { data, isLoading } = useAdminDeposits(page, perPage, "APPROVED", search);
+  const { data, isLoading } = useAdminDeposits(
+    page,
+    perPage,
+    "APPROVED",
+    search,
+  );
 
   return (
     <DepositTable
@@ -19,7 +24,10 @@ export default function ApprovedDeposits() {
       perPage={perPage}
       searchQuery={search}
       onPageChange={setPage}
-      onSearchChange={(s) => { setSearch(s); setPage(1); }}
+      onSearchChange={(s) => {
+        setSearch(s);
+        setPage(1);
+      }}
       isLoading={isLoading}
     />
   );

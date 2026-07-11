@@ -11,7 +11,7 @@ export interface IClientUser {
   _id: string;
   name: string;
   email: string;
-  role: 'AGENT' | 'INVESTOR';
+  role: "AGENT" | "INVESTOR";
 }
 
 export interface IApiResponse<T> {

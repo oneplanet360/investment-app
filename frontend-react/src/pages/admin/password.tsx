@@ -6,7 +6,6 @@ import * as z from "zod";
 import { useAdminProfileQuery } from "../../services/admin/adminProfile/adminProfile.query";
 import { useUpdateAdminPasswordMutation } from "../../services/admin/adminProfile/adminProfile.mutation";
 
-
 const schema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),

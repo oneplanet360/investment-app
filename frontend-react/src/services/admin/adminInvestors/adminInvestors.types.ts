@@ -11,8 +11,8 @@ export interface IInvestor {
   city: string;
   state: string;
   zip: string;
-  role: 'INVESTOR';
-  kycStatus: 'UNVERIFIED' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  role: "INVESTOR";
+  kycStatus: "UNVERIFIED" | "PENDING" | "APPROVED" | "REJECTED";
   createdAt: string;
   updatedAt: string;
 }

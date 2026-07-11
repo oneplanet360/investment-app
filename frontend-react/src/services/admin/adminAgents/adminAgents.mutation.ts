@@ -14,9 +14,7 @@ export const useCreateAgentMutation = () => {
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message || "Failed to create agent",
-        );
+        toast.error(error?.response?.data?.message || "Failed to create agent");
         return;
       }
       toast.error("Something went wrong");

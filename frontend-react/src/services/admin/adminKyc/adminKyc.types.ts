@@ -15,7 +15,7 @@ export interface IKyc {
   documentNumber?: string;
   documentFrontUrl: string;
   documentBackUrl?: string;
-  status: 'UNVERIFIED' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: "UNVERIFIED" | "PENDING" | "APPROVED" | "REJECTED";
   adminRemarks?: string;
   createdAt: string;
   updatedAt: string;

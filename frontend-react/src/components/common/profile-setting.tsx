@@ -68,9 +68,10 @@ export default function ProfileSetting() {
     country: "Samoa",
   });
 
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
-  };
+  const handleChange =
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +87,6 @@ export default function ProfileSetting() {
 
       <div className="max-w-4xl bg-[#141414] border border-[#222] rounded-xl p-6 sm:p-10 shadow-lg">
         <form onSubmit={handleSubmit} className="space-y-8 relative">
-          
           {/* Avatar Section */}
           <div className="flex flex-col items-center justify-center pt-2 pb-6 border-b border-[#2a2a2a]">
             <div className="relative">

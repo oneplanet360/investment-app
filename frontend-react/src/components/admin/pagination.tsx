@@ -49,7 +49,10 @@ export default function Pagination({
 
         {getPages().map((page, i) =>
           page === "..." ? (
-            <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center text-sm text-gray-400">
+            <span
+              key={`ellipsis-${i}`}
+              className="w-8 h-8 flex items-center justify-center text-sm text-gray-400"
+            >
               …
             </span>
           ) : (
@@ -65,7 +68,7 @@ export default function Pagination({
             >
               {page}
             </button>
-          )
+          ),
         )}
 
         <button

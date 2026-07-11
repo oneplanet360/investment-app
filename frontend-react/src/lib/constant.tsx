@@ -42,29 +42,63 @@ export const sidebarMenu: SidebarMenuItem[] = [
     icon: TrendingUp,
     children: [
       { label: "All Investments", href: "/admin/investments", icon: List },
-      { label: "Active Investments", href: "/admin/investments/active", icon: CheckCircle },
-      { label: "Completed Investments", href: "/admin/investments/completed", icon: CheckSquare },
-      { label: "Closed Investments", href: "/admin/investments/closed", icon: XCircle },
-      { label: "Close Requests", href: "/admin/investments/close-requests", icon: Clock },
+      {
+        label: "Active Investments",
+        href: "/admin/investments/active",
+        icon: CheckCircle,
+      },
+      {
+        label: "Completed Investments",
+        href: "/admin/investments/completed",
+        icon: CheckSquare,
+      },
+      {
+        label: "Closed Investments",
+        href: "/admin/investments/closed",
+        icon: XCircle,
+      },
+      {
+        label: "Close Requests",
+        href: "/admin/investments/close-requests",
+        icon: Clock,
+      },
     ],
   },
   {
     label: "Top-ups",
     icon: ArrowUpCircle,
-    children: [
-      { label: "All Top-ups", href: "/admin/topups", icon: List },
-    ],
+    children: [{ label: "All Top-ups", href: "/admin/topups", icon: List }],
   },
   {
     label: "Deposits",
     icon: ArrowDownCircle,
     children: [
       { label: "All Deposits", href: "/admin/deposits", icon: List },
-      { label: "Pending Deposits", href: "/admin/deposits/pending", icon: Clock },
-      { label: "Approved Deposits", href: "/admin/deposits/approved", icon: CheckCircle },
-      { label: "Successful Deposits", href: "/admin/deposits/successful", icon: CheckSquare },
-      { label: "Rejected Deposits", href: "/admin/deposits/rejected", icon: XCircle },
-      { label: "Initiated Deposits", href: "/admin/deposits/initiated", icon: PlayCircle },
+      {
+        label: "Pending Deposits",
+        href: "/admin/deposits/pending",
+        icon: Clock,
+      },
+      {
+        label: "Approved Deposits",
+        href: "/admin/deposits/approved",
+        icon: CheckCircle,
+      },
+      {
+        label: "Successful Deposits",
+        href: "/admin/deposits/successful",
+        icon: CheckSquare,
+      },
+      {
+        label: "Rejected Deposits",
+        href: "/admin/deposits/rejected",
+        icon: XCircle,
+      },
+      {
+        label: "Initiated Deposits",
+        href: "/admin/deposits/initiated",
+        icon: PlayCircle,
+      },
     ],
   },
   {
@@ -72,10 +106,26 @@ export const sidebarMenu: SidebarMenuItem[] = [
     icon: Landmark,
     children: [
       { label: "All Withdrawals", href: "/admin/withdrawals", icon: List },
-      { label: "Pending Withdrawals", href: "/admin/withdrawals/pending", icon: Clock },
-      { label: "Approved Withdrawals", href: "/admin/withdrawals/approved", icon: CheckCircle },
-      { label: "Rejected Withdrawals", href: "/admin/withdrawals/rejected", icon: XCircle },
-      { label: "Agent Withdrawals", href: "/admin/withdrawals/agent", icon: Briefcase },
+      {
+        label: "Pending Withdrawals",
+        href: "/admin/withdrawals/pending",
+        icon: Clock,
+      },
+      {
+        label: "Approved Withdrawals",
+        href: "/admin/withdrawals/approved",
+        icon: CheckCircle,
+      },
+      {
+        label: "Rejected Withdrawals",
+        href: "/admin/withdrawals/rejected",
+        icon: XCircle,
+      },
+      {
+        label: "Agent Withdrawals",
+        href: "/admin/withdrawals/agent",
+        icon: Briefcase,
+      },
     ],
   },
   {
@@ -104,7 +154,11 @@ export const sidebarMenu: SidebarMenuItem[] = [
     children: [
       { label: "All Agents", href: "/admin/agents", icon: Briefcase },
       { label: "Add Agent", href: "/admin/agents/add", icon: UserPlus },
-      { label: "Password Reset", href: "/admin/agents/password-reset", icon: KeyRound },
+      {
+        label: "Password Reset",
+        href: "/admin/agents/password-reset",
+        icon: KeyRound,
+      },
     ],
   },
   {
@@ -112,17 +166,33 @@ export const sidebarMenu: SidebarMenuItem[] = [
     icon: Users,
     children: [
       { label: "All Investors", href: "/admin/investors", icon: Users },
-      { label: "Password Reset", href: "/admin/investors/password-reset", icon: KeyRound },
+      {
+        label: "Password Reset",
+        href: "/admin/investors/password-reset",
+        icon: KeyRound,
+      },
     ],
   },
   {
     label: "Reports",
     icon: PieChart,
     children: [
-      { label: "Investment Report", href: "/admin/reports/investments", icon: TrendingUp },
+      {
+        label: "Investment Report",
+        href: "/admin/reports/investments",
+        icon: TrendingUp,
+      },
       { label: "ROI Report", href: "/admin/reports/roi", icon: Percent },
-      { label: "Commissions Report", href: "/admin/reports/commissions", icon: Coins },
-      { label: "Withdrawals Report", href: "/admin/reports/withdrawals", icon: Landmark },
+      {
+        label: "Commissions Report",
+        href: "/admin/reports/commissions",
+        icon: Coins,
+      },
+      {
+        label: "Withdrawals Report",
+        href: "/admin/reports/withdrawals",
+        icon: Landmark,
+      },
     ],
   },
   {
@@ -134,8 +204,16 @@ export const sidebarMenu: SidebarMenuItem[] = [
     label: "System Settings",
     icon: Settings,
     children: [
-      { label: "Investment Settings", href: "/admin/settings/investment", icon: TrendingUp },
-      { label: "Admin Settings", href: "/admin/settings/admin", icon: ShieldCheck },
+      {
+        label: "Investment Settings",
+        href: "/admin/settings/investment",
+        icon: TrendingUp,
+      },
+      {
+        label: "Admin Settings",
+        href: "/admin/settings/admin",
+        icon: ShieldCheck,
+      },
       { label: "Client Settings", href: "/admin/settings/client", icon: Users },
     ],
   },

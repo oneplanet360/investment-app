@@ -24,7 +24,9 @@ type StatCardProps = {
 function StatCard({ label, value, icon, iconBg }: StatCardProps) {
   return (
     <div className="bg-white rounded-lg p-4 flex items-center gap-4 shadow-sm">
-      <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
+      <div
+        className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}
+      >
         {icon}
       </div>
       <div className="min-w-0">
@@ -45,14 +47,18 @@ type MiniCardProps = {
 function MiniCard({ label, value, icon, iconBg }: MiniCardProps) {
   return (
     <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group">
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
+      <div
+        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}
+      >
         {icon}
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-gray-800">{value}</p>
         <p className="text-xs text-gray-500 truncate">{label}</p>
       </div>
-      <span className="text-gray-300 group-hover:text-gray-400 transition-colors">›</span>
+      <span className="text-gray-300 group-hover:text-gray-400 transition-colors">
+        ›
+      </span>
     </div>
   );
 }
@@ -74,11 +80,19 @@ export default function Dashboard() {
   const { data, isLoading, isError } = useAdminDashboard();
 
   if (isLoading) {
-    return <div className="min-h-full bg-[var(--theme-bg)] p-6 text-center text-gray-500">Loading dashboard...</div>;
+    return (
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 text-center text-gray-500">
+        Loading dashboard...
+      </div>
+    );
   }
 
   if (isError || !data) {
-    return <div className="min-h-full bg-[var(--theme-bg)] p-6 text-center text-red-500">Failed to load dashboard data</div>;
+    return (
+      <div className="min-h-full bg-[var(--theme-bg)] p-6 text-center text-red-500">
+        Failed to load dashboard data
+      </div>
+    );
   }
 
   const s = data.stats;
@@ -159,7 +173,9 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-4">
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Withdrawals</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-3">
+            Withdrawals
+          </h2>
           <div className="grid grid-cols-2 gap-1">
             <MiniCard
               label="Total Withdrawn"
@@ -192,7 +208,9 @@ export default function Dashboard() {
       <div className="bg-white rounded-lg shadow-sm">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
           <ArrowUpDown size={16} className="text-indigo-500" />
-          <h2 className="text-sm font-semibold text-gray-700">Recent Transactions</h2>
+          <h2 className="text-sm font-semibold text-gray-700">
+            Recent Transactions
+          </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -213,15 +231,21 @@ export default function Dashboard() {
                     <p className="text-xs text-indigo-500">@{tx.username}</p>
                   </td>
                   <td className="px-5 py-3">
-                    <span className={`font-medium capitalize ${typeColors[tx.type]}`}>
+                    <span
+                      className={`font-medium capitalize ${typeColors[tx.type]}`}
+                    >
                       {tx.type}
                     </span>
                   </td>
-                  <td className={`px-5 py-3 text-right font-semibold ${typeColors[tx.type]}`}>
+                  <td
+                    className={`px-5 py-3 text-right font-semibold ${typeColors[tx.type]}`}
+                  >
                     ${tx.amount.toFixed(2)} USD
                   </td>
                   <td className="px-5 py-3 text-center">
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${statusColors[tx.status]}`}>
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${statusColors[tx.status]}`}
+                    >
                       {tx.status}
                     </span>
                   </td>

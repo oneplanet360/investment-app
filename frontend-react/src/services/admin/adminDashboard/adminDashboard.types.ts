@@ -18,9 +18,9 @@ export interface IRecentTransaction {
   id: string;
   user: string;
   username: string;
-  type: 'deposit' | 'withdrawal' | 'investment' | 'profit';
+  type: "deposit" | "withdrawal" | "investment" | "profit";
   amount: number;
-  status: 'completed' | 'pending' | 'rejected';
+  status: "completed" | "pending" | "rejected";
   date: string;
 }
 

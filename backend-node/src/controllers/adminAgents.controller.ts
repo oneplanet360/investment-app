@@ -42,12 +42,62 @@ export const getAgentsController = customAsyncWrapper(
   }
 );
 
-import { getAdminUserDetailService } from '../services/adminUsers.service';
+import { getAdminUserDetailService, impersonateUserService, toggleUserBanService, sendNotificationService } from '../services/adminUsers.service';
+import { ParsedEnvVariables } from '../configs';
+
+export const toggleBanAgentController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const user = await toggleUserBanService(username, 'AGENT');
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: `User ${user.isActive ? 'unbanned' : 'banned'} successfully`,
+      data: user,
+    });
+  }
+);
+
+export const sendNotificationAgentController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const { title, message } = req.body;
+    const notification = await sendNotificationService(username, 'AGENT', title, message);
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.CREATED,
+      message: 'Notification sent successfully',
+      data: notification,
+    });
+  }
+);
+
+export const impersonateAgentController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const { user, token } = await impersonateUserService(username, 'AGENT');
+
+    const cookieMaxAge = 24 * 60 * 60 * 1000;
+    res.cookie('clientAccessToken', token, {
+      httpOnly: true,
+      secure: ParsedEnvVariables.NODE_ENV === 'production',
+      sameSite: ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: cookieMaxAge,
+    });
+
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: 'Impersonated successfully',
+      data: user,
+    });
+  }
+);
 
         export const getAgentDetailController = customAsyncWrapper(
           async (req: Request, res: Response) => {
             const { username } = req.params;
-            const data = await getAdminUserDetailService(username, 'agent');
+            const data = await getAdminUserDetailService(username, 'AGENT');
             if (!data) {
               return customApiResponse({
                 response: res,

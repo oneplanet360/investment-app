@@ -8,7 +8,11 @@ export default function RoiReport() {
   }
 
   if (isLoading) {
-    return <div className="min-h-full bg-(--theme-bg) p-6 text-center text-gray-500">Loading report...</div>;
+    return (
+      <div className="min-h-full bg-(--theme-bg) p-6 text-center text-gray-500">
+        Loading report...
+      </div>
+    );
   }
 
   if (!stats) return null;
@@ -21,10 +25,26 @@ export default function RoiReport() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Total ROI Paid", value: `$${totalPaid.toFixed(2)}`, color: "text-emerald-600" },
-          { label: "Total Credits", value: totalCredits, color: "text-indigo-600" },
-          { label: "Avg ROI Rate", value: `${avgRate}%`, color: "text-violet-600" },
-          { label: "Unique Investors", value: uniqueInvestors, color: "text-sky-600" },
+          {
+            label: "Total ROI Paid",
+            value: `$${totalPaid.toFixed(2)}`,
+            color: "text-emerald-600",
+          },
+          {
+            label: "Total Credits",
+            value: totalCredits,
+            color: "text-indigo-600",
+          },
+          {
+            label: "Avg ROI Rate",
+            value: `${avgRate}%`,
+            color: "text-violet-600",
+          },
+          {
+            label: "Unique Investors",
+            value: uniqueInvestors,
+            color: "text-sky-600",
+          },
         ].map((c) => (
           <div key={c.label} className="bg-white rounded-lg shadow-sm p-4">
             <p className="text-xs text-gray-500">{c.label}</p>
@@ -34,7 +54,9 @@ export default function RoiReport() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm p-5">
-        <h2 className="text-sm font-semibold text-gray-700 mb-4">Monthly ROI Payouts</h2>
+        <h2 className="text-sm font-semibold text-gray-700 mb-4">
+          Monthly ROI Payouts
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-100">
             <thead>
@@ -45,12 +67,24 @@ export default function RoiReport() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {byMonth.length === 0 ? <tr><td colSpan={3} className="text-center py-6 text-gray-400">No data available</td></tr> : null}
+              {byMonth.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="text-center py-6 text-gray-400">
+                    No data available
+                  </td>
+                </tr>
+              ) : null}
               {byMonth.map(([month, { count, total }]) => (
                 <tr key={month} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-5 py-3.5 font-medium text-gray-700">{month}</td>
-                  <td className="px-5 py-3.5 text-center text-gray-600">{count}</td>
-                  <td className="px-5 py-3.5 text-right font-semibold text-emerald-600">${total.toFixed(2)}</td>
+                  <td className="px-5 py-3.5 font-medium text-gray-700">
+                    {month}
+                  </td>
+                  <td className="px-5 py-3.5 text-center text-gray-600">
+                    {count}
+                  </td>
+                  <td className="px-5 py-3.5 text-right font-semibold text-emerald-600">
+                    ${total.toFixed(2)}
+                  </td>
                 </tr>
               ))}
             </tbody>

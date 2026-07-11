@@ -7,7 +7,7 @@ export default function ClientSignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const { mutate: signIn, isPending } = useClientSignIn();
 
   const handleLogin = (e: FormEvent) => {
@@ -23,12 +23,10 @@ export default function ClientSignInPage() {
 
       <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Brand Header */}
-        
 
         {/* Card Panel */}
         <div className="bg-[#141414] border border-[#222] rounded-2xl p-8 shadow-2xl">
           <form className="space-y-6" onSubmit={handleLogin}>
-          
             {/* Email Field */}
             <div className="space-y-2">
               <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">

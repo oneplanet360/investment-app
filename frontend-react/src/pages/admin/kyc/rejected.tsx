@@ -15,14 +15,19 @@ export default function RejectedKyc() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  const { data, isLoading } = useKycSubmissionsQuery(page, 20, "REJECTED", debouncedSearch);
+  const { data, isLoading } = useKycSubmissionsQuery(
+    page,
+    20,
+    "REJECTED",
+    debouncedSearch,
+  );
 
   const kycData = data?.data || [];
   const meta = data?.meta || { total: 0, page: 1, limit: 20, totalPages: 1 };
 
   return (
-    <KycTable 
-      title="Rejected KYC Submissions" 
+    <KycTable
+      title="Rejected KYC Submissions"
       data={kycData}
       totalPages={meta.totalPages}
       currentPage={meta.page}

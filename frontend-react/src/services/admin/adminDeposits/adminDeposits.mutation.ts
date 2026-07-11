@@ -10,7 +10,9 @@ export const useUpdateDepositStatusMutation = (trxId: string) => {
       updateAdminDepositStatus(trxId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminDeposits"] });
-      queryClient.invalidateQueries({ queryKey: ["adminDepositDetail", trxId] });
+      queryClient.invalidateQueries({
+        queryKey: ["adminDepositDetail", trxId],
+      });
     },
   });
 };

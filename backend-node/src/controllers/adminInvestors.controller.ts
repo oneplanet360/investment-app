@@ -27,12 +27,62 @@ export const getInvestorsController = customAsyncWrapper(
   }
 );
 
-import { getAdminUserDetailService } from '../services/adminUsers.service';
+import { getAdminUserDetailService, impersonateUserService, toggleUserBanService, sendNotificationService } from '../services/adminUsers.service';
+import { ParsedEnvVariables } from '../configs';
+
+export const toggleBanInvestorController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const user = await toggleUserBanService(username, 'INVESTOR');
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: `User ${user.isActive ? 'unbanned' : 'banned'} successfully`,
+      data: user,
+    });
+  }
+);
+
+export const sendNotificationInvestorController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const { title, message } = req.body;
+    const notification = await sendNotificationService(username, 'INVESTOR', title, message);
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.CREATED,
+      message: 'Notification sent successfully',
+      data: notification,
+    });
+  }
+);
+
+export const impersonateInvestorController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const { user, token } = await impersonateUserService(username, 'INVESTOR');
+
+    const cookieMaxAge = 24 * 60 * 60 * 1000;
+    res.cookie('clientAccessToken', token, {
+      httpOnly: true,
+      secure: ParsedEnvVariables.NODE_ENV === 'production',
+      sameSite: ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: cookieMaxAge,
+    });
+
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: 'Impersonated successfully',
+      data: user,
+    });
+  }
+);
 
         export const getInvestorDetailController = customAsyncWrapper(
           async (req: Request, res: Response) => {
             const { username } = req.params;
-            const data = await getAdminUserDetailService(username, 'user');
+            const data = await getAdminUserDetailService(username, 'INVESTOR');
             if (!data) {
               return customApiResponse({
                 response: res,

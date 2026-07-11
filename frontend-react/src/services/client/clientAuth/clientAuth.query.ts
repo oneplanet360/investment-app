@@ -1,7 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { clientSignInApi, clientSignOutApi, clientVerifyUserApi } from "./clientAuth.api";
+import {
+  clientLoginFn,
+  clientSignOutApi,
+  clientVerifyUserApi,
+} from "./clientAuth.api";
+import { AxiosError } from "axios";
 
 export const useClientVerifyUser = () => {
   return useQuery({
@@ -16,21 +21,23 @@ export const useClientSignIn = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: clientSignInApi,
+    mutationFn: clientLoginFn,
     onSuccess: (data) => {
       toast.success(data.message || "Signed in successfully");
       queryClient.setQueryData(["clientVerifyUser"], data);
-      
-      if (data.data.role === 'AGENT') {
+
+      if (data?.data?.user?.role === "AGENT") {
         navigate("/agent/dashboard");
       } else {
         navigate("/investor/dashboard");
       }
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Failed to sign in"
-      );
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message || "Failed to sign in");
+      } else {
+        toast.error("Failed to sign in");
+      }
     },
   });
 };
@@ -46,8 +53,12 @@ export const useClientSignOut = () => {
       queryClient.setQueryData(["clientVerifyUser"], null);
       navigate("/");
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to sign out");
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message || "Failed to sign out");
+      } else {
+        toast.error("Failed to sign out");
+      }
     },
   });
 };

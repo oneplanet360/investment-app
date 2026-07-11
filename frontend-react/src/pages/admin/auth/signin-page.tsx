@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { adminSignInSchema, type AdminSignInSchemaType } from "../../../services/admin/adminAuth/adminAuth.types";
+import {
+  adminSignInSchema,
+  type AdminSignInSchemaType,
+} from "../../../services/admin/adminAuth/adminAuth.types";
 import { useAdminSignIn } from "../../../services/admin/adminAuth/adminAuth.query";
-
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,23 +43,28 @@ export default function SignInPage() {
       <div className="relative w-full max-w-115">
         {/* Card */}
         <div className="bg-[#0d1e45] rounded-2xl shadow-2xl overflow-hidden border border-[#1e3a6e]/50">
-
           {/* Header band */}
           <div className="bg-linear-to-r from-[#2a4aad] to-[#3b5fc0] px-8 py-7 text-center relative">
             {/* Shield icon */}
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/15 mb-3 ring-2 ring-white/20">
               <ShieldCheck className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-white tracking-wide">Admin Portal</h1>
-            <p className="text-white/70 text-sm mt-1">Sign in to your dashboard</p>
+            <h1 className="text-xl font-bold text-white tracking-wide">
+              Admin Portal
+            </h1>
+            <p className="text-white/70 text-sm mt-1">
+              Sign in to your dashboard
+            </p>
 
             {/* Bottom notch */}
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-[#2a4aad] rotate-45 rounded-sm" />
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="px-8 pt-10 pb-8 space-y-5">
-
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="px-8 pt-10 pb-8 space-y-5"
+          >
             {/* Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-white/60 uppercase tracking-widest">
@@ -76,7 +83,9 @@ export default function SignInPage() {
                 />
               </div>
               {errors.email && (
-                <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
+                <p className="text-red-400 text-xs mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -102,11 +111,17 @@ export default function SignInPage() {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
+                <p className="text-red-400 text-xs mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 

@@ -3,7 +3,6 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/client/sidebar";
 import Topbar from "../components/client/topbar";
 
-
 export default function AgentLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -20,6 +19,7 @@ export default function AgentLayout() {
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Header Topbar */}
         <Topbar
+          role="agent"
           onToggleSidebar={() => setSidebarOpen(true)}
           searchPlaceholder="Search referrals..."
           user={{

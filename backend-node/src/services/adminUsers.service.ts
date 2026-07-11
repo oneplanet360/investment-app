@@ -2,6 +2,58 @@ import { User } from '../database/models/user.model';
 import { Investment } from '../database/models/investment.model';
 import { Deposit } from '../database/models/deposit.model';
 import { Withdrawal } from '../database/models/withdrawal.model';
+import jwt from 'jsonwebtoken';
+import { ParsedEnvVariables } from '../configs';
+import { customError } from '../utils';
+import { HttpStatusCode } from '../constants';
+
+import { Notification } from '../database/models/notification.model';
+
+export const toggleUserBanService = async (username: string, expectedRole: string) => {
+  const user = await User.findOne({ username, role: expectedRole });
+  if (!user) {
+    throw new customError('User not found', HttpStatusCode.NOT_FOUND);
+  }
+  user.isActive = !user.isActive;
+  await user.save();
+  return user;
+};
+
+export const sendNotificationService = async (username: string, expectedRole: string, title: string, message: string) => {
+  const user = await User.findOne({ username, role: expectedRole });
+  if (!user) {
+    throw new customError('User not found', HttpStatusCode.NOT_FOUND);
+  }
+  const notification = await Notification.create({
+    userId: user._id,
+    title,
+    message
+  });
+  return notification;
+};
+
+export const impersonateUserService = async (username: string, expectedRole: string) => {
+  const user = await User.findOne({ username, role: expectedRole });
+  if (!user) {
+    throw new customError('User not found', HttpStatusCode.NOT_FOUND);
+  }
+
+  const token = await jwt.sign(
+    { _id: user._id, role: user.role },
+    ParsedEnvVariables.ACCESS_TOKEN_SECRET,
+    { expiresIn: '1h' }
+  );
+
+  return {
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+    token
+  };
+};
 
 export const getAdminUserDetailService = async (username: string, expectedRole: string) => {
   const user = await User.findOne({ username, role: expectedRole }).select('-password -__v');

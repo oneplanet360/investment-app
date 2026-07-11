@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateAdminProfileFn, updateAdminPasswordFn } from "./adminProfile.api";
+import {
+  updateAdminProfileFn,
+  updateAdminPasswordFn,
+} from "./adminProfile.api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 

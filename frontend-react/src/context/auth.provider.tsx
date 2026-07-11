@@ -2,7 +2,6 @@ import { createContext } from "react";
 import { useAdminVerifyUser } from "../services/admin/adminAuth/adminAuth.query";
 import type { IAdmin } from "../services/admin/adminAuth/adminAuth.types";
 
-
 interface AuthContextType {
   admin: IAdmin | null;
   isAuthenticated: boolean;
@@ -28,4 +27,4 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export {AuthContext, AuthProvider}
+export { AuthContext, AuthProvider };

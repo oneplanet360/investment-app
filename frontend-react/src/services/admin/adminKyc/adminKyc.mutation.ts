@@ -10,7 +10,9 @@ export const useUpdateKycStatusMutation = () => {
     mutationFn: updateKycStatusFn,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["admin-kyc"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-kyc-detail", data._id] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-kyc-detail", data._id],
+      });
       toast.success(`KYC ${data.status.toLowerCase()} successfully`);
     },
     onError: (error: unknown) => {

@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAdminInvestments, getAdminInvestmentDetail } from "./adminInvestments.api";
+import {
+  getAdminInvestments,
+  getAdminInvestmentDetail,
+} from "./adminInvestments.api";
 
 export const useAdminInvestments = (
   page: number = 1,
   limit: number = 20,
   status?: string,
-  search?: string
+  search?: string,
 ) => {
   return useQuery({
     queryKey: ["adminInvestments", page, limit, status, search],

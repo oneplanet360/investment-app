@@ -5,7 +5,7 @@ export const useAdminDeposits = (
   page: number = 1,
   limit: number = 20,
   status?: string,
-  search?: string
+  search?: string,
 ) => {
   return useQuery({
     queryKey: ["adminDeposits", page, limit, status, search],

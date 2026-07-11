@@ -1,4 +1,12 @@
-import { Menu, Bell, Search } from "lucide-react";
+import { Menu, Bell, Search, User, LogOut, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useClientSignOut } from "../../services/client/clientAuth/clientAuth.query";
+import {
+  useClientNotificationsQuery,
+  useMarkNotificationRead,
+} from "../../services/client/clientNotifications/clientNotifications.query";
+import { toast } from "sonner";
 
 interface TopbarUser {
   name: string;
@@ -10,13 +18,46 @@ interface TopbarProps {
   onToggleSidebar: () => void;
   searchPlaceholder?: string;
   user: TopbarUser;
+  role: "investor" | "agent";
 }
 
 export default function Topbar({
   onToggleSidebar,
   searchPlaceholder = "Search...",
   user,
+  role,
 }: TopbarProps) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { mutate: signOut } = useClientSignOut();
+  const { data: notificationsData } = useClientNotificationsQuery();
+  const { mutate: markAsRead } = useMarkNotificationRead();
+  const unreadCount = notificationsData?.unreadCount || 0;
+  const notifications = notificationsData?.notifications || [];
+
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target as Node)
+      ) {
+        setIsNotifOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-[#141414]/40 border-b border-[#222] backdrop-blur-md sticky top-0 z-30">
       <div className="flex items-center gap-4">
@@ -30,31 +71,166 @@ export default function Topbar({
 
         {/* Search Bar (Desktop/Tablet) */}
         <div className="relative hidden sm:block">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
+          <Search
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
+            size={16}
+          />
           <input
             type="text"
             placeholder={searchPlaceholder}
-            className="bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 w-64 transition-all"
+            className="bg-[#18181b] border border-[#222] rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 w-64 transition-all"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-4">
         {/* Notification Bell */}
-        <button className="relative text-zinc-400 hover:text-white p-2 rounded-xl hover:bg-[#18181b] transition-colors cursor-pointer">
-          <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-orange-500" />
-        </button>
+        <div className="relative select-none" ref={notifRef}>
+          <button
+            onClick={() => setIsNotifOpen(!isNotifOpen)}
+            className="relative text-zinc-400 hover:text-white p-2 rounded-xl hover:bg-[#18181b] transition-colors cursor-pointer"
+          >
+            <Bell size={18} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 min-w-4 h-4 rounded-full bg-orange-500 flex items-center justify-center text-[9px] text-white font-bold px-1">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notifications Dropdown */}
+          {isNotifOpen && (
+            <div className="absolute right-0 top-full mt-2 w-80 bg-[#141414] border border-[#222] rounded-xl shadow-lg shadow-black/50 overflow-hidden z-50">
+              <div className="px-4 py-3 border-b border-[#222] flex justify-between items-center">
+                <h3 className="text-sm font-semibold text-white">
+                  Notifications
+                </h3>
+                <span className="text-xs text-orange-500">
+                  {unreadCount} new
+                </span>
+              </div>
+
+              <div className="max-h-75 overflow-y-auto divide-y divide-[#222]">
+                {notifications.length === 0 ? (
+                  <div className="p-4 text-center text-xs text-zinc-500">
+                    No notifications
+                  </div>
+                ) : (
+                  notifications
+                    .slice(0, 4)
+                    .map(
+                      (
+                        notif: Record<string, unknown> & {
+                          _id: string;
+                          isRead: boolean;
+                          title: string;
+                          message: string;
+                          createdAt: string;
+                        },
+                      ) => (
+                        <div
+                          key={notif._id}
+                          onClick={() => {
+                            if (!notif.isRead)
+                              markAsRead(notif._id, {
+                                onError: (error: unknown) => {
+                                  toast.error(
+                                    (
+                                      error as {
+                                        response?: {
+                                          data?: { message?: string };
+                                        };
+                                      }
+                                    )?.response?.data?.message ||
+                                      "Failed to mark notifications as read",
+                                  );
+                                },
+                              });
+                          }}
+                          className={`p-3 cursor-pointer transition-colors hover:bg-white/5 ${!notif.isRead ? "bg-[#1a1a1e]" : ""}`}
+                        >
+                          <div className="flex justify-between items-start gap-2">
+                            <h4
+                              className={`text-xs font-semibold ${!notif.isRead ? "text-white" : "text-zinc-300"}`}
+                            >
+                              {notif.title}
+                            </h4>
+                            {!notif.isRead && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-1" />
+                            )}
+                          </div>
+                          <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2">
+                            {notif.message}
+                          </p>
+                        </div>
+                      ),
+                    )
+                )}
+              </div>
+
+              <Link
+                to={`/${role}/notifications`}
+                onClick={() => setIsNotifOpen(false)}
+                className="block text-center text-xs text-indigo-400 hover:text-indigo-300 py-2 border-t border-[#222] bg-white/2 hover:bg-white/4 transition-colors"
+              >
+                View all
+              </Link>
+            </div>
+          )}
+        </div>
 
         {/* Profile Avatar Widget */}
-        <div className="flex items-center gap-2.5 pl-2 border-l border-zinc-800 select-none">
-          <div className="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center font-bold text-xs">
-            {user.initials}
+        <div
+          className="relative pl-2 border-l border-zinc-800 select-none"
+          ref={dropdownRef}
+        >
+          <div
+            className="flex items-center gap-2.5 cursor-pointer hover:bg-white/5 p-1.5 rounded-xl transition-colors"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <div className="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center font-bold text-xs">
+              {user.initials}
+            </div>
+            <div className="hidden md:flex items-center gap-3">
+              <div className="text-left">
+                <p className="text-xs font-semibold text-white leading-none">
+                  {user.name}
+                </p>
+                <span className="text-[10px] text-zinc-500 mt-1 block">
+                  {user.details}
+                </span>
+              </div>
+              <ChevronDown
+                size={14}
+                className={`text-zinc-500 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+              />
+            </div>
           </div>
-          <div className="hidden md:block text-left">
-            <p className="text-xs font-semibold text-white leading-none">{user.name}</p>
-            <span className="text-[10px] text-zinc-500 mt-1 block">{user.details}</span>
-          </div>
+
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div className="absolute right-0 top-full mt-2 w-48 bg-[#141414] border border-[#222] rounded-xl shadow-lg shadow-black/50 py-1.5 z-50 overflow-hidden">
+              <Link
+                to={`/${role}/profile-setting`}
+                onClick={() => setIsDropdownOpen(false)}
+                className="w-full text-left px-4 py-3 flex items-center gap-3 text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                <User size={16} />
+                <span>Profile Setting</span>
+              </Link>
+              <div className="h-px bg-[#222] my-1" />
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  signOut();
+                }}
+                className="w-full text-left px-4 py-3 flex items-center gap-3 text-sm text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              >
+                <LogOut size={16} />
+                <span>Log Out</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -7,7 +7,13 @@ export default function AgentWithdrawals() {
   const [search, setSearch] = useState("");
   const perPage = 20;
 
-  const { data, isLoading } = useAdminWithdrawals(page, perPage, "all", search, "COMMISSION");
+  const { data, isLoading } = useAdminWithdrawals(
+    page,
+    perPage,
+    "all",
+    search,
+    "COMMISSION",
+  );
 
   return (
     <WithdrawalTable
@@ -19,7 +25,10 @@ export default function AgentWithdrawals() {
       perPage={perPage}
       searchQuery={search}
       onPageChange={setPage}
-      onSearchChange={(s) => { setSearch(s); setPage(1); }}
+      onSearchChange={(s) => {
+        setSearch(s);
+        setPage(1);
+      }}
       isLoading={isLoading}
     />
   );

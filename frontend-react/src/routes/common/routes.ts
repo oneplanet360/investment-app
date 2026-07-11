@@ -79,12 +79,18 @@ export const PROTECTED_ROUTES = {
 
 export const AGENT_PROTECTED_ROUTES = {
   DASHBOARD: "/agent/dashboard",
-  ADD_INVESTOR: "/agent/add-investor",
+  ASSIGN_USER: "/agent/assign-user",
   ALL_INVESTORS: "/agent/all-investors",
+  TREE: "/agent/tree",
   COMMISSIONS: "/agent/commissions",
   TEAM: "/agent/team",
   WALLET: "/agent/wallet",
   WITHDRAWALS: "/agent/withdrawals",
+  PROFILE_SETTING: "/agent/profile-setting",
+  CHANGE_PASSWORD: "/agent/change-password",
+  TWO_FA: "/agent/2fa-security",
+  NOTIFICATIONS: "/agent/notifications",
+  KYC: "/agent/kyc",
 };
 
 export const INVESTOR_PROTECTED_ROUTES = {
@@ -95,4 +101,8 @@ export const INVESTOR_PROTECTED_ROUTES = {
   TOP_UPS: "/investor/top-ups",
   WALLET: "/investor/wallet",
   WITHDRAWALS: "/investor/withdrawals",
+  PROFILE_SETTING: "/investor/profile-setting",
+  CHANGE_PASSWORD: "/investor/change-password",
+  TWO_FA: "/investor/2fa-security",
+  NOTIFICATIONS: "/investor/notifications",
 };

@@ -4,22 +4,30 @@ import { useAdminWithdrawalDetail } from "../../../services/admin/adminWithdrawa
 import { useUpdateWithdrawalStatusMutation } from "../../../services/admin/adminWithdrawals/adminWithdrawals.mutation";
 
 const statusStyle: Record<string, string> = {
-  PENDING:  "text-yellow-600 bg-yellow-50 border-yellow-400",
+  PENDING: "text-yellow-600 bg-yellow-50 border-yellow-400",
   APPROVED: "text-green-600 bg-green-50 border-green-500",
   REJECTED: "text-red-500 bg-red-50 border-red-400",
 };
 
 function fmt(d: string) {
-  return new Date(d).toLocaleString("en-US", {
-    year: "numeric", month: "short", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", hour12: false,
-  }).replace(",", "");
+  return new Date(d)
+    .toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(",", "");
 }
 
 export default function AgentWithdrawalDetail() {
   const { trxId } = useParams<{ trxId: string }>();
   const { data, isLoading } = useAdminWithdrawalDetail(trxId || "");
-  const { mutate: updateStatus, isPending } = useUpdateWithdrawalStatusMutation(trxId || "");
+  const { mutate: updateStatus, isPending } = useUpdateWithdrawalStatusMutation(
+    trxId || "",
+  );
 
   const withdrawal = data?.data;
 
@@ -35,7 +43,12 @@ export default function AgentWithdrawalDetail() {
     return (
       <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
         <p className="text-gray-500">Withdrawal not found.</p>
-        <Link to="/withdrawals/agent" className="text-sm text-indigo-600 hover:underline">← Back to Agent Withdrawals</Link>
+        <Link
+          to="/withdrawals/agent"
+          className="text-sm text-indigo-600 hover:underline"
+        >
+          ← Back to Agent Withdrawals
+        </Link>
       </div>
     );
   }
@@ -51,37 +64,73 @@ export default function AgentWithdrawalDetail() {
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
       <div className="flex items-center gap-3">
-        <Link to="/withdrawals/agent" className="flex items-center gap-1 text-sm text-indigo-600 hover:underline">
+        <Link
+          to="/withdrawals/agent"
+          className="flex items-center gap-1 text-sm text-indigo-600 hover:underline"
+        >
           <ArrowLeft size={14} /> Back
         </Link>
-        <h1 className="text-base font-semibold text-gray-700">Agent Withdrawal Request</h1>
+        <h1 className="text-base font-semibold text-gray-700">
+          Agent Withdrawal Request
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Detail Card */}
         <div className="bg-white rounded-lg shadow-sm p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-700 mb-2">Request Details</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-2">
+            Request Details
+          </h2>
           <div className="divide-y divide-gray-50 text-sm">
             {[
-              ["Trx ID", <span className="font-mono text-indigo-500 font-semibold text-xs">{withdrawal.trxId}</span>],
-              ["Agent Name", withdrawal.userId?.firstName || withdrawal.userId?.lastName ? `${withdrawal.userId?.firstName} ${withdrawal.userId?.lastName}` : withdrawal.userId?.name],
+              [
+                "Trx ID",
+                <span className="font-mono text-indigo-500 font-semibold text-xs">
+                  {withdrawal.trxId}
+                </span>,
+              ],
+              [
+                "Agent Name",
+                withdrawal.userId?.firstName || withdrawal.userId?.lastName
+                  ? `${withdrawal.userId?.firstName} ${withdrawal.userId?.lastName}`
+                  : withdrawal.userId?.name,
+              ],
               ["Agent Username", `@${withdrawal.userId?.username}`],
               ["Email", withdrawal.userId?.email || "-"],
               ["Requested Amount", `$${withdrawal.amount.toFixed(2)}`],
-              ["Charge", <span className="text-orange-500">-${withdrawal.charge?.toFixed(2) || 0}</span>],
-              ["Net Payable", <span className="font-semibold text-emerald-600">${(withdrawal.amount - (withdrawal.charge || 0)).toFixed(2)}</span>],
+              [
+                "Charge",
+                <span className="text-orange-500">
+                  -${withdrawal.charge?.toFixed(2) || 0}
+                </span>,
+              ],
+              [
+                "Net Payable",
+                <span className="font-semibold text-emerald-600">
+                  ${(withdrawal.amount - (withdrawal.charge || 0)).toFixed(2)}
+                </span>,
+              ],
               ["Payment Method", withdrawal.gateway],
               ["Requested At", fmt(withdrawal.createdAt)],
-              ...(withdrawal.updatedAt && withdrawal.status !== 'PENDING' ? [["Reviewed At", fmt(withdrawal.updatedAt)]] : []),
+              ...(withdrawal.updatedAt && withdrawal.status !== "PENDING"
+                ? [["Reviewed At", fmt(withdrawal.updatedAt)]]
+                : []),
             ].map(([label, value]) => (
-              <div key={label as string} className="flex items-center justify-between py-2.5 gap-2">
+              <div
+                key={label as string}
+                className="flex items-center justify-between py-2.5 gap-2"
+              >
                 <span className="text-gray-500 shrink-0">{label}</span>
-                <span className="font-medium text-gray-800 text-right">{value}</span>
+                <span className="font-medium text-gray-800 text-right">
+                  {value}
+                </span>
               </div>
             ))}
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Status</span>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[withdrawal.status]}`}>
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[withdrawal.status]}`}
+              >
                 {withdrawal.status}
               </span>
             </div>
@@ -91,10 +140,16 @@ export default function AgentWithdrawalDetail() {
         {/* Action Card */}
         {withdrawal.status === "PENDING" && (
           <div className="bg-white rounded-lg shadow-sm p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-700 mb-2">Action Required</h2>
+            <h2 className="text-sm font-semibold text-gray-700 mb-2">
+              Action Required
+            </h2>
             <p className="text-sm text-gray-500">
-              Please review this commission withdrawal request.
-              Upon approval, the net amount of <strong>${(withdrawal.amount - (withdrawal.charge || 0)).toFixed(2)}</strong> should be paid out via <strong>{withdrawal.gateway}</strong>.
+              Please review this commission withdrawal request. Upon approval,
+              the net amount of{" "}
+              <strong>
+                ${(withdrawal.amount - (withdrawal.charge || 0)).toFixed(2)}
+              </strong>{" "}
+              should be paid out via <strong>{withdrawal.gateway}</strong>.
             </p>
             <div className="flex flex-col gap-3 pt-2">
               <button

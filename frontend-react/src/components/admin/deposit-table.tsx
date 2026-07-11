@@ -3,29 +3,7 @@ import { Search } from "lucide-react";
 import Pagination from "./pagination";
 import type { IDeposit } from "../../services/admin/adminDeposits/adminDeposits.types";
 
-
-function fmtDate(d: string) {
-  return new Date(d).toLocaleString("en-US", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", hour12: false,
-  }).replace(",", "");
-}
-
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  const hours = Math.floor(mins / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-  const months = Math.floor(days / 30);
-  const years = Math.floor(days / 365);
-  if (years >= 1)  return `${years} year${years > 1 ? "s" : ""} ago`;
-  if (months >= 1) return `${months} month${months > 1 ? "s" : ""} ago`;
-  if (weeks >= 1)  return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
-  if (days >= 1)   return `${days} day${days > 1 ? "s" : ""} ago`;
-  if (hours >= 1)  return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  return `${mins} min ago`;
-}
+import { timeAgo, fmtDate } from "../../lib/helper";
 
 type Props = {
   title: string;
@@ -41,11 +19,11 @@ type Props = {
 };
 
 const statusStyle: Record<string, string> = {
-  PENDING:    "text-yellow-600 bg-yellow-50 border-yellow-400",
-  APPROVED:   "text-green-600 bg-green-50 border-green-500",
+  PENDING: "text-yellow-600 bg-yellow-50 border-yellow-400",
+  APPROVED: "text-green-600 bg-green-50 border-green-500",
   SUCCESSFUL: "text-blue-600 bg-blue-50 border-blue-500",
-  REJECTED:   "text-red-500 bg-red-50 border-red-400",
-  INITIATED:  "text-gray-500 bg-gray-50 border-gray-400",
+  REJECTED: "text-red-500 bg-red-50 border-red-400",
+  INITIATED: "text-gray-500 bg-gray-50 border-gray-400",
 };
 
 export default function DepositTable({
@@ -58,9 +36,8 @@ export default function DepositTable({
   searchQuery,
   onPageChange,
   onSearchChange,
-  isLoading
+  isLoading,
 }: Props) {
-
   return (
     <div className="min-h-full bg-(--theme-bg) p-4 sm:p-6 space-y-4">
       {/* Table Section */}
@@ -84,13 +61,17 @@ export default function DepositTable({
         <div className="overflow-x-auto relative">
           {isLoading && (
             <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
-              <span className="text-sm text-indigo-600 font-medium">Loading...</span>
+              <span className="text-sm text-indigo-600 font-medium">
+                Loading...
+              </span>
             </div>
           )}
           <table className="w-full text-sm min-w-200">
             <thead>
               <tr className="bg-indigo-600 text-white">
-                <th className="text-left px-5 py-3 font-medium">Gateway | Trx</th>
+                <th className="text-left px-5 py-3 font-medium">
+                  Gateway | Trx
+                </th>
                 <th className="text-left px-5 py-3 font-medium">Initiated</th>
                 <th className="text-left px-5 py-3 font-medium">User</th>
                 <th className="text-right px-5 py-3 font-medium">Amount</th>
@@ -102,16 +83,26 @@ export default function DepositTable({
             <tbody className="divide-y divide-gray-50">
               {deposits.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-gray-400 text-sm">
+                  <td
+                    colSpan={7}
+                    className="text-center py-12 text-gray-400 text-sm"
+                  >
                     {isLoading ? "Fetching data..." : "Data not found"}
                   </td>
                 </tr>
               ) : (
                 deposits.map((d) => (
-                  <tr key={d._id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={d._id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-5 py-3.5">
-                      <p className="font-semibold text-gray-800 text-sm">{d.gateway}</p>
-                      <p className="text-xs font-mono text-indigo-500">{d.trxId}</p>
+                      <p className="font-semibold text-gray-800 text-sm">
+                        {d.gateway}
+                      </p>
+                      <p className="text-xs font-mono text-indigo-500">
+                        {d.trxId}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-xs text-gray-600 whitespace-nowrap">
                       <p>{fmtDate(d.createdAt)}</p>
@@ -119,20 +110,34 @@ export default function DepositTable({
                     </td>
                     <td className="px-5 py-3.5">
                       <p className="font-semibold text-gray-800 text-sm">
-                        {d.userId?.firstName || d.userId?.lastName ? `${d.userId.firstName} ${d.userId.lastName}` : d.userId?.name}
+                        {d.userId?.firstName || d.userId?.lastName
+                          ? `${d.userId.firstName} ${d.userId.lastName}`
+                          : d.userId?.name}
                       </p>
-                      <p className="text-xs text-indigo-500">@{d.userId?.username}</p>
+                      <p className="text-xs text-indigo-500">
+                        @{d.userId?.username}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm">
-                      <p className="font-semibold text-gray-700">${d.amount.toFixed(2)}</p>
-                      <p className="text-xs text-orange-500">+ ${d.charge.toFixed(2)}</p>
+                      <p className="font-semibold text-gray-700">
+                        ${d.amount.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-orange-500">
+                        + ${d.charge.toFixed(2)}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-sm text-gray-600">
-                      <p>1 USD = {d.conversionRate} {d.conversionCurrency}</p>
-                      <p className="font-semibold text-gray-800">{d.convertedAmount.toFixed(2)} {d.conversionCurrency}</p>
+                      <p>
+                        1 USD = {d.conversionRate} {d.conversionCurrency}
+                      </p>
+                      <p className="font-semibold text-gray-800">
+                        {d.convertedAmount.toFixed(2)} {d.conversionCurrency}
+                      </p>
                     </td>
                     <td className="px-5 py-3.5 text-center">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[d.status] || ""}`}>
+                      <span
+                        className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium border ${statusStyle[d.status] || ""}`}
+                      >
                         {d.status}
                       </span>
                     </td>

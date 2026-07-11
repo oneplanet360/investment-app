@@ -4,7 +4,6 @@ import { NavLink } from "react-router-dom";
 import { sidebarMenu } from "../../lib/constant";
 import { useAdminSettingsQuery } from "../../services/admin/adminSettings/adminSettings.query";
 
-
 type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -16,7 +15,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const toggleMenu = (label: string) => {
     setOpenMenus((prev) =>
-      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label],
     );
   };
 
@@ -32,7 +31,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         className={[
           "fixed top-0 left-0 h-full w-65 z-30 flex flex-col",
-          "bg-(--theme-sidebar) text-white transition-transform duration-300",
+          "bg-(--theme-sidebar) text-(--theme-sidebar-fg) transition-transform duration-300",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0 lg:static lg:z-auto",
         ].join(" ")}
@@ -40,7 +39,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex items-center justify-between px-6 py-5">
           <a href="/" className="flex items-center gap-2 select-none h-9">
             {settings?.logoUrl ? (
-              <img src={settings.logoUrl} alt={settings.appName} className="max-h-full object-contain" />
+              <img
+                src={settings.logoUrl}
+                alt={settings.appName}
+                className="max-h-full object-contain"
+              />
             ) : (
               <span className="text-xl font-bold truncate">
                 {settings?.appName}
@@ -49,7 +52,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </a>
           <button
             onClick={onClose}
-            className="lg:hidden text-white/60 hover:text-white"
+            className="lg:hidden text-(--theme-sidebar-fg-muted) hover:text-(--theme-sidebar-fg)"
           >
             <X size={20} />
           </button>
@@ -65,12 +68,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div key={item.label}>
                   <button
                     onClick={() => toggleMenu(item.label)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-(--theme-sidebar-fg) hover:opacity-80 transition-opacity"
                   >
-                    <Icon size={18} className="shrink-0 text-white/70" />
+                    <Icon
+                      size={18}
+                      className="shrink-0 text-(--theme-sidebar-fg) opacity-70"
+                    />
                     <span className="flex-1 text-left">{item.label}</span>
                     {item.badge !== undefined && (
-                      <span className="bg-orange-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-sm">
+                      <span className="bg-indigo-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-sm">
                         {item.badge}
                       </span>
                     )}
@@ -90,15 +96,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                             end
                             className={({ isActive }) =>
                               [
-                                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-opacity",
                                 isActive
-                                  ? "bg-white/15 text-white"
-                                  : "text-white/65 hover:text-white hover:bg-white/10",
+                                  ? "opacity-100 font-semibold"
+                                  : "opacity-70 hover:opacity-100",
                               ].join(" ")
                             }
                           >
-                            {ChildIcon && <ChildIcon size={16} className="shrink-0 text-white/70" />}
-                            <span className="flex-1 text-left">{child.label}</span>
+                            {ChildIcon && (
+                              <ChildIcon
+                                size={16}
+                                className="shrink-0 opacity-70"
+                              />
+                            )}
+                            <span className="flex-1 text-left">
+                              {child.label}
+                            </span>
                           </NavLink>
                         );
                       })}
@@ -115,25 +128,24 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 end
                 className={({ isActive }) =>
                   [
-                    "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-opacity",
                     isActive
-                      ? "bg-white/15 text-white"
-                      : "text-white/80 hover:text-white hover:bg-white/10",
+                      ? "opacity-100 font-semibold"
+                      : "opacity-70 hover:opacity-100",
                   ].join(" ")
                 }
               >
-                <Icon size={18} className="shrink-0 text-white/70" />
+                <Icon size={18} className="shrink-0 opacity-70" />
                 <span className="flex-1">{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="px-6 py-4 border-t border-white/10 text-center">
-          <span className="text-xs tracking-widest text-indigo-400 font-semibold uppercase">
+        <div className="px-6 py-4 border-t border-(--theme-sidebar-fg-muted) text-center opacity-70">
+          <span className="text-xs tracking-widest text-indigo-500 font-semibold uppercase">
             {settings?.appName}
           </span>
-          <span className="text-xs text-white/50 ml-1">V2.0</span>
         </div>
       </aside>
     </>

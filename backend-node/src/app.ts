@@ -22,6 +22,13 @@ import {
   adminCommissionsRoute,
   adminReportsRoute,
   adminDashboardRoute,
+  clientProfileRoute,
+  clientWalletRoute,
+  clientWithdrawalRoute,
+  clientAgentRoute,
+  clientNotificationsRoute,
+  clientKycRoute,
+  clientInvestmentsRoute,
 } from './routes';
 
 const app: Application = express();
@@ -61,6 +68,15 @@ app.use('/api/v1/admin/roi', adminRoiRoute);
 app.use('/api/v1/admin/commissions', adminCommissionsRoute);
 app.use('/api/v1/admin/reports', adminReportsRoute);
 app.use('/api/v1/admin/dashboard', adminDashboardRoute);
+
+// Client Routes
+app.use('/api/v1/client/profile', clientProfileRoute);
+app.use('/api/v1/client/wallet', clientWalletRoute);
+app.use('/api/v1/client/withdrawals', clientWithdrawalRoute);
+app.use('/api/v1/client/agent', clientAgentRoute);
+app.use('/api/v1/client/notifications', clientNotificationsRoute);
+app.use('/api/v1/client/kyc', clientKycRoute);
+app.use('/api/v1/client/investments', clientInvestmentsRoute);
 
 /** error middleware. */
 app.use(errorMiddleware);

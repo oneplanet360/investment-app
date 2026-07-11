@@ -7,7 +7,12 @@ export default function RejectedWithdrawals() {
   const [search, setSearch] = useState("");
   const perPage = 20;
 
-  const { data, isLoading } = useAdminWithdrawals(page, perPage, "REJECTED", search);
+  const { data, isLoading } = useAdminWithdrawals(
+    page,
+    perPage,
+    "REJECTED",
+    search,
+  );
 
   return (
     <WithdrawalTable
@@ -19,7 +24,10 @@ export default function RejectedWithdrawals() {
       perPage={perPage}
       searchQuery={search}
       onPageChange={setPage}
-      onSearchChange={(s) => { setSearch(s); setPage(1); }}
+      onSearchChange={(s) => {
+        setSearch(s);
+        setPage(1);
+      }}
       isLoading={isLoading}
     />
   );

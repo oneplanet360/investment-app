@@ -1,10 +1,9 @@
-
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAdminSettingsQuery } from "../services/admin/adminSettings/adminSettings.query";
 import Topbar from "../components/admin/topbar";
 import Sidebar from "../components/admin/sidebar";
-
+import { getContrastColor, getMutedContrastColor } from "../lib/utils";
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,7 +14,8 @@ export default function AdminLayout() {
     if (!settings) return;
 
     document.title = `${settings.appName} - Admin Panel`;
-    let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+    let link: HTMLLinkElement | null =
+      document.querySelector("link[rel~='icon']");
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
@@ -24,35 +24,55 @@ export default function AdminLayout() {
     link.href = settings.faviconUrl;
 
     const root = document.documentElement;
-    root.style.setProperty('--theme-bg', settings.backgroundColor);
-    root.style.setProperty('--theme-sidebar', settings.sidebarColor);
-    root.style.setProperty('--color-indigo-500', settings.primaryColor);
-    root.style.setProperty('--color-indigo-600', settings.primaryColor);
-    root.style.setProperty('--color-indigo-700', settings.primaryColor);
+    root.style.setProperty("--theme-bg", settings.backgroundColor);
+    root.style.setProperty(
+      "--theme-bg-fg",
+      getContrastColor(settings.backgroundColor),
+    );
+
+    root.style.setProperty("--theme-sidebar", settings.sidebarColor);
+    root.style.setProperty(
+      "--theme-sidebar-fg",
+      getContrastColor(settings.sidebarColor),
+    );
+    root.style.setProperty(
+      "--theme-sidebar-fg-muted",
+      getMutedContrastColor(settings.sidebarColor),
+    );
+
+    root.style.setProperty("--color-indigo-500", settings.primaryColor);
+    root.style.setProperty("--color-indigo-600", settings.primaryColor);
+    root.style.setProperty("--color-indigo-700", settings.primaryColor);
+    root.style.setProperty(
+      "--theme-primary-fg",
+      getContrastColor(settings.primaryColor),
+    );
+
     root.style.fontFamily = settings.fontFamily;
-    
+
     // Save to localStorage so it can be loaded synchronously on refresh
-    localStorage.setItem("admin-theme", JSON.stringify({
-      backgroundColor: settings.backgroundColor,
-      sidebarColor: settings.sidebarColor,
-      primaryColor: settings.primaryColor,
-      fontFamily: settings.fontFamily
-    }));
+    localStorage.setItem(
+      "admin-theme",
+      JSON.stringify({
+        backgroundColor: settings.backgroundColor,
+        sidebarColor: settings.sidebarColor,
+        primaryColor: settings.primaryColor,
+        fontFamily: settings.fontFamily,
+      }),
+    );
   }, [settings]);
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
- <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-       {/* Topbar and Main */}
-       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-      <Topbar onMenuClick={() => setSidebarOpen(true)} />
-      <main className="flex-1 overflow-y-auto">
-      
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {/* Topbar and Main */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <Topbar onMenuClick={() => setSidebarOpen(true)} />
+        <main className="flex-1 overflow-y-auto">
           <Outlet />
-      
-      </main>
-       </div>
+        </main>
+      </div>
     </div>
-  )
+  );
 }

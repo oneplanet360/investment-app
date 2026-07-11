@@ -7,13 +7,15 @@ import { useAgentsQuery } from "../../../services/admin/adminAgents/adminAgents.
 import { useResetAgentPasswordMutation } from "../../../services/admin/adminAgents/adminAgents.mutation";
 import type { IAgent } from "../../../services/admin/adminAgents/adminAgents.types";
 
-const schema = z.object({
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(1, "Confirm password is required"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const schema = z
+  .object({
+    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Confirm password is required"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type FormData = z.infer<typeof schema>;
 
@@ -21,7 +23,7 @@ export default function AgentResetPassword() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selected, setSelected] = useState<IAgent | null>(null);
-  
+
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedQuery(query), 300);
     return () => clearTimeout(handler);
@@ -45,7 +47,7 @@ export default function AgentResetPassword() {
 
   const onSubmit = (formData: FormData) => {
     if (!selected) return;
-    
+
     resetPassword(
       { agentId: selected._id, newPassword: formData.newPassword },
       {
@@ -53,52 +55,65 @@ export default function AgentResetPassword() {
           reset();
           setSelected(null);
           setQuery("");
-        }
-      }
+        },
+      },
     );
   };
 
-  const inputCls = (err?: string) => `w-full border rounded px-3 py-2 text-sm outline-none transition-colors ${
-    err ? "border-red-500" : "border-gray-200 focus:border-indigo-400 text-gray-700"
-  }`;
+  const inputCls = (err?: string) =>
+    `w-full border rounded px-3 py-2 text-sm outline-none transition-colors ${
+      err
+        ? "border-red-500"
+        : "border-gray-200 focus:border-indigo-400 text-gray-700"
+    }`;
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6">
-      <h1 className="text-base font-semibold text-gray-700 mb-5">Reset Agent Password</h1>
-      
+      <h1 className="text-base font-semibold text-gray-700 mb-5">
+        Reset Agent Password
+      </h1>
+
       <div className="bg-white rounded-lg shadow-sm p-5 sm:p-6 space-y-5">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Search Agent</label>
+          <label className="block text-xs text-gray-500 mb-1">
+            Search Agent
+          </label>
           <div className="relative">
             <div className="flex items-center gap-2 border border-gray-200 rounded px-3 py-2 focus-within:border-indigo-400 transition-colors">
               <Search size={14} className="text-gray-400 shrink-0" />
-              <input 
-                type="text" 
-                value={query} 
-                onChange={e => { 
-                  setQuery(e.target.value); 
-                  setSelected(null); 
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelected(null);
                 }}
                 placeholder="Search by username, name or email..."
-                className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent" 
+                className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent"
               />
-              {isSearching && <Loader2 size={14} className="animate-spin text-gray-400" />}
+              {isSearching && (
+                <Loader2 size={14} className="animate-spin text-gray-400" />
+              )}
             </div>
-            
+
             {query.trim() && !selected && (
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b shadow-lg z-10 max-h-48 overflow-y-auto">
                 {results.length > 0 ? (
-                  results.map(u => (
-                    <button 
-                      key={u._id} 
-                      onClick={() => { 
-                        setSelected(u); 
-                        setQuery(u.name); 
+                  results.map((u) => (
+                    <button
+                      key={u._id}
+                      onClick={() => {
+                        setSelected(u);
+                        setQuery(u.name);
                       }}
                       className="w-full text-left px-4 py-2.5 hover:bg-indigo-50 transition-colors border-b border-gray-50 last:border-0"
                     >
-                      <p className="text-sm font-medium text-gray-800">{u.name}</p>
-                      <p className="text-xs text-indigo-500">@{u.username} • {u.email}</p>
+                      <p className="text-sm font-medium text-gray-800">
+                        {u.name}
+                      </p>
+                      <p className="text-xs text-indigo-500">
+                        @{u.username} • {u.email}
+                      </p>
                     </button>
                   ))
                 ) : (
@@ -117,8 +132,12 @@ export default function AgentResetPassword() {
               {selected.name ? selected.name.charAt(0).toUpperCase() : "A"}
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-800">{selected.name}</p>
-              <p className="text-xs text-indigo-500">@{selected.username} · {selected.email}</p>
+              <p className="text-sm font-semibold text-gray-800">
+                {selected.name}
+              </p>
+              <p className="text-xs text-indigo-500">
+                @{selected.username} · {selected.email}
+              </p>
             </div>
           </div>
         )}
@@ -126,29 +145,41 @@ export default function AgentResetPassword() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">New Password <span className="text-red-500">*</span></label>
-              <input 
-                type="password" 
+              <label className="block text-xs text-gray-500 mb-1">
+                New Password <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
                 {...register("newPassword")}
                 disabled={!selected}
-                className={inputCls(errors.newPassword?.message)} 
+                className={inputCls(errors.newPassword?.message)}
               />
-              {errors.newPassword && <p className="text-xs text-red-500 mt-1">{errors.newPassword.message}</p>}
+              {errors.newPassword && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.newPassword.message}
+                </p>
+              )}
             </div>
-            
+
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Confirm Password <span className="text-red-500">*</span></label>
-              <input 
-                type="password" 
+              <label className="block text-xs text-gray-500 mb-1">
+                Confirm Password <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
                 {...register("confirmPassword")}
                 disabled={!selected}
-                className={inputCls(errors.confirmPassword?.message)} 
+                className={inputCls(errors.confirmPassword?.message)}
               />
-              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>}
+              {errors.confirmPassword && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
           </div>
 
-          <button 
+          <button
             type="submit"
             disabled={!selected || !isValid || !isDirty || isPending}
             className="w-full flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 rounded transition-colors"

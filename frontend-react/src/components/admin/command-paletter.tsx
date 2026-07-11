@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Search, ChevronRight } from "lucide-react";
 import { sidebarMenu } from "../../lib/constant";
 
-
 // ─── Build a flat list of all navigable pages ───────────────────────────────
 
 type PageEntry = {
@@ -73,6 +72,7 @@ export default function CommandPalette({ open, onClose }: Props) {
   // Reset state when opening
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line
       setQuery("");
       setActiveIndex(0);
       setTimeout(() => inputRef.current?.focus(), 0);
@@ -81,13 +81,14 @@ export default function CommandPalette({ open, onClose }: Props) {
 
   // Keep active item clamped when list shrinks
   useEffect(() => {
+    // eslint-disable-next-line
     setActiveIndex((i) => Math.min(i, Math.max(filtered.length - 1, 0)));
   }, [filtered.length]);
 
   // Scroll active row into view
   useEffect(() => {
     const row = listRef.current?.querySelector<HTMLElement>(
-      `[data-index="${activeIndex}"]`
+      `[data-index="${activeIndex}"]`,
     );
     row?.scrollIntoView({ block: "nearest" });
   }, [activeIndex]);
@@ -97,7 +98,7 @@ export default function CommandPalette({ open, onClose }: Props) {
       navigate(href);
       onClose();
     },
-    [navigate, onClose]
+    [navigate, onClose],
   );
 
   // Keyboard navigation
@@ -216,7 +217,10 @@ export default function CommandPalette({ open, onClose }: Props) {
                     </span>
 
                     {isActive && (
-                      <ChevronRight size={16} className="text-white/70 shrink-0" />
+                      <ChevronRight
+                        size={16}
+                        className="text-white/70 shrink-0"
+                      />
                     )}
                   </button>
                 );
@@ -227,16 +231,24 @@ export default function CommandPalette({ open, onClose }: Props) {
           {/* Footer hints */}
           <div className="flex items-center gap-4 px-4 py-2.5 border-t border-gray-100 bg-gray-50/80">
             <span className="flex items-center gap-1 text-[11px] text-gray-400">
-              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">↵</kbd>
+              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">
+                ↵
+              </kbd>
               to select
             </span>
             <span className="flex items-center gap-1 text-[11px] text-gray-400">
-              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">↑</kbd>
-              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">↓</kbd>
+              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">
+                ↑
+              </kbd>
+              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">
+                ↓
+              </kbd>
               to navigate
             </span>
             <span className="flex items-center gap-1 text-[11px] text-gray-400">
-              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">ESC</kbd>
+              <kbd className="bg-white border border-gray-200 rounded px-1 py-0.5 font-mono text-[10px] shadow-sm">
+                ESC
+              </kbd>
               to close
             </span>
           </div>

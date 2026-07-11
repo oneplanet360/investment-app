@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAdminWithdrawals, getAdminWithdrawalDetail } from "./adminWithdrawals.api";
+import {
+  getAdminWithdrawals,
+  getAdminWithdrawalDetail,
+} from "./adminWithdrawals.api";
 
 export const useAdminWithdrawals = (
   page: number = 1,
   limit: number = 20,
   status?: string,
   search?: string,
-  type?: string
+  type?: string,
 ) => {
   return useQuery({
     queryKey: ["adminWithdrawals", page, limit, status, search, type],
