@@ -18,6 +18,10 @@ const AddAgent = lazy(
 const AgentResetPassword = lazy(
   () => import("../../pages/admin/agent-management/agent-password-reset"),
 );
+const AdminGenealogyTree = lazy(
+  () => import("../../pages/admin/agent-management/genealogy-tree"),
+);
+const AdminNotifications = lazy(() => import("../../pages/admin/notifications"));
 const InvestorResetPassword = lazy(
   () =>
     import("../../pages/admin/investors-management/investor-password-reset"),
@@ -172,6 +176,10 @@ export const clientAuthPaths = [
 
 export const protectedRoutesPaths = [
   { path: PROTECTED_ROUTES.ADMINDASHBOARD, element: <Dashboard /> },
+  {
+    path: PROTECTED_ROUTES.ADMINNOTIFICATIONS,
+    element: <AdminNotifications />,
+  },
   { path: PROTECTED_ROUTES.ADMINPASSWORDCHANGE, element: <Password /> },
   { path: PROTECTED_ROUTES.ADMINPROFILE, element: <Profile /> },
 
@@ -182,6 +190,7 @@ export const protectedRoutesPaths = [
     path: PROTECTED_ROUTES.ADMINAGENTPASSWORDRESET,
     element: <AgentResetPassword />,
   },
+  { path: PROTECTED_ROUTES.ADMINAGENTTREE, element: <AdminGenealogyTree /> },
   { path: PROTECTED_ROUTES.ADMINAGENTDETAILS, element: <UserDetail /> },
 
   // Investor Management — static before dynamic

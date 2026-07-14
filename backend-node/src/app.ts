@@ -29,6 +29,8 @@ import {
   clientNotificationsRoute,
   clientKycRoute,
   clientInvestmentsRoute,
+  clientDepositsRoute,
+  clientRoiRoute,
 } from './routes';
 
 const app: Application = express();
@@ -77,6 +79,8 @@ app.use('/api/v1/client/agent', clientAgentRoute);
 app.use('/api/v1/client/notifications', clientNotificationsRoute);
 app.use('/api/v1/client/kyc', clientKycRoute);
 app.use('/api/v1/client/investments', clientInvestmentsRoute);
+app.use('/api/v1/client/deposits', clientDepositsRoute);
+app.use('/api/v1/client/roi', clientRoiRoute);
 
 /** error middleware. */
 app.use(errorMiddleware);

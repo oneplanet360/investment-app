@@ -75,3 +75,8 @@ export const sendNotificationAgentApi = async ({
   );
   return data;
 };
+
+export const getAdminAgentTreeFn = async (username: string): Promise<IAgent & { subAgents?: IAgent[]; investors?: IAgent[] }> => {
+  const { data } = await axiosInstance.get(`/agents/${username}/tree`);
+  return data.tree;
+};

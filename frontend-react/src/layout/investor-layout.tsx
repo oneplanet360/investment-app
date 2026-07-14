@@ -3,8 +3,13 @@ import { Outlet } from "react-router-dom";
 import Topbar from "../components/client/topbar";
 import Sidebar from "../components/client/sidebar";
 
+import { useClientVerifyUser } from "../services/client/clientAuth/clientAuth.query";
+
 export default function InvestorLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { data: userData } = useClientVerifyUser();
+  const user = userData?.data;
+  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "--";
 
   return (
     <div className="flex min-h-screen bg-[#0b0b0b] text-white font-sans overflow-hidden">
@@ -23,9 +28,9 @@ export default function InvestorLayout() {
           onToggleSidebar={() => setSidebarOpen(true)}
           searchPlaceholder="Search investments..."
           user={{
-            name: "John Doe",
-            initials: "JD",
-            details: "Account ID: #28475",
+            name: user?.name || "Loading...",
+            initials: initials,
+            details: user?.username ? `@${user.username}` : "Investor",
           }}
         />
 

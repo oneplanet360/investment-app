@@ -23,6 +23,7 @@ export interface IInvestment extends Document {
   status: InvestmentStatus;
   roiCycleStartDate: Date;
   nextRoiDate: Date;
+  roiLog?: { monthIndex: number };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,6 +44,9 @@ const investmentSchema = new Schema<IInvestment>(
     },
     roiCycleStartDate: { type: Date, required: true, default: Date.now },
     nextRoiDate: { type: Date, required: true },
+    roiLog: {
+      monthIndex: { type: Number, default: 0 }
+    }
   },
   {
     timestamps: true,

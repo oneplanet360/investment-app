@@ -3,9 +3,12 @@ import { toast } from "sonner";
 import {
   searchUnassignedUserFn,
   assignClientInvestorFn,
+  createClientInvestorFn,
   getClientInvestorsFn,
   assignClientSubAgentFn,
   getClientAgentTreeFn,
+  getAgentCommissionsFn,
+  getAgentDashboardStatsFn,
 } from "./clientAgent.api";
 import { AxiosError } from "axios";
 
@@ -43,6 +46,28 @@ export const useAssignClientInvestor = () => {
   });
 };
 
+export const useCreateClientInvestor = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createClientInvestorFn,
+    onSuccess: () => {
+      toast.success("Investor created successfully");
+      queryClient.invalidateQueries({ queryKey: ["clientInvestors"] });
+      queryClient.invalidateQueries({ queryKey: ["clientAgentTree"] });
+    },
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.message || "Failed to create investor",
+        );
+      } else {
+        toast.error("Failed to create investor");
+      }
+    },
+  });
+};
+
 export const useClientInvestorsQuery = () => {
   return useQuery({
     queryKey: ["clientInvestors"],
@@ -75,5 +100,19 @@ export const useClientAgentTreeQuery = () => {
   return useQuery({
     queryKey: ["clientAgentTree"],
     queryFn: getClientAgentTreeFn,
+  });
+};
+
+export const useAgentCommissionsQuery = () => {
+  return useQuery({
+    queryKey: ["agentCommissions"],
+    queryFn: getAgentCommissionsFn,
+  });
+};
+
+export const useAgentDashboardStatsQuery = () => {
+  return useQuery({
+    queryKey: ["agentDashboardStats"],
+    queryFn: getAgentDashboardStatsFn,
   });
 };

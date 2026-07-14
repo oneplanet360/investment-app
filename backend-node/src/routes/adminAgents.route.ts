@@ -7,7 +7,8 @@ import {
   resetAgentPasswordController,
   impersonateAgentController,
   toggleBanAgentController,
-  sendNotificationAgentController
+  sendNotificationAgentController,
+  getAgentTreeAdminController
 } from '../controllers/adminAgents.controller';
 
 const router = Router();
@@ -22,5 +23,6 @@ router.put('/:username/ban', toggleBanAgentController);
 router.post('/:username/notification', sendNotificationAgentController);
 router.post('/:username/impersonate', impersonateAgentController);
 router.put('/:id/password-reset', resetAgentPasswordController);
+router.get('/:username/tree', getAgentTreeAdminController);
 
 export default router;

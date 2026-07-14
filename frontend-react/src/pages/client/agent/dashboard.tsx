@@ -5,12 +5,20 @@ import {
   ArrowDownLeft,
   DollarSign,
   Wallet,
-  ArrowUpRight as ArrowUpRightIcon,
   Percent,
 } from "lucide-react";
+import { useAgentDashboardStatsQuery } from "../../../services/client/clientAgent/clientAgent.queries";
 
 export default function AgentDashboard() {
   const [activeTab] = useState("dashboard");
+  const { data: statsData } = useAgentDashboardStatsQuery();
+  const stats = statsData || {
+    totalBalance: 0,
+    activeReferrals: 0,
+    totalCommissions: 0,
+    level1Bonuses: 0,
+    recentCommissions: []
+  };
 
   // Render dummy content depending on activeTab
   const renderContent = () => {
@@ -23,8 +31,8 @@ export default function AgentDashboard() {
               {[
                 {
                   label: "Total Balance",
-                  value: "$4,250.50",
-                  change: "+5.2%",
+                  value: `$${stats.totalBalance.toLocaleString()}`,
+                  change: "+0.0%",
                   icon: Wallet,
                   color:
                     "from-orange-500/20 to-amber-500/10 border-orange-500/30",
@@ -32,8 +40,8 @@ export default function AgentDashboard() {
                 },
                 {
                   label: "Active Referrals",
-                  value: "42 Partners",
-                  change: "+12.4%",
+                  value: `${stats.activeReferrals} Partners`,
+                  change: "+0.0%",
                   icon: TrendingUp,
                   color:
                     "from-emerald-500/20 to-teal-500/10 border-emerald-500/30",
@@ -41,16 +49,16 @@ export default function AgentDashboard() {
                 },
                 {
                   label: "Total Commissions",
-                  value: "$9,850.00",
-                  change: "+18.9%",
+                  value: `$${stats.totalCommissions.toLocaleString()}`,
+                  change: "+0.0%",
                   icon: DollarSign,
                   color: "from-blue-500/20 to-indigo-500/10 border-blue-500/30",
                   iconColor: "text-blue-500",
                 },
                 {
                   label: "Level-1 Bonuses",
-                  value: "$3,400.00",
-                  change: "+8.1%",
+                  value: `$${stats.level1Bonuses.toLocaleString()}`,
+                  change: "+0.0%",
                   icon: Percent,
                   color:
                     "from-purple-500/20 to-pink-500/10 border-purple-500/30",
@@ -95,72 +103,38 @@ export default function AgentDashboard() {
                   </button>
                 </div>
                 <div className="divide-y divide-[#222]">
-                  {[
-                    {
-                      desc: "Commission from Referral ID #38294",
-                      date: "July 8, 2026 10:05 AM",
-                      amount: "+$120.00",
-                      status: "Completed",
-                      type: "in",
-                    },
-                    {
-                      desc: "Bonus from Partner Rank Level 3",
-                      date: "July 7, 2026 11:20 AM",
-                      amount: "+$500.00",
-                      status: "Completed",
-                      type: "in",
-                    },
-                    {
-                      desc: "Withdrawal to TrustWallet",
-                      date: "July 4, 2026 04:10 PM",
-                      amount: "-$1,200.00",
-                      status: "Completed",
-                      type: "out",
-                    },
-                  ].map((tx, idx) => (
+                  {stats.recentCommissions.length === 0 && (
+                    <div className="py-4 text-sm text-zinc-500 text-center">No recent commissions</div>
+                  )}
+                  {stats.recentCommissions.map((tx: any, idx: number) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`p-2 rounded-xl ${
-                            tx.type === "in"
-                              ? "bg-emerald-500/10 text-emerald-500"
-                              : "bg-red-500/10 text-red-500"
-                          }`}
+                          className={`p-2 rounded-xl bg-emerald-500/10 text-emerald-500`}
                         >
-                          {tx.type === "in" ? (
-                            <ArrowDownLeft size={16} />
-                          ) : (
-                            <ArrowUpRightIcon size={16} />
-                          )}
+                          <ArrowDownLeft size={16} />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-white leading-tight">
-                            {tx.desc}
+                            Commission from {tx.investorId?.username || 'Unknown'} (Level {tx.level})
                           </p>
                           <span className="text-[11px] text-zinc-500 mt-1 block">
-                            {tx.date}
+                            {new Date(tx.createdAt).toLocaleString()}
                           </span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p
-                          className={`text-sm font-bold ${
-                            tx.type === "in"
-                              ? "text-emerald-500"
-                              : "text-zinc-300"
-                          }`}
-                        >
-                          {tx.amount}
+                        <p className="text-sm font-bold text-emerald-500">
+                          +${tx.amount.toLocaleString()}
                         </p>
                         <span
-                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${
-                            tx.status === "Completed"
-                              ? "bg-emerald-500/10 text-emerald-400"
-                              : "bg-amber-500/10 text-amber-400"
-                          }`}
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${tx.status === "PAID"
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : "bg-amber-500/10 text-amber-400"
+                            }`}
                         >
                           {tx.status}
                         </span>

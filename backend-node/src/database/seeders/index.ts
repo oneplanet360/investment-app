@@ -1,6 +1,7 @@
 import { initializeMongoConnection } from '../../configs/mongo.config';
 import { Admin } from '../models/admin.model';
 import { customLogger } from '../../utils';
+import bcrypt from 'bcryptjs';
 
 const seedAdmin = async () => {
   try {
@@ -16,10 +17,12 @@ const seedAdmin = async () => {
         `Admin with email ${adminEmail} already exists. Skipping seed.`
       );
     } else {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(adminPassword, salt);
       await Admin.create({
         name: 'Super Admin',
         email: adminEmail,
-        password: adminPassword,
+        password: hashedPassword,
         isActive: true,
       });
       customLogger.info(`Admin seeded successfully: ${adminEmail}`);

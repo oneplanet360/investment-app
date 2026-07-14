@@ -5,6 +5,7 @@ import { User } from '../database/models/user.model';
 import { customError } from '../utils';
 import { adminSignInSchemaType, clientSignInSchemaType } from '../validations/auth.schema';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 export const signInAdminServices = async (body: adminSignInSchemaType) => {
   const { email, password } = body;
@@ -18,7 +19,15 @@ export const signInAdminServices = async (body: adminSignInSchemaType) => {
     );
   }
 
-  if (existingAdmin.password !== password) {
+  if (!existingAdmin.password) {
+    throw new customError(
+      ApiErrorMessages.INVALID_CREDENTIALS,
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
+  const isMatchAdmin = await bcrypt.compare(password, existingAdmin.password);
+  if (!isMatchAdmin) {
     throw new customError(
       ApiErrorMessages.INVALID_CREDENTIALS,
       HttpStatusCode.BAD_REQUEST
@@ -54,7 +63,15 @@ export const signInClientServices = async (body: clientSignInSchemaType) => {
     );
   }
 
-  if (existingUser.password !== password) {
+  if (!existingUser.password) {
+    throw new customError(
+      ApiErrorMessages.INVALID_CREDENTIALS,
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
+  const isMatchClient = await bcrypt.compare(password, existingUser.password);
+  if (!isMatchClient) {
     throw new customError(
       ApiErrorMessages.INVALID_CREDENTIALS,
       HttpStatusCode.BAD_REQUEST
@@ -73,6 +90,8 @@ export const signInClientServices = async (body: clientSignInSchemaType) => {
     name: existingUser.name,
     email: existingUser.email,
     role: existingUser.role,
+    level: (existingUser as any).level,
+    username: existingUser.username,
   };
 
   const token = await jwt.sign(
@@ -80,6 +99,43 @@ export const signInClientServices = async (body: clientSignInSchemaType) => {
     ParsedEnvVariables.ACCESS_TOKEN_SECRET,
     {
       expiresIn: '7d',
+    }
+  );
+
+  return { user: userData, token };
+};
+
+export const impersonateClientService = async (userId: string) => {
+  const existingUser = await User.findById(userId);
+
+  if (!existingUser) {
+    throw new customError(
+      'User not found.',
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
+  if (!existingUser.isActive) {
+    throw new customError(
+      'Your account has been banned.',
+      HttpStatusCode.BAD_REQUEST
+    );
+  }
+
+  const userData = {
+    _id: existingUser._id,
+    name: existingUser.name,
+    email: existingUser.email,
+    role: existingUser.role,
+    level: (existingUser as any).level,
+    username: existingUser.username,
+  };
+
+  const token = await jwt.sign(
+    { _id: existingUser._id, role: existingUser.role },
+    ParsedEnvVariables.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: '1h',
     }
   );
 

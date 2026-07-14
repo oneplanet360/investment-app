@@ -5,7 +5,7 @@ import { Notification } from '../database/models/notification.model';
 
 export const getClientNotificationsController = customAsyncWrapper(
   async (req: Request, res: Response) => {
-    const userId = req.user._id;
+    const userId = req.user!._id;
 
     const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
     const unreadCount = await Notification.countDocuments({ userId, isRead: false });
@@ -25,7 +25,7 @@ export const getClientNotificationsController = customAsyncWrapper(
 export const markNotificationReadController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user!._id;
 
     const notification = await Notification.findOneAndUpdate(
       { _id: id, userId },

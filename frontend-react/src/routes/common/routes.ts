@@ -11,6 +11,7 @@ export const PROTECTED_ROUTES = {
   ADMINAGENTS: "/admin/agents",
   ADMINADDAGENT: "/admin/agents/add",
   ADMINAGENTPASSWORDRESET: "/admin/agents/password-reset",
+  ADMINAGENTTREE: "/admin/agents/tree",
   ADMINAGENTDETAILS: "/admin/agents/:username",
 
   ADMININVESTORS: "/admin/investors",
@@ -64,6 +65,7 @@ export const PROTECTED_ROUTES = {
 
   // Commissions
   ADMINCOMMISSIONSLOG: "/admin/commissions",
+  ADMINNOTIFICATIONS: "/admin/notifications",
 
   // System Settings
   ADMINSETTINGSINVESTMENT: "/admin/settings/investment",

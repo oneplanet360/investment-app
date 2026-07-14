@@ -124,8 +124,8 @@ export default function Sidebar({
 
   const footerUser =
     role === "agent"
-      ? { name: "Sarah Smith", initials: "SS", label: "Agent", tag: "AGENT" }
-      : { name: "John Doe", initials: "JD", label: "Investor", tag: "PRO" };
+      ? { name: user?.name || "Loading...", initials: user?.name ? user.name.slice(0, 2).toUpperCase() : "--", label: "Agent", tag: "AGENT" }
+      : { name: user?.name || "Loading...", initials: user?.name ? user.name.slice(0, 2).toUpperCase() : "--", label: "Investor", tag: "PRO" };
 
   return (
     <>

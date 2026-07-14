@@ -26,7 +26,9 @@ export const useClientSignIn = () => {
       toast.success(data.message || "Signed in successfully");
       queryClient.setQueryData(["clientVerifyUser"], data);
 
-      if (data?.data?.user?.role === "AGENT") {
+      // The API returns the user directly in data.data
+      const user = (data as any)?.data;
+      if (user?.role === "AGENT") {
         navigate("/agent/dashboard");
       } else {
         navigate("/investor/dashboard");

@@ -23,6 +23,14 @@ export const assignClientInvestorFn = async (payload: {
   return response.data.investor;
 };
 
+export const createClientInvestorFn = async (payload: any) => {
+  const response = await axiosInstance.post(
+    `${CLIENT_AGENT_URL}/create-investor`,
+    payload,
+  );
+  return response.data;
+};
+
 export const assignClientSubAgentFn = async (payload: {
   username: string;
 }): Promise<IAgent> => {
@@ -43,4 +51,14 @@ export const getClientAgentTreeFn = async (): Promise<
 > => {
   const response = await axiosInstance.get(`${CLIENT_AGENT_URL}/tree`);
   return response.data.tree;
+};
+
+export const getAgentCommissionsFn = async (): Promise<any[]> => {
+  const response = await axiosInstance.get(`${CLIENT_AGENT_URL}/commissions`);
+  return response.data.commissions;
+};
+
+export const getAgentDashboardStatsFn = async (): Promise<any> => {
+  const response = await axiosInstance.get(`${CLIENT_AGENT_URL}/dashboard-stats`);
+  return response.data.stats;
 };

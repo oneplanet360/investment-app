@@ -1,6 +1,7 @@
 import { User, UserRole, IUser } from '../database/models/user.model';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
+import bcrypt from 'bcryptjs';
 
 export const createAgentService = async (
   payload: Partial<IUser>
@@ -20,10 +21,10 @@ export const createAgentService = async (
   let sponsorId = undefined;
   let level = 1;
 
-  if (payload.referredBy) {
+  if ((payload as any).referredBy) {
     // payload.referredBy comes in as the sponsor's username from the UI (string)
     const sponsor = await User.findOne({
-      username: payload.referredBy as unknown as string,
+      username: (payload as any).referredBy as unknown as string,
       role: UserRole.AGENT,
     });
     if (!sponsor) {
@@ -106,6 +107,9 @@ export const resetAgentPasswordService = async (
     throw new customError('Agent not found', HttpStatusCode.NOT_FOUND);
   }
 
-  agent.password = newPassword;
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  agent.password = hashedPassword;
   await agent.save();
 };

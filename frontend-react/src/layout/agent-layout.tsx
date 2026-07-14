@@ -3,8 +3,13 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/client/sidebar";
 import Topbar from "../components/client/topbar";
 
+import { useClientVerifyUser } from "../services/client/clientAuth/clientAuth.query";
+
 export default function AgentLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { data: userData } = useClientVerifyUser();
+  const user = userData?.data;
+  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "--";
 
   return (
     <div className="flex min-h-screen bg-[#0b0b0b] text-white font-sans overflow-hidden">
@@ -23,9 +28,9 @@ export default function AgentLayout() {
           onToggleSidebar={() => setSidebarOpen(true)}
           searchPlaceholder="Search referrals..."
           user={{
-            name: "Sarah Smith",
-            initials: "SS",
-            details: "Agent ID: #10485",
+            name: user?.name || "Loading...",
+            initials: initials,
+            details: user?.username ? `@${user.username}` : "Agent",
           }}
         />
 

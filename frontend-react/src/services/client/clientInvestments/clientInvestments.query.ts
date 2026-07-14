@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createInvestmentFn } from "./clientInvestments.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createInvestmentFn, getClientInvestmentsFn, closeInvestmentFn } from "./clientInvestments.api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -22,6 +22,32 @@ export const useCreateInvestment = () => {
         );
       } else {
         toast.error("Failed to create investment");
+      }
+    },
+  });
+};
+
+export const useClientInvestmentsQuery = () => {
+  return useQuery({
+    queryKey: ["client-investments"],
+    queryFn: getClientInvestmentsFn,
+  });
+};
+
+export const useCloseInvestmentMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: closeInvestmentFn,
+    onSuccess: (data) => {
+      toast.success(data.message || "Close request submitted");
+      queryClient.invalidateQueries({ queryKey: ["client-investments"] });
+    },
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message || "Failed to submit close request");
+      } else {
+        toast.error("Failed to submit close request");
       }
     },
   });

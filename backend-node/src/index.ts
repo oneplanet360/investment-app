@@ -4,15 +4,17 @@ import { ParsedEnvVariables } from './configs/app.config';
 import { initializeMongoConnection } from './configs/mongo.config';
 import { GlobalErrorMessages, GlobalSuccessMessages } from './constants';
 import { customLogger } from './utils';
+import { startRoiScheduler } from './cron/roiScheduler';
 
 const startServer = async () => {
   try {
     await initializeMongoConnection();
     const server = http.createServer(app);
 
-    server.listen(ParsedEnvVariables.PORT, () =>
-      customLogger.info(GlobalSuccessMessages.DEV_SERVER_STARTED)
-    );
+    server.listen(ParsedEnvVariables.PORT, () => {
+      customLogger.info(GlobalSuccessMessages.DEV_SERVER_STARTED);
+      startRoiScheduler();
+    });
   } catch (error) {
     customLogger.error(GlobalErrorMessages.DEV_SERVER_FAILED_TO_START, error);
     process.exit(1);

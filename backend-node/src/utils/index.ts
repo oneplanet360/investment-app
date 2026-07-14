@@ -6,6 +6,12 @@ import {
   customApiResponseWithPagination,
 } from './custom.response';
 
+import crypto from 'crypto';
+
+export const generateTransactionId = () => {
+  return crypto.randomBytes(8).toString('hex').toUpperCase();
+};
+
 export {
   customApiResponse,
   customApiResponseWithPagination,

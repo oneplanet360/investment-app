@@ -20,6 +20,7 @@ import {
   PieChart,
   Mail,
   Settings,
+  Network,
   type LucideIcon,
 } from "lucide-react";
 
@@ -154,6 +155,7 @@ export const sidebarMenu: SidebarMenuItem[] = [
     children: [
       { label: "All Agents", href: "/admin/agents", icon: Briefcase },
       { label: "Add Agent", href: "/admin/agents/add", icon: UserPlus },
+      { label: "Genealogy Tree", href: "/admin/agents/tree", icon: Network },
       {
         label: "Password Reset",
         href: "/admin/agents/password-reset",

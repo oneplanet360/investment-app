@@ -3,7 +3,8 @@ import {
   WithdrawalStatus,
   WithdrawalType,
 } from '../database/models/withdrawal.model';
-import { User, UserRole } from '../database/models/user.model';
+import { User, UserRole, Agent } from '../database/models/user.model';
+import mongoose from 'mongoose';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
 
@@ -73,31 +74,51 @@ export const updateWithdrawalStatusService = async (
   status: WithdrawalStatus,
   adminRemarks?: string
 ) => {
-  const withdrawal = await Withdrawal.findOne({ trxId }).populate('userId');
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (!withdrawal) {
-    throw new customError('Withdrawal not found', HttpStatusCode.NOT_FOUND);
+  try {
+    const withdrawal = await Withdrawal.findOne({ trxId }).populate('userId').session(session);
+
+    if (!withdrawal) {
+      throw new customError('Withdrawal not found', HttpStatusCode.NOT_FOUND);
+    }
+
+    if (withdrawal.status !== WithdrawalStatus.PENDING) {
+      throw new customError(
+        'Can only update pending withdrawals',
+        HttpStatusCode.BAD_REQUEST
+      );
+    }
+
+    if (status === WithdrawalStatus.REJECTED) {
+      if (withdrawal.type === WithdrawalType.COMMISSION) {
+        await Agent.findByIdAndUpdate(
+          withdrawal.userId,
+          { $inc: { commissionBalance: withdrawal.amount } },
+          { session }
+        );
+      } else {
+        await User.findByIdAndUpdate(
+          withdrawal.userId,
+          { $inc: { walletBalance: withdrawal.amount } },
+          { session }
+        );
+      }
+    }
+
+    withdrawal.status = status;
+    if (adminRemarks) {
+      withdrawal.adminRemarks = adminRemarks;
+    }
+
+    await withdrawal.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+    return withdrawal;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  if (withdrawal.status !== WithdrawalStatus.PENDING) {
-    throw new customError(
-      'Can only update pending withdrawals',
-      HttpStatusCode.BAD_REQUEST
-    );
-  }
-
-  if (status === WithdrawalStatus.REJECTED) {
-    // Refund the amount to the user's wallet
-    const user: any = withdrawal.userId;
-    user.walletBalance = (user.walletBalance || 0) + withdrawal.amount;
-    await user.save();
-  }
-
-  withdrawal.status = status;
-  if (adminRemarks) {
-    withdrawal.adminRemarks = adminRemarks;
-  }
-
-  await withdrawal.save();
-  return withdrawal;
 };

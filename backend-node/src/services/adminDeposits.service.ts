@@ -2,6 +2,7 @@ import { Deposit, DepositStatus } from '../database/models/deposit.model';
 import { User } from '../database/models/user.model';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
+import mongoose from 'mongoose';
 
 export const getDepositsService = async (
   page: number = 1,
@@ -64,35 +65,46 @@ export const updateDepositStatusService = async (
   status: DepositStatus,
   adminRemarks?: string
 ) => {
-  const deposit = await Deposit.findOne({ trxId }).populate('userId');
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (!deposit) {
-    throw new customError('Deposit not found', HttpStatusCode.NOT_FOUND);
+  try {
+    const deposit = await Deposit.findOne({ trxId }).populate('userId').session(session);
+
+    if (!deposit) {
+      throw new customError('Deposit not found', HttpStatusCode.NOT_FOUND);
+    }
+
+    if (
+      deposit.status === DepositStatus.SUCCESSFUL ||
+      deposit.status === DepositStatus.REJECTED
+    ) {
+      throw new customError(
+        `Cannot update a deposit that is already ${deposit.status}`,
+        HttpStatusCode.BAD_REQUEST
+      );
+    }
+
+    deposit.status = status;
+    if (adminRemarks) {
+      deposit.adminRemarks = adminRemarks;
+    }
+
+    if (status === DepositStatus.SUCCESSFUL) {
+      await User.findByIdAndUpdate(
+        deposit.userId,
+        { $inc: { walletBalance: deposit.convertedAmount } },
+        { session }
+      );
+    }
+
+    await deposit.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+    return deposit;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  // Prevent modifying completed deposits
-  if (
-    deposit.status === DepositStatus.SUCCESSFUL ||
-    deposit.status === DepositStatus.REJECTED
-  ) {
-    throw new customError(
-      `Cannot update a deposit that is already ${deposit.status}`,
-      HttpStatusCode.BAD_REQUEST
-    );
-  }
-
-  deposit.status = status;
-  if (adminRemarks) {
-    deposit.adminRemarks = adminRemarks;
-  }
-
-  // If successful, credit the user's wallet
-  if (status === DepositStatus.SUCCESSFUL) {
-    const user: any = deposit.userId;
-    user.walletBalance = (user.walletBalance || 0) + deposit.convertedAmount;
-    await user.save();
-  }
-
-  await deposit.save();
-  return deposit;
 };

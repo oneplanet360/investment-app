@@ -19,19 +19,20 @@ export default function KYC() {
 
   const [documentType, setDocumentType] = useState("Passport");
   const [documentNumber, setDocumentNumber] = useState("");
-  const [documentFrontUrl, setDocumentFrontUrl] = useState("");
-  const [documentBackUrl, setDocumentBackUrl] = useState("");
+  const [documentFront, setDocumentFront] = useState<File | null>(null);
+  const [documentBack, setDocumentBack] = useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!documentFrontUrl) return;
+    if (!documentFront) return;
 
-    submitKyc({
-      documentType,
-      documentNumber,
-      documentFrontUrl,
-      documentBackUrl,
-    });
+    const formData = new FormData();
+    formData.append('documentType', documentType);
+    if (documentNumber) formData.append('documentNumber', documentNumber);
+    formData.append('documentFront', documentFront);
+    if (documentBack) formData.append('documentBack', documentBack);
+
+    submitKyc(formData as any);
   };
 
   if (isLoading) {
@@ -158,7 +159,7 @@ export default function KYC() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-400">
-              Document Front Image URL *
+              Document Front Image *
             </label>
             <div className="relative">
               <UploadCloud
@@ -166,19 +167,18 @@ export default function KYC() {
                 size={18}
               />
               <input
-                type="url"
+                type="file"
+                accept="image/*,application/pdf"
                 required
-                value={documentFrontUrl}
-                onChange={(e) => setDocumentFrontUrl(e.target.value)}
-                placeholder="https://example.com/front-id.jpg"
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                onChange={(e) => setDocumentFront(e.target.files?.[0] || null)}
+                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-500/10 file:text-orange-500 hover:file:bg-orange-500/20"
               />
             </div>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-400">
-              Document Back Image URL (Optional)
+              Document Back Image (Optional)
             </label>
             <div className="relative">
               <UploadCloud
@@ -186,11 +186,10 @@ export default function KYC() {
                 size={18}
               />
               <input
-                type="url"
-                value={documentBackUrl}
-                onChange={(e) => setDocumentBackUrl(e.target.value)}
-                placeholder="https://example.com/back-id.jpg"
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={(e) => setDocumentBack(e.target.files?.[0] || null)}
+                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-500/10 file:text-orange-500 hover:file:bg-orange-500/20"
               />
             </div>
           </div>

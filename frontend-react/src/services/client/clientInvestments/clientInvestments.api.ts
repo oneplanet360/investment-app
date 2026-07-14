@@ -12,3 +12,13 @@ export const createInvestmentFn = async (payload: {
   );
   return response.data;
 };
+
+export const getClientInvestmentsFn = async (): Promise<ApiResponse<IInvestment[]>> => {
+  const response = await axiosInstance.get(`${CLIENT_INVESTMENT_URL}/`);
+  return response.data;
+};
+
+export const closeInvestmentFn = async (payload: { trxId: string }): Promise<ApiResponse<IInvestment>> => {
+  const response = await axiosInstance.post(`${CLIENT_INVESTMENT_URL}/close`, payload);
+  return response.data;
+};

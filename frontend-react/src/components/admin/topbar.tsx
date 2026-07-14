@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Menu,
   Search,
@@ -9,29 +9,53 @@ import {
   ChevronDown,
   User,
   KeyRound,
-  LogOut,
+  LogOut
 } from "lucide-react";
 import CommandPalette from "./command-paletter";
 import { useAdminSignOut } from "../../services/admin/adminAuth/adminAuth.query";
+import { useAdminNotificationsQuery, useMarkNotificationRead, useMarkAllNotificationsRead } from "../../services/admin/adminNotifications/adminNotifications.query";
+import { PROTECTED_ROUTES } from "../../routes/common/routes";
 
 type TopbarProps = {
   onMenuClick: () => void;
 };
 
+const timeAgo = (dateStr: string) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+};
+
 export default function Topbar({ onMenuClick }: TopbarProps) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { mutate: signOut } = useAdminSignOut();
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
-  // Close user dropdown on outside click
+  const { mutate: signOut } = useAdminSignOut();
+  const { data: notifData } = useAdminNotificationsQuery({ limit: 4 });
+  const { mutate: markRead } = useMarkNotificationRead();
+  const { mutate: markAllRead } = useMarkAllNotificationsRead();
+
+  const notifications = notifData?.data?.notifications || [];
+  const unreadCount = notifData?.data?.unreadCount || 0;
+
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(e.target as Node)) {
+        setNotificationsOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -50,9 +74,17 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  const handleNotificationClick = (id: string, isRead: boolean) => {
+    if (!isRead) {
+      markRead(id);
+    }
+    setNotificationsOpen(false);
+    navigate(PROTECTED_ROUTES.ADMINNOTIFICATIONS);
+  };
+
   return (
     <>
-      <header className="h-14 bg-(--theme-sidebar) flex items-center px-4 gap-3 sticky top-0 z-10">
+      <header className="h-14 bg-[var(--theme-sidebar)] flex items-center px-4 gap-3 sticky top-0 z-10">
         <button
           onClick={onMenuClick}
           className="lg:hidden text-[var(--theme-sidebar-fg-muted)] hover:text-[var(--theme-sidebar-fg)] p-1"
@@ -65,10 +97,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
           onClick={() => setPaletteOpen(true)}
           className="flex items-center gap-2 flex-1 max-w-sm border border-[var(--theme-sidebar-fg)] opacity-60 hover:opacity-100 rounded-md px-3 py-1.5 text-left transition-opacity"
         >
-          <Search
-            size={15}
-            className="text-[var(--theme-sidebar-fg)] shrink-0"
-          />
+          <Search size={15} className="text-[var(--theme-sidebar-fg)] shrink-0" />
           <span className="flex-1 text-sm text-[var(--theme-sidebar-fg)] select-none">
             Search here...
           </span>
@@ -76,9 +105,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
             <kbd className="flex items-center gap-0.5 text-[10px] text-[var(--theme-sidebar-fg)] border border-[var(--theme-sidebar-fg)] rounded px-1 py-0.5 font-mono">
               ctrl
             </kbd>
-            <span className="text-[var(--theme-sidebar-fg)] text-[10px]">
-              +
-            </span>
+            <span className="text-[var(--theme-sidebar-fg)] text-[10px]">+</span>
             <kbd className="flex items-center text-[10px] text-[var(--theme-sidebar-fg)] border border-[var(--theme-sidebar-fg)] rounded px-1 py-0.5 font-mono">
               K
             </kbd>
@@ -90,17 +117,93 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
             <Globe size={18} />
           </button>
 
-          <button className="relative w-9 h-9 flex items-center justify-center text-[var(--theme-sidebar-fg-muted)] hover:text-[var(--theme-sidebar-fg)] rounded-md transition-colors">
-            <Bell size={18} />
-            <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-              9+
-            </span>
-          </button>
+          {/* Notifications Dropdown */}
+          <div className="relative" ref={notificationsRef}>
+            <button 
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              className="relative w-9 h-9 flex items-center justify-center text-[var(--theme-sidebar-fg-muted)] hover:text-[var(--theme-sidebar-fg)] rounded-md transition-colors"
+            >
+              <Bell size={18} />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
+            
+            {notificationsOpen && (
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden z-50">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                  <h3 className="font-semibold text-gray-800">Notifications</h3>
+                  {unreadCount > 0 && (
+                    <button 
+                      onClick={() => markAllRead()}
+                      className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+                
+                <div className="max-h-80 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="py-8 text-center text-gray-500 text-sm">
+                      No notifications yet.
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-50">
+                      {notifications.map((notif: any) => (
+                        <div 
+                          key={notif._id}
+                          onClick={() => handleNotificationClick(notif._id, notif.isRead)}
+                          className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notif.isRead ? 'bg-indigo-50/30' : ''}`}
+                        >
+                          <div className="flex gap-3">
+                            <div className="mt-0.5">
+                              {notif.isRead ? (
+                                <Bell size={16} className="text-gray-400" />
+                              ) : (
+                                <div className="w-4 h-4 rounded-full bg-indigo-100 flex items-center justify-center">
+                                  <div className="w-2 h-2 rounded-full bg-indigo-600"></div>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm ${!notif.isRead ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                                {notif.title}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
+                                {notif.message}
+                              </p>
+                              <p className="text-[10px] text-gray-400 mt-1">
+                                {timeAgo(notif.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="border-t border-gray-100 p-2">
+                  <Link 
+                    to={PROTECTED_ROUTES.ADMINNOTIFICATIONS}
+                    onClick={() => setNotificationsOpen(false)}
+                    className="block w-full text-center py-2 text-sm text-indigo-600 font-medium rounded-md hover:bg-indigo-50 transition-colors"
+                  >
+                    View All Notifications
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
 
           <button className="w-9 h-9 flex items-center justify-center text-[var(--theme-sidebar-fg-muted)] hover:text-[var(--theme-sidebar-fg)] rounded-md transition-colors">
             <Wrench size={18} />
           </button>
 
+          {/* User Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen((p) => !p)}
@@ -156,10 +259,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
         </div>
       </header>
 
-      <CommandPalette
-        open={paletteOpen}
-        onClose={() => setPaletteOpen(false)}
-      />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </>
   );
 }

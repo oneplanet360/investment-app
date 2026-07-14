@@ -4,6 +4,7 @@ import { ApiSuccessMessages, HttpStatusCode } from '../../constants';
 import {
   signInAdminServices,
   signInClientServices,
+  impersonateClientService,
 } from '../../services/auth.service';
 import { customApiResponse, customAsyncWrapper } from '../../utils';
 import {
@@ -116,6 +117,38 @@ export const verifyClientController = customAsyncWrapper(
     customApiResponse({
       response,
       statusCode: HttpStatusCode.OK,
+      data: user,
+    });
+  }
+);
+
+export const adminImpersonateUserController = customAsyncWrapper(
+  async (request: Request, response: Response) => {
+    const { userId } = request.body;
+    
+    if (!userId) {
+      return response.status(HttpStatusCode.BAD_REQUEST).json({
+        success: false,
+        message: 'userId is required',
+      });
+    }
+
+    const { user, token } = await impersonateClientService(userId);
+
+    const cookieMaxAge = 1 * 60 * 60 * 1000; // 1 hour for impersonation
+
+    response.cookie('clientAccessToken', token, {
+      httpOnly: true,
+      secure: ParsedEnvVariables.NODE_ENV === 'production',
+      sameSite:
+        ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: cookieMaxAge,
+    });
+
+    customApiResponse({
+      response,
+      statusCode: HttpStatusCode.OK,
+      message: 'Impersonation successful',
       data: user,
     });
   }

@@ -8,6 +8,7 @@ import {
   impersonateAgentApi,
   toggleBanAgentApi,
   sendNotificationAgentApi,
+  getAdminAgentTreeFn,
 } from "./adminAgents.api";
 
 export const useCreateAgent = () => {
@@ -84,5 +85,13 @@ export const useSendNotificationAgent = () => {
         );
       }
     },
+  });
+};
+
+export const useAdminAgentTreeQuery = (username: string) => {
+  return useQuery({
+    queryKey: ["adminAgentTree", username],
+    queryFn: () => getAdminAgentTreeFn(username),
+    enabled: !!username,
   });
 };

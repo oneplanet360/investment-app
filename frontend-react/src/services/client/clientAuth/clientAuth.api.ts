@@ -8,7 +8,7 @@ export const clientLoginFn = async (
   payload: ClientSignInSchemaType,
 ): Promise<ApiResponse<{ token: string; user: IUser }>> => {
   const response = await axiosInstance.post(
-    `${CLIENT_AUTH_URL}/login`,
+    `${CLIENT_AUTH_URL}/sign-in`,
     payload,
   );
   return response.data;

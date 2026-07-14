@@ -33,7 +33,7 @@ import { ParsedEnvVariables } from '../configs';
 export const toggleBanInvestorController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
-    const user = await toggleUserBanService(username, 'INVESTOR');
+    const user = await toggleUserBanService(username as string, 'INVESTOR');
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.OK,
@@ -47,7 +47,7 @@ export const sendNotificationInvestorController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
     const { title, message } = req.body;
-    const notification = await sendNotificationService(username, 'INVESTOR', title, message);
+    const notification = await sendNotificationService(username as string, 'INVESTOR', title, message);
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.CREATED,
@@ -60,7 +60,7 @@ export const sendNotificationInvestorController = customAsyncWrapper(
 export const impersonateInvestorController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
-    const { user, token } = await impersonateUserService(username, 'INVESTOR');
+    const { user, token } = await impersonateUserService(username as string, 'INVESTOR');
 
     const cookieMaxAge = 24 * 60 * 60 * 1000;
     res.cookie('clientAccessToken', token, {
@@ -82,7 +82,7 @@ export const impersonateInvestorController = customAsyncWrapper(
         export const getInvestorDetailController = customAsyncWrapper(
           async (req: Request, res: Response) => {
             const { username } = req.params;
-            const data = await getAdminUserDetailService(username, 'INVESTOR');
+            const data = await getAdminUserDetailService(username as string, 'INVESTOR');
             if (!data) {
               return customApiResponse({
                 response: res,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCreateInvestment } from "../../../services/client/clientInvestments/clientInvestments.query";
+import { useClientWalletQuery, useClientWalletTransactionsQuery } from "../../../services/client/clientWallet/clientWallet.query";
 import {
   TrendingUp,
   ArrowUpRight,
@@ -13,6 +14,11 @@ import {
 export default function InvestorDashboard() {
   const [activeTab] = useState("dashboard");
   const { mutate: createInvestment, isPending } = useCreateInvestment();
+  const { data: walletData } = useClientWalletQuery();
+  const { data: txData } = useClientWalletTransactionsQuery();
+
+  const wallet: any = (walletData as any)?.data || {};
+  const transactions: any[] = (txData as any)?.transactions || [];
 
   // Render dummy content depending on activeTab
   const renderContent = () => {
@@ -25,8 +31,8 @@ export default function InvestorDashboard() {
               {[
                 {
                   label: "Total Balance",
-                  value: "$12,450.80",
-                  change: "+12.5%",
+                  value: `$${(wallet.walletBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                  change: "Available",
                   icon: Wallet,
                   color:
                     "from-orange-500/20 to-amber-500/10 border-orange-500/30",
@@ -34,8 +40,8 @@ export default function InvestorDashboard() {
                 },
                 {
                   label: "Active Investments",
-                  value: "$8,200.00",
-                  change: "+8.3%",
+                  value: `$${(wallet.investmentBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                  change: "Total Invested",
                   icon: TrendingUp,
                   color:
                     "from-emerald-500/20 to-teal-500/10 border-emerald-500/30",
@@ -43,16 +49,16 @@ export default function InvestorDashboard() {
                 },
                 {
                   label: "Total Deposits",
-                  value: "$15,000.00",
-                  change: "+15.0%",
+                  value: `$${(wallet.totalDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                  change: "All time",
                   icon: DollarSign,
                   color: "from-blue-500/20 to-indigo-500/10 border-blue-500/30",
                   iconColor: "text-blue-500",
                 },
                 {
-                  label: "Ref. Commission",
-                  value: "$1,250.00",
-                  change: "+24.1%",
+                  label: "Total ROI",
+                  value: `$${(wallet.roiBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                  change: "Earned",
                   icon: Percent,
                   color:
                     "from-purple-500/20 to-pink-500/10 border-purple-500/30",
@@ -79,7 +85,7 @@ export default function InvestorDashboard() {
                     </h3>
                     <div className="flex items-center gap-1 mt-1 text-xs text-emerald-400 font-medium">
                       <ArrowUpRight size={14} />
-                      <span>{stat.change} this month</span>
+                      <span>{stat.change}</span>
                     </div>
                   </div>
                 </div>
@@ -97,29 +103,7 @@ export default function InvestorDashboard() {
                   </button>
                 </div>
                 <div className="divide-y divide-[#222]">
-                  {[
-                    {
-                      desc: "Deposit via Bitcoin Wallet",
-                      date: "July 8, 2026 09:12 AM",
-                      amount: "+$2,500.00",
-                      status: "Completed",
-                      type: "in",
-                    },
-                    {
-                      desc: "Invested in Gold Premium Plan",
-                      date: "July 7, 2026 03:45 PM",
-                      amount: "-$5,000.00",
-                      status: "Processing",
-                      type: "out",
-                    },
-                    {
-                      desc: "Withdrawal to Binance Account",
-                      date: "July 5, 2026 11:20 AM",
-                      amount: "-$850.00",
-                      status: "Completed",
-                      type: "out",
-                    },
-                  ].map((tx, idx) => (
+                  {transactions.slice(0, 5).map((tx: any, idx: number) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
@@ -127,12 +111,12 @@ export default function InvestorDashboard() {
                       <div className="flex items-center gap-3">
                         <div
                           className={`p-2 rounded-xl ${
-                            tx.type === "in"
+                            tx.transactionType === "DEPOSIT"
                               ? "bg-emerald-500/10 text-emerald-500"
                               : "bg-red-500/10 text-red-500"
                           }`}
                         >
-                          {tx.type === "in" ? (
+                          {tx.transactionType === "DEPOSIT" ? (
                             <ArrowDownLeft size={16} />
                           ) : (
                             <ArrowUpRightIcon size={16} />
@@ -140,26 +124,26 @@ export default function InvestorDashboard() {
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-white leading-tight">
-                            {tx.desc}
+                            {tx.transactionType} ({tx.gateway})
                           </p>
                           <span className="text-[11px] text-zinc-500 mt-1 block">
-                            {tx.date}
+                            {new Date(tx.createdAt).toLocaleString()}
                           </span>
                         </div>
                       </div>
                       <div className="text-right">
                         <p
                           className={`text-sm font-bold ${
-                            tx.type === "in"
+                            tx.transactionType === "DEPOSIT"
                               ? "text-emerald-500"
                               : "text-zinc-300"
                           }`}
                         >
-                          {tx.amount}
+                          {tx.amountDisplay}
                         </p>
                         <span
                           className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${
-                            tx.status === "Completed"
+                            tx.status === "SUCCESSFUL" || tx.status === "APPROVED"
                               ? "bg-emerald-500/10 text-emerald-400"
                               : "bg-amber-500/10 text-amber-400"
                           }`}

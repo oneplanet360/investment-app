@@ -48,7 +48,7 @@ import { ParsedEnvVariables } from '../configs';
 export const toggleBanAgentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
-    const user = await toggleUserBanService(username, 'AGENT');
+    const user = await toggleUserBanService(username as string, 'AGENT');
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.OK,
@@ -62,7 +62,7 @@ export const sendNotificationAgentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
     const { title, message } = req.body;
-    const notification = await sendNotificationService(username, 'AGENT', title, message);
+    const notification = await sendNotificationService(username as string, 'AGENT', title, message);
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.CREATED,
@@ -75,7 +75,7 @@ export const sendNotificationAgentController = customAsyncWrapper(
 export const impersonateAgentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
-    const { user, token } = await impersonateUserService(username, 'AGENT');
+    const { user, token } = await impersonateUserService(username as string, 'AGENT');
 
     const cookieMaxAge = 24 * 60 * 60 * 1000;
     res.cookie('clientAccessToken', token, {
@@ -97,7 +97,7 @@ export const impersonateAgentController = customAsyncWrapper(
         export const getAgentDetailController = customAsyncWrapper(
           async (req: Request, res: Response) => {
             const { username } = req.params;
-            const data = await getAdminUserDetailService(username, 'AGENT');
+            const data = await getAdminUserDetailService(username as string, 'AGENT');
             if (!data) {
               return customApiResponse({
                 response: res,
@@ -126,6 +126,52 @@ export const impersonateAgentController = customAsyncWrapper(
       response: res,
       statusCode: HttpStatusCode.OK,
       message: 'Agent password reset successfully',
+    });
+  }
+);
+
+import { Agent, Investor } from '../database/models/user.model';
+import { customError } from '../utils';
+
+export const getAgentTreeAdminController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+
+    const getDownline = async (agentId: string, currentLevel: number): Promise<any> => {
+      if (currentLevel >= 4) {
+        const investors = await Investor.find({ referredBy: agentId }).select('name username email kycStatus createdAt');
+        return investors;
+      }
+
+      const subAgents = await Agent.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
+      const downline = [];
+      for (const sub of subAgents) {
+        const subAgentData = sub.toObject();
+        const children = await getDownline(sub._id.toString(), subAgentData.level);
+        if (subAgentData.level === 4) {
+          (subAgentData as any).investors = children;
+        } else {
+          (subAgentData as any).subAgents = children;
+        }
+        downline.push(subAgentData);
+      }
+      return downline;
+    };
+
+    const rootAgent = await Agent.findOne({ username }).select('name username email level kycStatus createdAt');
+    if (!rootAgent) throw new customError('Agent not found', 404);
+
+    const tree = rootAgent.toObject();
+    const children = await getDownline(rootAgent._id.toString(), tree.level);
+    if (tree.level === 4) {
+      (tree as any).investors = children;
+    } else {
+      (tree as any).subAgents = children;
+    }
+
+    res.status(HttpStatusCode.OK).json({
+      success: true,
+      tree,
     });
   }
 );

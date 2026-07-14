@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,6 +23,7 @@ export default function AgentResetPassword() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selected, setSelected] = useState<IAgent | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedQuery(query), 300);
@@ -148,12 +149,21 @@ export default function AgentResetPassword() {
               <label className="block text-xs text-gray-500 mb-1">
                 New Password <span className="text-red-500">*</span>
               </label>
-              <input
-                type="password"
-                {...register("newPassword")}
-                disabled={!selected}
-                className={inputCls(errors.newPassword?.message)}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  {...register("newPassword")}
+                  disabled={!selected}
+                  className={inputCls(errors.newPassword?.message) + " pr-10"}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
               {errors.newPassword && (
                 <p className="text-xs text-red-500 mt-1">
                   {errors.newPassword.message}
@@ -165,12 +175,21 @@ export default function AgentResetPassword() {
               <label className="block text-xs text-gray-500 mb-1">
                 Confirm Password <span className="text-red-500">*</span>
               </label>
-              <input
-                type="password"
-                {...register("confirmPassword")}
-                disabled={!selected}
-                className={inputCls(errors.confirmPassword?.message)}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  {...register("confirmPassword")}
+                  disabled={!selected}
+                  className={inputCls(errors.confirmPassword?.message) + " pr-10"}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-xs text-red-500 mt-1">
                   {errors.confirmPassword.message}

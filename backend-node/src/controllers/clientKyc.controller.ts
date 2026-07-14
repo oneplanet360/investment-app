@@ -12,15 +12,22 @@ export const submitKycController = customAsyncWrapper(
       throw new customError('Unauthorized', HttpStatusCode.UNAUTHORIZED);
     }
 
-    const { documentType, documentNumber, documentFrontUrl, documentBackUrl } = req.body;
+    const { documentType, documentNumber } = req.body;
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    if (!documentType || !documentFrontUrl) {
-      throw new customError('Document Type and Document Front URL are required', HttpStatusCode.BAD_REQUEST);
+    const documentFront = files?.['documentFront']?.[0];
+    const documentBack = files?.['documentBack']?.[0];
+
+    if (!documentType || !documentFront) {
+      throw new customError('Document Type and Document Front Image are required', HttpStatusCode.BAD_REQUEST);
     }
+
+    const documentFrontUrl = `/uploads/kyc/${documentFront.filename}`;
+    const documentBackUrl = documentBack ? `/uploads/kyc/${documentBack.filename}` : '';
 
     // Check if user already has pending or verified KYC
     const existingKyc = await Kyc.findOne({ userId: req.user._id });
-    if (existingKyc && (existingKyc.status === KycStatus.PENDING || existingKyc.status === KycStatus.VERIFIED)) {
+    if (existingKyc && (existingKyc.status === KycStatus.PENDING || existingKyc.status === KycStatus.APPROVED)) {
       throw new customError(`Cannot submit. Current KYC status is ${existingKyc.status}`, HttpStatusCode.BAD_REQUEST);
     }
 

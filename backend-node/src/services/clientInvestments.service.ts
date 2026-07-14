@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
 import { Investor, Agent } from '../database/models/user.model';
@@ -7,47 +7,90 @@ import { Setting } from '../database/models/setting.model';
 import { Commission, CommissionStatus } from '../database/models/commission.model';
 import crypto from 'crypto';
 
+export const getClientInvestmentsService = async (userId: string) => {
+  return await Investment.find({ userId }).sort({ createdAt: -1 });
+};
+
+export const closeInvestmentRequestService = async (userId: string, trxId: string) => {
+  const investment = await Investment.findOne({ userId, trxId });
+  if (!investment) {
+    throw new customError('Investment not found', HttpStatusCode.NOT_FOUND);
+  }
+  if (investment.status !== InvestmentStatus.ACTIVE) {
+    throw new customError('Only active investments can be closed', HttpStatusCode.BAD_REQUEST);
+  }
+  
+  investment.status = InvestmentStatus.CLOSE_REQUEST;
+  await investment.save();
+  return investment;
+};
+
 /**
- * Creates an investment and triggers the commission distribution flow.
+ * Creates an investment and triggers the commission distribution flow using a transaction.
  */
 export const createInvestmentService = async (
   userId: string,
-  amount: number
+  amount: number,
+  type: InvestmentType = InvestmentType.INITIAL
 ) => {
-  const investor = await Investor.findById(userId);
-  if (!investor) {
-    throw new customError('Investor not found', HttpStatusCode.NOT_FOUND);
+  if (amount <= 0) {
+    throw new customError('Investment amount must be greater than 0', HttpStatusCode.BAD_REQUEST);
   }
 
-  // Ensure investor has enough wallet balance
-  if (investor.walletBalance < amount) {
-    throw new customError('Insufficient wallet balance to invest', HttpStatusCode.BAD_REQUEST);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const investor = await Investor.findById(userId).session(session);
+    if (!investor) {
+      throw new customError('Investor not found', HttpStatusCode.NOT_FOUND);
+    }
+
+    if (investor.kycStatus !== 'APPROVED') {
+      throw new customError('KYC must be APPROVED to invest', HttpStatusCode.BAD_REQUEST);
+    }
+
+    if (investor.walletBalance < amount) {
+      throw new customError('Insufficient wallet balance to invest', HttpStatusCode.BAD_REQUEST);
+    }
+
+    // Atomic update for balances to prevent double spending
+    const updatedInvestor = await Investor.findOneAndUpdate(
+      { _id: investor._id, walletBalance: { $gte: amount } },
+      { $inc: { walletBalance: -amount, investmentBalance: amount } },
+      { new: true, session }
+    );
+
+    if (!updatedInvestor) {
+      throw new customError('Insufficient balance or concurrent update', HttpStatusCode.BAD_REQUEST);
+    }
+
+    const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
+
+    const nextRoiDate = new Date();
+    nextRoiDate.setMonth(nextRoiDate.getMonth() + 1);
+
+    const investment = await Investment.create([{
+      userId: investor._id,
+      trxId,
+      amount,
+      type,
+      status: InvestmentStatus.ACTIVE,
+      roiCycleStartDate: new Date(),
+      nextRoiDate: nextRoiDate,
+    }], { session });
+
+    await distributeCommissionService(investor._id as Types.ObjectId, investment[0]._id as Types.ObjectId, amount, session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return investment[0];
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  // Deduct from wallet and add to investment balance
-  investor.walletBalance -= amount;
-  investor.investmentBalance += amount;
-  await investor.save();
-
-  const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
-
-  const nextRoiDate = new Date();
-  nextRoiDate.setMonth(nextRoiDate.getMonth() + 1); // Basic 1-month ROI cycle
-
-  const investment = await Investment.create({
-    userId: investor._id,
-    trxId,
-    amount,
-    type: InvestmentType.INITIAL, // Assuming first or basic
-    status: InvestmentStatus.ACTIVE,
-    roiCycleStartDate: new Date(),
-    nextRoiDate: nextRoiDate,
-  });
-
-  // Distribute commissions up the sponsorship tree
-  await distributeCommissionService(investor._id as Types.ObjectId, investment._id as Types.ObjectId, amount);
-
-  return investment;
 };
 
 /**
@@ -56,49 +99,49 @@ export const createInvestmentService = async (
 export const distributeCommissionService = async (
   investorId: Types.ObjectId,
   investmentId: Types.ObjectId,
-  amount: number
+  amount: number,
+  session: mongoose.mongo.ClientSession
 ) => {
-  const settings = await Setting.findOne();
+  const settings = await Setting.findOne().session(session);
   if (!settings || !settings.commissionLevels || settings.commissionLevels.length === 0) {
     return; // No commission settings configured
   }
 
-  const investor = await Investor.findById(investorId);
+  const investor = await Investor.findById(investorId).session(session);
   if (!investor || !investor.referredBy) {
-    return; // Investor has no sponsor (Level 1)
+    return; 
   }
 
   let currentAgentId: Types.ObjectId | undefined = investor.referredBy;
 
   for (let currentLevel = 1; currentLevel <= 4; currentLevel++) {
     if (!currentAgentId) {
-      break; // End of the chain
+      break; 
     }
 
-    // Find the commission rate for this level
     const levelSetting = settings.commissionLevels.find((lvl) => lvl.level === currentLevel);
     if (!levelSetting || levelSetting.percentage <= 0) {
-      // Fetch the next agent anyway in case a higher level has commission
-      const tempAgent = await Agent.findById(currentAgentId).select('sponsor');
+      const tempAgent = await Agent.findById(currentAgentId).select('sponsor').session(session);
       currentAgentId = tempAgent?.sponsor;
       continue;
     }
 
-    const agent = await Agent.findById(currentAgentId);
+    const agent = await Agent.findById(currentAgentId).session(session);
     if (!agent) {
-      break; // Agent not found in DB
+      break; 
     }
 
     const commissionAmount = (amount * levelSetting.percentage) / 100;
 
-    // Award commission to agent
-    agent.commissionBalance += commissionAmount;
-    await agent.save();
+    await Agent.findByIdAndUpdate(
+      agent._id,
+      { $inc: { commissionBalance: commissionAmount } },
+      { session }
+    );
 
     const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
 
-    // Create commission log
-    await Commission.create({
+    await Commission.create([{
       trxId: `COM-${trxId}`,
       agentId: agent._id,
       investorId: investorId,
@@ -107,9 +150,8 @@ export const distributeCommissionService = async (
       rate: levelSetting.percentage,
       amount: commissionAmount,
       status: CommissionStatus.PAID,
-    });
+    }], { session });
 
-    // Move to the next level (this agent's sponsor)
     currentAgentId = agent.sponsor;
   }
 };
