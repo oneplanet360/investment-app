@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useCreateInvestment } from "../../../services/client/clientInvestments/clientInvestments.query";
-import { useClientWalletQuery, useClientWalletTransactionsQuery } from "../../../services/client/clientWallet/clientWallet.query";
+import {
+  useClientWalletQuery,
+  useClientWalletTransactionsQuery,
+} from "../../../services/client/clientWallet/clientWallet.query";
 import {
   TrendingUp,
   ArrowUpRight,
@@ -108,10 +111,11 @@ export default function InvestorDashboard() {
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`p-2 rounded-xl ${tx.transactionType === "DEPOSIT"
-                            ? "bg-emerald-500/10 text-emerald-500"
-                            : "bg-red-500/10 text-red-500"
-                            }`}
+                          className={`p-2 rounded-xl ${
+                            tx.transactionType === "DEPOSIT"
+                              ? "bg-emerald-500/10 text-emerald-500"
+                              : "bg-red-500/10 text-red-500"
+                          }`}
                         >
                           {tx.transactionType === "DEPOSIT" ? (
                             <ArrowDownLeft size={16} />
@@ -130,18 +134,21 @@ export default function InvestorDashboard() {
                       </div>
                       <div className="text-right">
                         <p
-                          className={`text-sm font-bold ${tx.transactionType === "DEPOSIT"
-                            ? "text-emerald-500"
-                            : "text-zinc-300"
-                            }`}
+                          className={`text-sm font-bold ${
+                            tx.transactionType === "DEPOSIT"
+                              ? "text-emerald-500"
+                              : "text-zinc-300"
+                          }`}
                         >
                           {tx.amountDisplay}
                         </p>
                         <span
-                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${tx.status === "SUCCESSFUL" || tx.status === "APPROVED"
-                            ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-amber-500/10 text-amber-400"
-                            }`}
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${
+                            tx.status === "SUCCESSFUL" ||
+                            tx.status === "APPROVED"
+                              ? "bg-emerald-500/10 text-emerald-400"
+                              : "bg-amber-500/10 text-amber-400"
+                          }`}
                         >
                           {tx.status}
                         </span>
@@ -150,8 +157,6 @@ export default function InvestorDashboard() {
                   ))}
                 </div>
               </div>
-
-
             </div>
           </div>
         );

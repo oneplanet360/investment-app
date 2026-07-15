@@ -74,10 +74,7 @@ export const clientAuthMiddleware = customAsyncWrapper(
       const currentUser = await User.findById(decoded._id).select('-password');
 
       if (!currentUser) {
-        throw new customError(
-          'User not found',
-          HttpStatusCode.UNAUTHORIZED
-        );
+        throw new customError('User not found', HttpStatusCode.UNAUTHORIZED);
       }
 
       (req as any).user = currentUser;

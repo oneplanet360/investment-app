@@ -20,14 +20,17 @@ export const getAdminNotificationsController = customAsyncWrapper(
       .sort({ createdAt: -1 })
       .limit(Number(limit));
 
-    const unreadCount = await Notification.countDocuments({ userId: req.user._id, isRead: false });
+    const unreadCount = await Notification.countDocuments({
+      userId: req.user._id,
+      isRead: false,
+    });
 
     res.status(HttpStatusCode.OK).json({
       success: true,
       data: {
         notifications,
-        unreadCount
-      }
+        unreadCount,
+      },
     });
   }
 );
@@ -53,7 +56,7 @@ export const markNotificationReadController = customAsyncWrapper(
     res.status(HttpStatusCode.OK).json({
       success: true,
       message: 'Notification marked as read',
-      data: notification
+      data: notification,
     });
   }
 );

@@ -83,14 +83,23 @@ export const updateInvestmentStatusService = async (
     }
 
     if (investment.status === status) {
-      throw new customError(`Investment is already ${status}`, HttpStatusCode.BAD_REQUEST);
+      throw new customError(
+        `Investment is already ${status}`,
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
-    const user = await User.findById(investment.userId).session(session) as any;
+    const user = (await User.findById(investment.userId).session(
+      session
+    )) as any;
 
     // Handle approval logic (PENDING -> ACTIVE)
-    if (status === InvestmentStatus.ACTIVE && investment.status === InvestmentStatus.PENDING) {
-      user.investmentBalance = (user.investmentBalance || 0) + investment.amount;
+    if (
+      status === InvestmentStatus.ACTIVE &&
+      investment.status === InvestmentStatus.PENDING
+    ) {
+      user.investmentBalance =
+        (user.investmentBalance || 0) + investment.amount;
       await user.save({ session });
     }
 
@@ -104,10 +113,16 @@ export const updateInvestmentStatusService = async (
       }
 
       // Decrement active investment balance if closing an active one
-      if (investment.status === InvestmentStatus.ACTIVE || investment.status === InvestmentStatus.CLOSE_REQUEST) {
-         user.investmentBalance = Math.max((user.investmentBalance || 0) - investment.amount, 0);
+      if (
+        investment.status === InvestmentStatus.ACTIVE ||
+        investment.status === InvestmentStatus.CLOSE_REQUEST
+      ) {
+        user.investmentBalance = Math.max(
+          (user.investmentBalance || 0) - investment.amount,
+          0
+        );
       }
-      
+
       // Payout the initial deposit (ROI has already been paid directly)
       const payoutAmount = investment.amount;
       // Since wallet is for withdrawals, we add the returned principal to the roiBalance or walletBalance?

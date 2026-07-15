@@ -1,5 +1,14 @@
 import { Router } from 'express';
-import { assignInvestorController, getAllInvestorsController, assignAgentController, getAgentTreeController, searchUnassignedUserController, getAgentCommissionsController, getAgentDashboardStatsController, createInvestorController } from '../controllers/clientAgent.controller';
+import {
+  assignInvestorController,
+  getAllInvestorsController,
+  assignAgentController,
+  getAgentTreeController,
+  searchUnassignedUserController,
+  getAgentCommissionsController,
+  getAgentDashboardStatsController,
+  createInvestorController,
+} from '../controllers/clientAgent.controller';
 import { clientAuthMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();

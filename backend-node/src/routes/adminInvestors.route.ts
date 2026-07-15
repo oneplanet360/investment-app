@@ -6,7 +6,7 @@ import {
   resetInvestorPasswordController,
   impersonateInvestorController,
   toggleBanInvestorController,
-  sendNotificationInvestorController
+  sendNotificationInvestorController,
 } from '../controllers/adminInvestors.controller';
 
 const router = Router();

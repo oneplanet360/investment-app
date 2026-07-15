@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createInvestmentFn, getClientInvestmentsFn, closeInvestmentFn } from "./clientInvestments.api";
+import {
+  createInvestmentFn,
+  getClientInvestmentsFn,
+  closeInvestmentFn,
+} from "./clientInvestments.api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -45,7 +49,9 @@ export const useCloseInvestmentMutation = () => {
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Failed to submit close request");
+        toast.error(
+          error.response?.data?.message || "Failed to submit close request",
+        );
       } else {
         toast.error("Failed to submit close request");
       }

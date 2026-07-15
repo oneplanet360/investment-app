@@ -45,16 +45,25 @@ export default function TopUps() {
               </tr>
             ) : (
               deposits.map((deposit: any) => (
-                <tr key={deposit._id} className="hover:bg-[#1a1a1a] transition-colors">
-                  <td className="px-4 py-3 font-medium text-white">{deposit.trxId}</td>
-                  <td className="px-4 py-3 text-white">${deposit.amount.toLocaleString()}</td>
+                <tr
+                  key={deposit._id}
+                  className="hover:bg-[#1a1a1a] transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium text-white">
+                    {deposit.trxId}
+                  </td>
+                  <td className="px-4 py-3 text-white">
+                    ${deposit.amount.toLocaleString()}
+                  </td>
                   <td className="px-4 py-3">{deposit.gateway}</td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 text-[10px] font-semibold tracking-wide rounded-md bg-emerald-500/10 text-emerald-400">
                       {deposit.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{new Date(deposit.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3">
+                    {new Date(deposit.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))
             )}

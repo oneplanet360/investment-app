@@ -2,24 +2,37 @@ import mongoose, { Types } from 'mongoose';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
 import { Investor, Agent } from '../database/models/user.model';
-import { Investment, InvestmentType, InvestmentStatus } from '../database/models/investment.model';
+import {
+  Investment,
+  InvestmentType,
+  InvestmentStatus,
+} from '../database/models/investment.model';
 import { Setting } from '../database/models/setting.model';
-import { Commission, CommissionStatus } from '../database/models/commission.model';
+import {
+  Commission,
+  CommissionStatus,
+} from '../database/models/commission.model';
 import crypto from 'crypto';
 
 export const getClientInvestmentsService = async (userId: string) => {
   return await Investment.find({ userId }).sort({ createdAt: -1 });
 };
 
-export const closeInvestmentRequestService = async (userId: string, trxId: string) => {
+export const closeInvestmentRequestService = async (
+  userId: string,
+  trxId: string
+) => {
   const investment = await Investment.findOne({ userId, trxId });
   if (!investment) {
     throw new customError('Investment not found', HttpStatusCode.NOT_FOUND);
   }
   if (investment.status !== InvestmentStatus.ACTIVE) {
-    throw new customError('Only active investments can be closed', HttpStatusCode.BAD_REQUEST);
+    throw new customError(
+      'Only active investments can be closed',
+      HttpStatusCode.BAD_REQUEST
+    );
   }
-  
+
   investment.status = InvestmentStatus.CLOSE_REQUEST;
   await investment.save();
   return investment;
@@ -35,7 +48,10 @@ export const createInvestmentService = async (
   paymentProof: string
 ) => {
   if (amount <= 0) {
-    throw new customError('Investment amount must be greater than 0', HttpStatusCode.BAD_REQUEST);
+    throw new customError(
+      'Investment amount must be greater than 0',
+      HttpStatusCode.BAD_REQUEST
+    );
   }
 
   const session = await mongoose.startSession();
@@ -48,7 +64,10 @@ export const createInvestmentService = async (
     }
 
     if (investor.kycStatus !== 'APPROVED') {
-      throw new customError('KYC must be APPROVED to invest', HttpStatusCode.BAD_REQUEST);
+      throw new customError(
+        'KYC must be APPROVED to invest',
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
@@ -56,16 +75,21 @@ export const createInvestmentService = async (
     const nextRoiDate = new Date();
     nextRoiDate.setMonth(nextRoiDate.getMonth() + 1);
 
-    const investment = await Investment.create([{
-      userId: investor._id,
-      trxId,
-      amount,
-      type,
-      status: InvestmentStatus.PENDING,
-      paymentProof,
-      roiCycleStartDate: new Date(),
-      nextRoiDate: nextRoiDate,
-    }], { session });
+    const investment = await Investment.create(
+      [
+        {
+          userId: investor._id,
+          trxId,
+          amount,
+          type,
+          status: InvestmentStatus.PENDING,
+          paymentProof,
+          roiCycleStartDate: new Date(),
+          nextRoiDate: nextRoiDate,
+        },
+      ],
+      { session }
+    );
 
     await session.commitTransaction();
     session.endSession();
@@ -88,33 +112,41 @@ export const distributeCommissionService = async (
   session: mongoose.mongo.ClientSession
 ) => {
   const settings = await Setting.findOne().session(session);
-  if (!settings || !settings.commissionLevels || settings.commissionLevels.length === 0) {
+  if (
+    !settings ||
+    !settings.commissionLevels ||
+    settings.commissionLevels.length === 0
+  ) {
     return; // No commission settings configured
   }
 
   const investor = await Investor.findById(investorId).session(session);
   if (!investor || !investor.referredBy) {
-    return; 
+    return;
   }
 
   let currentAgentId: Types.ObjectId | undefined = investor.referredBy;
-  const maxLevel = Math.max(...settings.commissionLevels.map(l => l.level));
+  const maxLevel = Math.max(...settings.commissionLevels.map((l) => l.level));
 
   for (let currentLevel = 1; currentLevel <= maxLevel; currentLevel++) {
     if (!currentAgentId) {
-      break; 
+      break;
     }
 
-    const levelSetting = settings.commissionLevels.find((lvl) => lvl.level === currentLevel);
+    const levelSetting = settings.commissionLevels.find(
+      (lvl) => lvl.level === currentLevel
+    );
     if (!levelSetting || levelSetting.percentage <= 0) {
-      const tempAgent = await Agent.findById(currentAgentId).select('sponsor').session(session);
+      const tempAgent = await Agent.findById(currentAgentId)
+        .select('sponsor')
+        .session(session);
       currentAgentId = tempAgent?.sponsor;
       continue;
     }
 
     const agent = await Agent.findById(currentAgentId).session(session);
     if (!agent) {
-      break; 
+      break;
     }
 
     const commissionAmount = (amount * levelSetting.percentage) / 100;
@@ -127,16 +159,21 @@ export const distributeCommissionService = async (
 
     const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
 
-    await Commission.create([{
-      trxId: `COM-${trxId}`,
-      agentId: agent._id,
-      investorId: investorId,
-      investmentId: investmentId,
-      level: currentLevel,
-      rate: levelSetting.percentage,
-      amount: commissionAmount,
-      status: CommissionStatus.PAID,
-    }], { session });
+    await Commission.create(
+      [
+        {
+          trxId: `COM-${trxId}`,
+          agentId: agent._id,
+          investorId: investorId,
+          investmentId: investmentId,
+          level: currentLevel,
+          rate: levelSetting.percentage,
+          amount: commissionAmount,
+          status: CommissionStatus.PAID,
+        },
+      ],
+      { session }
+    );
 
     currentAgentId = agent.sponsor;
   }

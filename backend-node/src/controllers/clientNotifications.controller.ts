@@ -7,8 +7,13 @@ export const getClientNotificationsController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const userId = req.user!._id;
 
-    const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
-    const unreadCount = await Notification.countDocuments({ userId, isRead: false });
+    const notifications = await Notification.find({ userId }).sort({
+      createdAt: -1,
+    });
+    const unreadCount = await Notification.countDocuments({
+      userId,
+      isRead: false,
+    });
 
     return customApiResponse({
       response: res,

@@ -28,7 +28,7 @@ export default function AssignUser() {
 
   const { mutate: assignSubAgent, isPending: isAssigningSubAgent } =
     useAssignClientSubAgent();
-    
+
   const { mutate: createInvestor, isPending: isCreatingInvestor } =
     useCreateClientInvestor();
 
@@ -60,12 +60,9 @@ export default function AssignUser() {
 
   const handleCreateInvestor = (e: React.FormEvent) => {
     e.preventDefault();
-    createInvestor(
-      formData,
-      {
-        onSuccess: () => navigate("/agent/all-investors"),
-      },
-    );
+    createInvestor(formData, {
+      onSuccess: () => navigate("/agent/all-investors"),
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,8 +84,8 @@ export default function AssignUser() {
             {isLevel4 ? "Create Investor" : "Assign User"}
           </h1>
           <p className="text-sm text-zinc-400">
-            {isLevel4 
-              ? "Create a new investor and add them directly under your downline." 
+            {isLevel4
+              ? "Create a new investor and add them directly under your downline."
               : "Search for unassigned users and add them as your sub-agent."}
           </p>
         </div>
@@ -98,7 +95,9 @@ export default function AssignUser() {
         <div className="bg-[#18181b] border border-[#222] rounded-2xl p-6">
           <form onSubmit={handleCreateInvestor} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-zinc-400 mb-1">
+                Full Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -109,10 +108,12 @@ export default function AssignUser() {
                 className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
               />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Email</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -124,7 +125,9 @@ export default function AssignUser() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Mobile (Optional)</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                  Mobile (Optional)
+                </label>
                 <input
                   type="text"
                   name="mobile"
@@ -138,7 +141,9 @@ export default function AssignUser() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Username</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                  Username
+                </label>
                 <input
                   type="text"
                   name="username"
@@ -150,7 +155,9 @@ export default function AssignUser() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Password</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -206,15 +213,22 @@ export default function AssignUser() {
                   <User size={24} />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">{searchResult.name}</h3>
-                  <p className="text-sm text-zinc-400">@{searchResult.username}</p>
+                  <h3 className="text-white font-semibold">
+                    {searchResult.name}
+                  </h3>
+                  <p className="text-sm text-zinc-400">
+                    @{searchResult.username}
+                  </p>
                   <p className="text-xs text-zinc-500 mt-1">
                     Joined{" "}
-                    {new Date(searchResult.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {new Date(searchResult.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )}
                   </p>
                 </div>
               </div>

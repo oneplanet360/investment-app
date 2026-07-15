@@ -21,7 +21,9 @@ const AgentResetPassword = lazy(
 const AdminGenealogyTree = lazy(
   () => import("../../pages/admin/agent-management/genealogy-tree"),
 );
-const AdminNotifications = lazy(() => import("../../pages/admin/notifications"));
+const AdminNotifications = lazy(
+  () => import("../../pages/admin/notifications"),
+);
 const InvestorResetPassword = lazy(
   () =>
     import("../../pages/admin/investors-management/investor-password-reset"),
@@ -210,7 +212,6 @@ export const protectedRoutesPaths = [
     element: <InvestmentDetail />,
   },
 
-
   // Withdrawals (Investor)
   { path: PROTECTED_ROUTES.ADMINWITHDRAWALSALL, element: <AllWithdrawals /> },
   {
@@ -246,7 +247,6 @@ export const protectedRoutesPaths = [
   { path: PROTECTED_ROUTES.ADMINKYCAPPROVED, element: <ApprovedKyc /> },
   { path: PROTECTED_ROUTES.ADMINKYCREJECTED, element: <RejectedKyc /> },
   { path: PROTECTED_ROUTES.ADMINKYCDETAILS, element: <KycDetail /> },
-
 
   // ROI
   { path: PROTECTED_ROUTES.ADMINROILOG, element: <RoiLog /> },

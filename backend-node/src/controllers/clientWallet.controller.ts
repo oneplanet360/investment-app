@@ -27,23 +27,32 @@ export const getWalletController = customAsyncWrapper(
     // Get basic stats
     const totalDeposits = await Deposit.aggregate([
       { $match: { userId: req.user._id, status: 'SUCCESSFUL' } },
-      { $group: { _id: null, total: { $sum: '$amount' } } }
+      { $group: { _id: null, total: { $sum: '$amount' } } },
     ]);
     const totalWithdrawals = await Withdrawal.aggregate([
       { $match: { userId: req.user._id, status: 'APPROVED' } },
-      { $group: { _id: null, total: { $sum: '$amount' } } }
+      { $group: { _id: null, total: { $sum: '$amount' } } },
     ]);
 
     res.status(HttpStatusCode.OK).json({
       success: true,
       data: {
         walletBalance: userDetails.walletBalance,
-        commissionBalance: req.user.role === UserRole.AGENT ? (userDetails as any).commissionBalance : 0,
-        investmentBalance: req.user.role === UserRole.INVESTOR ? (userDetails as any).investmentBalance : 0,
-        roiBalance: req.user.role === UserRole.INVESTOR ? (userDetails as any).roiBalance : 0,
+        commissionBalance:
+          req.user.role === UserRole.AGENT
+            ? (userDetails as any).commissionBalance
+            : 0,
+        investmentBalance:
+          req.user.role === UserRole.INVESTOR
+            ? (userDetails as any).investmentBalance
+            : 0,
+        roiBalance:
+          req.user.role === UserRole.INVESTOR
+            ? (userDetails as any).roiBalance
+            : 0,
         totalDeposits: totalDeposits[0]?.total || 0,
         totalWithdrawals: totalWithdrawals[0]?.total || 0,
-      }
+      },
     });
   }
 );
@@ -58,25 +67,27 @@ export const getWalletTransactionsController = customAsyncWrapper(
     const deposits = await Deposit.find({ userId: req.user._id })
       .select('trxId amount gateway status createdAt')
       .lean();
-      
+
     const withdrawals = await Withdrawal.find({ userId: req.user._id })
       .select('trxId amount gateway status createdAt type')
       .lean();
 
-    const formattedDeposits = deposits.map(d => ({
+    const formattedDeposits = deposits.map((d) => ({
       ...d,
       transactionType: 'DEPOSIT',
-      amountDisplay: `+$${d.amount.toFixed(2)}`
+      amountDisplay: `+$${d.amount.toFixed(2)}`,
     }));
 
-    const formattedWithdrawals = withdrawals.map(w => ({
+    const formattedWithdrawals = withdrawals.map((w) => ({
       ...w,
       transactionType: 'WITHDRAWAL',
-      amountDisplay: `-$${w.amount.toFixed(2)}`
+      amountDisplay: `-$${w.amount.toFixed(2)}`,
     }));
 
-    const transactions = [...formattedDeposits, ...formattedWithdrawals]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const transactions = [...formattedDeposits, ...formattedWithdrawals].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     res.status(HttpStatusCode.OK).json({
       success: true,

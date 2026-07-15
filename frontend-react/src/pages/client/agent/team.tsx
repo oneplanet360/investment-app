@@ -39,15 +39,24 @@ export default function Team() {
               </tr>
             ) : (
               investors.map((investor: any) => (
-                <tr key={investor._id} className="hover:bg-[#1a1a1a] transition-colors">
-                  <td className="px-4 py-3 font-medium text-white">{investor.username}</td>
+                <tr
+                  key={investor._id}
+                  className="hover:bg-[#1a1a1a] transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium text-white">
+                    {investor.username}
+                  </td>
                   <td className="px-4 py-3 text-zinc-300">{investor.email}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 text-[10px] font-semibold tracking-wide rounded-md ${investor.kycStatus === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                    <span
+                      className={`px-2 py-1 text-[10px] font-semibold tracking-wide rounded-md ${investor.kycStatus === "APPROVED" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}
+                    >
                       {investor.kycStatus}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{new Date(investor.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3">
+                    {new Date(investor.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))
             )}

@@ -9,7 +9,10 @@ import { HttpStatusCode } from '../constants';
 
 import { Notification } from '../database/models/notification.model';
 
-export const toggleUserBanService = async (username: string, expectedRole: string) => {
+export const toggleUserBanService = async (
+  username: string,
+  expectedRole: string
+) => {
   const user = await User.findOne({ username, role: expectedRole });
   if (!user) {
     throw new customError('User not found', HttpStatusCode.NOT_FOUND);
@@ -19,7 +22,12 @@ export const toggleUserBanService = async (username: string, expectedRole: strin
   return user;
 };
 
-export const sendNotificationService = async (username: string, expectedRole: string, title: string, message: string) => {
+export const sendNotificationService = async (
+  username: string,
+  expectedRole: string,
+  title: string,
+  message: string
+) => {
   const user = await User.findOne({ username, role: expectedRole });
   if (!user) {
     throw new customError('User not found', HttpStatusCode.NOT_FOUND);
@@ -27,12 +35,15 @@ export const sendNotificationService = async (username: string, expectedRole: st
   const notification = await Notification.create({
     userId: user._id,
     title,
-    message
+    message,
   });
   return notification;
 };
 
-export const impersonateUserService = async (username: string, expectedRole: string) => {
+export const impersonateUserService = async (
+  username: string,
+  expectedRole: string
+) => {
   const user = await User.findOne({ username, role: expectedRole });
   if (!user) {
     throw new customError('User not found', HttpStatusCode.NOT_FOUND);
@@ -51,12 +62,17 @@ export const impersonateUserService = async (username: string, expectedRole: str
       email: user.email,
       role: user.role,
     },
-    token
+    token,
   };
 };
 
-export const getAdminUserDetailService = async (username: string, expectedRole: string) => {
-  const user = await User.findOne({ username, role: expectedRole }).select('-password -__v');
+export const getAdminUserDetailService = async (
+  username: string,
+  expectedRole: string
+) => {
+  const user = await User.findOne({ username, role: expectedRole }).select(
+    '-password -__v'
+  );
   if (!user) {
     return null;
   }
@@ -71,24 +87,24 @@ export const getAdminUserDetailService = async (username: string, expectedRole: 
         totalAmount: { $sum: '$amount' },
         count: { $sum: 1 },
         completedCount: {
-          $sum: { $cond: [{ $eq: ['$status', 'COMPLETED'] }, 1, 0] }
+          $sum: { $cond: [{ $eq: ['$status', 'COMPLETED'] }, 1, 0] },
         },
         closeRequests: {
-          $sum: { $cond: [{ $eq: ['$status', 'CLOSE_REQUEST'] }, 1, 0] }
+          $sum: { $cond: [{ $eq: ['$status', 'CLOSE_REQUEST'] }, 1, 0] },
         },
-        totalContribution: { $sum: '$contributionAmount' } // Assuming this is requested metric
-      }
-    }
+        totalContribution: { $sum: '$contributionAmount' }, // Assuming this is requested metric
+      },
+    },
   ]);
 
   const depStats = await Deposit.aggregate([
     { $match: { userId, status: 'APPROVED' } },
-    { $group: { _id: null, total: { $sum: '$amount' } } }
+    { $group: { _id: null, total: { $sum: '$amount' } } },
   ]);
 
   const wdStats = await Withdrawal.aggregate([
     { $match: { userId, status: 'APPROVED' } },
-    { $group: { _id: null, total: { $sum: '$amount' } } }
+    { $group: { _id: null, total: { $sum: '$amount' } } },
   ]);
 
   // transactions count could be sum of all docs
@@ -108,7 +124,7 @@ export const getAdminUserDetailService = async (username: string, expectedRole: 
       completedInvestments: stats.completedCount || 0,
       deposits: depStats[0]?.total || 0,
       withdrawals: wdStats[0]?.total || 0,
-      transactions: depositsCount + wdCount + invCount
-    }
+      transactions: depositsCount + wdCount + invCount,
+    },
   };
 };

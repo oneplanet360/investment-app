@@ -180,7 +180,9 @@ export default function AgentResetPassword() {
                   type={showPassword ? "text" : "password"}
                   {...register("confirmPassword")}
                   disabled={!selected}
-                  className={inputCls(errors.confirmPassword?.message) + " pr-10"}
+                  className={
+                    inputCls(errors.confirmPassword?.message) + " pr-10"
+                  }
                 />
                 <button
                   type="button"

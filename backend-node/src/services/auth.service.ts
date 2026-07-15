@@ -3,7 +3,10 @@ import { ApiErrorMessages, HttpStatusCode } from '../constants';
 import { Admin } from '../database/models/admin.model';
 import { User } from '../database/models/user.model';
 import { customError } from '../utils';
-import { adminSignInSchemaType, clientSignInSchemaType } from '../validations/auth.schema';
+import {
+  adminSignInSchemaType,
+  clientSignInSchemaType,
+} from '../validations/auth.schema';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
@@ -57,10 +60,7 @@ export const signInClientServices = async (body: clientSignInSchemaType) => {
   const existingUser = await User.findOne({ email });
 
   if (!existingUser) {
-    throw new customError(
-      'User not found.',
-      HttpStatusCode.BAD_REQUEST
-    );
+    throw new customError('User not found.', HttpStatusCode.BAD_REQUEST);
   }
 
   if (!existingUser.password) {
@@ -109,10 +109,7 @@ export const impersonateClientService = async (userId: string) => {
   const existingUser = await User.findById(userId);
 
   if (!existingUser) {
-    throw new customError(
-      'User not found.',
-      HttpStatusCode.BAD_REQUEST
-    );
+    throw new customError('User not found.', HttpStatusCode.BAD_REQUEST);
   }
 
   if (!existingUser.isActive) {

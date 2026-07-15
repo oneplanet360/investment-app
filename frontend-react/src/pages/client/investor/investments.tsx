@@ -1,11 +1,16 @@
 import { useState, useRef } from "react";
 import { TrendingUp, XCircle, Upload } from "lucide-react";
-import { useClientInvestmentsQuery, useCloseInvestmentMutation, useCreateInvestment } from "../../../services/client/clientInvestments/clientInvestments.query";
+import {
+  useClientInvestmentsQuery,
+  useCloseInvestmentMutation,
+  useCreateInvestment,
+} from "../../../services/client/clientInvestments/clientInvestments.query";
 
 export default function Investments() {
   const { data, isLoading } = useClientInvestmentsQuery();
   const { mutate: closeInvestment, isPending } = useCloseInvestmentMutation();
-  const { mutate: createInvestment, isPending: isCreating } = useCreateInvestment();
+  const { mutate: createInvestment, isPending: isCreating } =
+    useCreateInvestment();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amount, setAmount] = useState("");
@@ -41,7 +46,7 @@ export default function Investments() {
             View your active and completed investment packages.
           </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="py-2.5 px-4 bg-orange-500 hover:bg-orange-600 transition-colors rounded-xl text-xs font-semibold text-white flex items-center gap-2"
         >
@@ -77,9 +82,16 @@ export default function Investments() {
               </tr>
             ) : (
               investments.map((inv: any) => (
-                <tr key={inv._id} className="hover:bg-[#1a1a1a] transition-colors">
-                  <td className="px-4 py-3 font-medium text-white">{inv.trxId}</td>
-                  <td className="px-4 py-3 text-white">${inv.amount.toLocaleString()}</td>
+                <tr
+                  key={inv._id}
+                  className="hover:bg-[#1a1a1a] transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium text-white">
+                    {inv.trxId}
+                  </td>
+                  <td className="px-4 py-3 text-white">
+                    ${inv.amount.toLocaleString()}
+                  </td>
                   <td className="px-4 py-3">{inv.type}</td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 text-[10px] font-semibold tracking-wide rounded-md bg-emerald-500/10 text-emerald-400">
@@ -90,8 +102,8 @@ export default function Investments() {
                     {new Date(inv.nextRoiDate).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {inv.status === 'ACTIVE' && (
-                      <button 
+                    {inv.status === "ACTIVE" && (
+                      <button
                         onClick={() => closeInvestment({ trxId: inv.trxId })}
                         disabled={isPending}
                         className="text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1 text-xs"
@@ -116,7 +128,7 @@ export default function Investments() {
                 Upload your payment proof to request a new investment.
               </p>
             </div>
-            
+
             <form onSubmit={handleInvest} className="p-6 space-y-5">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-1.5">
@@ -138,7 +150,7 @@ export default function Investments() {
                 <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                   Payment Proof (Image)
                 </label>
-                <div 
+                <div
                   className="w-full border-2 border-dashed border-[#333] hover:border-orange-500/50 rounded-xl p-6 text-center cursor-pointer transition-colors"
                   onClick={() => fileInputRef.current?.click()}
                 >

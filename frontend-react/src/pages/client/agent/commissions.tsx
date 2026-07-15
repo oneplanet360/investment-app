@@ -41,17 +41,30 @@ export default function Commissions() {
               </tr>
             ) : (
               commissions.map((comm: any) => (
-                <tr key={comm._id} className="hover:bg-[#1a1a1a] transition-colors">
-                  <td className="px-4 py-3 font-medium text-white">{comm.trxId}</td>
-                  <td className="px-4 py-3">{comm.investorId?.username || 'Unknown'}</td>
-                  <td className="px-4 py-3">Level {comm.level} ({comm.rate}%)</td>
-                  <td className="px-4 py-3 font-medium text-emerald-400">+${comm.amount.toLocaleString()}</td>
+                <tr
+                  key={comm._id}
+                  className="hover:bg-[#1a1a1a] transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium text-white">
+                    {comm.trxId}
+                  </td>
+                  <td className="px-4 py-3">
+                    {comm.investorId?.username || "Unknown"}
+                  </td>
+                  <td className="px-4 py-3">
+                    Level {comm.level} ({comm.rate}%)
+                  </td>
+                  <td className="px-4 py-3 font-medium text-emerald-400">
+                    +${comm.amount.toLocaleString()}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 text-[10px] font-semibold tracking-wide rounded-md bg-emerald-500/10 text-emerald-400">
                       {comm.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{new Date(comm.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3">
+                    {new Date(comm.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))
             )}

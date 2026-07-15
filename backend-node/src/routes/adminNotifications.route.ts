@@ -3,7 +3,7 @@ import { adminAuthMiddleware } from '../middlewares/auth.middleware';
 import {
   getAdminNotificationsController,
   markNotificationReadController,
-  markAllNotificationsReadController
+  markAllNotificationsReadController,
 } from '../controllers/adminNotifications.controller';
 
 const router = Router();

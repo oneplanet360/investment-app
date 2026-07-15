@@ -59,6 +59,8 @@ export const getAgentCommissionsFn = async (): Promise<any[]> => {
 };
 
 export const getAgentDashboardStatsFn = async (): Promise<any> => {
-  const response = await axiosInstance.get(`${CLIENT_AGENT_URL}/dashboard-stats`);
+  const response = await axiosInstance.get(
+    `${CLIENT_AGENT_URL}/dashboard-stats`,
+  );
   return response.data.stats;
 };

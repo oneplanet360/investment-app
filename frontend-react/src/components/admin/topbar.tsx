@@ -9,11 +9,15 @@ import {
   ChevronDown,
   User,
   KeyRound,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import CommandPalette from "./command-paletter";
 import { useAdminSignOut } from "../../services/admin/adminAuth/adminAuth.query";
-import { useAdminNotificationsQuery, useMarkNotificationRead, useMarkAllNotificationsRead } from "../../services/admin/adminNotifications/adminNotifications.query";
+import {
+  useAdminNotificationsQuery,
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+} from "../../services/admin/adminNotifications/adminNotifications.query";
 import { PROTECTED_ROUTES } from "../../routes/common/routes";
 
 type TopbarProps = {
@@ -35,7 +39,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -51,10 +55,16 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setDropdownOpen(false);
       }
-      if (notificationsRef.current && !notificationsRef.current.contains(e.target as Node)) {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(e.target as Node)
+      ) {
         setNotificationsOpen(false);
       }
     };
@@ -97,7 +107,10 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
           onClick={() => setPaletteOpen(true)}
           className="flex items-center gap-2 flex-1 max-w-sm border border-[var(--theme-sidebar-fg)] opacity-60 hover:opacity-100 rounded-md px-3 py-1.5 text-left transition-opacity"
         >
-          <Search size={15} className="text-[var(--theme-sidebar-fg)] shrink-0" />
+          <Search
+            size={15}
+            className="text-[var(--theme-sidebar-fg)] shrink-0"
+          />
           <span className="flex-1 text-sm text-[var(--theme-sidebar-fg)] select-none">
             Search here...
           </span>
@@ -105,7 +118,9 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
             <kbd className="flex items-center gap-0.5 text-[10px] text-[var(--theme-sidebar-fg)] border border-[var(--theme-sidebar-fg)] rounded px-1 py-0.5 font-mono">
               ctrl
             </kbd>
-            <span className="text-[var(--theme-sidebar-fg)] text-[10px]">+</span>
+            <span className="text-[var(--theme-sidebar-fg)] text-[10px]">
+              +
+            </span>
             <kbd className="flex items-center text-[10px] text-[var(--theme-sidebar-fg)] border border-[var(--theme-sidebar-fg)] rounded px-1 py-0.5 font-mono">
               K
             </kbd>
@@ -119,7 +134,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
 
           {/* Notifications Dropdown */}
           <div className="relative" ref={notificationsRef}>
-            <button 
+            <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               className="relative w-9 h-9 flex items-center justify-center text-[var(--theme-sidebar-fg-muted)] hover:text-[var(--theme-sidebar-fg)] rounded-md transition-colors"
             >
@@ -130,13 +145,13 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                 </span>
               )}
             </button>
-            
+
             {notificationsOpen && (
               <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden z-50">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                   <h3 className="font-semibold text-gray-800">Notifications</h3>
                   {unreadCount > 0 && (
-                    <button 
+                    <button
                       onClick={() => markAllRead()}
                       className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
                     >
@@ -144,7 +159,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                     </button>
                   )}
                 </div>
-                
+
                 <div className="max-h-80 overflow-y-auto">
                   {notifications.length === 0 ? (
                     <div className="py-8 text-center text-gray-500 text-sm">
@@ -153,10 +168,12 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                   ) : (
                     <div className="divide-y divide-gray-50">
                       {notifications.map((notif: any) => (
-                        <div 
+                        <div
                           key={notif._id}
-                          onClick={() => handleNotificationClick(notif._id, notif.isRead)}
-                          className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notif.isRead ? 'bg-indigo-50/30' : ''}`}
+                          onClick={() =>
+                            handleNotificationClick(notif._id, notif.isRead)
+                          }
+                          className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notif.isRead ? "bg-indigo-50/30" : ""}`}
                         >
                           <div className="flex gap-3">
                             <div className="mt-0.5">
@@ -169,7 +186,9 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-sm ${!notif.isRead ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                              <p
+                                className={`text-sm ${!notif.isRead ? "font-semibold text-gray-900" : "text-gray-700"}`}
+                              >
                                 {notif.title}
                               </p>
                               <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
@@ -185,9 +204,9 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="border-t border-gray-100 p-2">
-                  <Link 
+                  <Link
                     to={PROTECTED_ROUTES.ADMINNOTIFICATIONS}
                     onClick={() => setNotificationsOpen(false)}
                     className="block w-full text-center py-2 text-sm text-indigo-600 font-medium rounded-md hover:bg-indigo-50 transition-colors"
@@ -259,7 +278,10 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
         </div>
       </header>
 
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+      />
     </>
   );
 }

@@ -4,10 +4,12 @@ import { AxiosError } from "axios";
 import {
   getAdminNotificationsFn,
   markNotificationReadFn,
-  markAllNotificationsReadFn
+  markAllNotificationsReadFn,
 } from "./adminNotifications.api";
 
-export const useAdminNotificationsQuery = (params: { limit?: number; unreadOnly?: boolean } = {}) => {
+export const useAdminNotificationsQuery = (
+  params: { limit?: number; unreadOnly?: boolean } = {},
+) => {
   return useQuery({
     queryKey: ["adminNotifications", params],
     queryFn: () => getAdminNotificationsFn(params),
@@ -16,7 +18,7 @@ export const useAdminNotificationsQuery = (params: { limit?: number; unreadOnly?
 
 export const useMarkNotificationRead = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: markNotificationReadFn,
     onSuccess: () => {
@@ -26,13 +28,13 @@ export const useMarkNotificationRead = () => {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Failed to mark as read");
       }
-    }
+    },
   });
 };
 
 export const useMarkAllNotificationsRead = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: markAllNotificationsReadFn,
     onSuccess: () => {
@@ -41,8 +43,10 @@ export const useMarkAllNotificationsRead = () => {
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Failed to mark all as read");
+        toast.error(
+          error.response?.data?.message || "Failed to mark all as read",
+        );
       }
-    }
+    },
   });
 };

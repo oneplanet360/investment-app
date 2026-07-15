@@ -262,7 +262,7 @@ export default function InvestmentSettings() {
                 )}
               </div>
             ))}
-            
+
             <button
               type="button"
               onClick={() => {

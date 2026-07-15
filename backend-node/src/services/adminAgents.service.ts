@@ -33,7 +33,10 @@ export const createAgentService = async (
     // Typecast to IAgent to access level
     const sponsorAgent = sponsor as any;
     if (sponsorAgent.level >= 4) {
-      throw new customError('Cannot create agents under a level 4 agent', HttpStatusCode.BAD_REQUEST);
+      throw new customError(
+        'Cannot create agents under a level 4 agent',
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     sponsorId = sponsor._id;

@@ -8,7 +8,7 @@ import {
   impersonateAgentController,
   toggleBanAgentController,
   sendNotificationAgentController,
-  getAgentTreeAdminController
+  getAgentTreeAdminController,
 } from '../controllers/adminAgents.controller';
 
 const router = Router();

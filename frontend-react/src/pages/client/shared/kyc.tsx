@@ -27,10 +27,10 @@ export default function KYC() {
     if (!documentFront) return;
 
     const formData = new FormData();
-    formData.append('documentType', documentType);
-    if (documentNumber) formData.append('documentNumber', documentNumber);
-    formData.append('documentFront', documentFront);
-    if (documentBack) formData.append('documentBack', documentBack);
+    formData.append("documentType", documentType);
+    if (documentNumber) formData.append("documentNumber", documentNumber);
+    formData.append("documentFront", documentFront);
+    if (documentBack) formData.append("documentBack", documentBack);
 
     submitKyc(formData as any);
   };

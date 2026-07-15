@@ -8,7 +8,7 @@ export const getClientRoiController = customAsyncWrapper(
     const roiLogs = await Roi.find({ investorId: req.user!._id })
       .populate('investmentId', 'trxId amount')
       .sort({ createdAt: -1 });
-    
+
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.OK,

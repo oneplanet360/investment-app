@@ -20,7 +20,8 @@ export const updateProfileController = customAsyncWrapper(
     if (!req.user) {
       throw new customError('Not authenticated', HttpStatusCode.UNAUTHORIZED);
     }
-    const { firstName, lastName, mobile, country, address, city, state, zip } = req.body;
+    const { firstName, lastName, mobile, country, address, city, state, zip } =
+      req.body;
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { firstName, lastName, mobile, country, address, city, state, zip },
@@ -41,9 +42,12 @@ export const updatePasswordController = customAsyncWrapper(
       throw new customError('Not authenticated', HttpStatusCode.UNAUTHORIZED);
     }
     const { oldPassword, newPassword } = req.body;
-    
+
     if (!oldPassword || !newPassword) {
-      throw new customError('Please provide old and new password', HttpStatusCode.BAD_REQUEST);
+      throw new customError(
+        'Please provide old and new password',
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     const user = await User.findById(req.user._id);
@@ -53,7 +57,10 @@ export const updatePasswordController = customAsyncWrapper(
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
-      throw new customError('Incorrect old password', HttpStatusCode.BAD_REQUEST);
+      throw new customError(
+        'Incorrect old password',
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     const salt = await bcrypt.genSalt(10);

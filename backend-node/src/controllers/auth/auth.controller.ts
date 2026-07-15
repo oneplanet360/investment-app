@@ -125,7 +125,7 @@ export const verifyClientController = customAsyncWrapper(
 export const adminImpersonateUserController = customAsyncWrapper(
   async (request: Request, response: Response) => {
     const { userId } = request.body;
-    
+
     if (!userId) {
       return response.status(HttpStatusCode.BAD_REQUEST).json({
         success: false,

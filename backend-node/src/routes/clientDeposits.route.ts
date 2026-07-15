@@ -2,7 +2,7 @@ import express from 'express';
 
 import {
   getClientDepositsController,
-  submitClientDepositController
+  submitClientDepositController,
 } from '../controllers/clientDeposits.controller';
 import { clientAuthMiddleware } from '../middlewares/auth.middleware';
 

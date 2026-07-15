@@ -116,55 +116,53 @@ export default function Topbar({
                     No notifications
                   </div>
                 ) : (
-                  notifications
-                    .slice(0, 4)
-                    .map(
-                      (
-                        notif: Record<string, unknown> & {
-                          _id: string;
-                          isRead: boolean;
-                          title: string;
-                          message: string;
-                          createdAt: string;
-                        },
-                      ) => (
-                        <div
-                          key={notif._id}
-                          onClick={() => {
-                            if (!notif.isRead)
-                              markAsRead(notif._id, {
-                                onError: (error: unknown) => {
-                                  toast.error(
-                                    (
-                                      error as {
-                                        response?: {
-                                          data?: { message?: string };
-                                        };
-                                      }
-                                    )?.response?.data?.message ||
-                                      "Failed to mark notifications as read",
-                                  );
-                                },
-                              });
-                          }}
-                          className={`p-3 cursor-pointer transition-colors hover:bg-white/5 ${!notif.isRead ? "bg-[#1a1a1e]" : ""}`}
-                        >
-                          <div className="flex justify-between items-start gap-2">
-                            <h4
-                              className={`text-xs font-semibold ${!notif.isRead ? "text-white" : "text-zinc-300"}`}
-                            >
-                              {notif.title}
-                            </h4>
-                            {!notif.isRead && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-1" />
-                            )}
-                          </div>
-                          <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2">
-                            {notif.message}
-                          </p>
+                  notifications.slice(0, 4).map(
+                    (
+                      notif: Record<string, unknown> & {
+                        _id: string;
+                        isRead: boolean;
+                        title: string;
+                        message: string;
+                        createdAt: string;
+                      },
+                    ) => (
+                      <div
+                        key={notif._id}
+                        onClick={() => {
+                          if (!notif.isRead)
+                            markAsRead(notif._id, {
+                              onError: (error: unknown) => {
+                                toast.error(
+                                  (
+                                    error as {
+                                      response?: {
+                                        data?: { message?: string };
+                                      };
+                                    }
+                                  )?.response?.data?.message ||
+                                    "Failed to mark notifications as read",
+                                );
+                              },
+                            });
+                        }}
+                        className={`p-3 cursor-pointer transition-colors hover:bg-white/5 ${!notif.isRead ? "bg-[#1a1a1e]" : ""}`}
+                      >
+                        <div className="flex justify-between items-start gap-2">
+                          <h4
+                            className={`text-xs font-semibold ${!notif.isRead ? "text-white" : "text-zinc-300"}`}
+                          >
+                            {notif.title}
+                          </h4>
+                          {!notif.isRead && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-1" />
+                          )}
                         </div>
-                      ),
-                    )
+                        <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2">
+                          {notif.message}
+                        </p>
+                      </div>
+                    ),
+                  )
                 )}
               </div>
 

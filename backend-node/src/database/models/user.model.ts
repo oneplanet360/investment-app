@@ -100,4 +100,7 @@ const investorSchema = new Schema<IInvestor>({
   roiBalance: { type: Number, default: 0 },
 });
 
-export const Investor = User.discriminator<IInvestor>(UserRole.INVESTOR, investorSchema);
+export const Investor = User.discriminator<IInvestor>(
+  UserRole.INVESTOR,
+  investorSchema
+);

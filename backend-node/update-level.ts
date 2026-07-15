@@ -13,7 +13,7 @@ const run = async () => {
   );
 
   console.log('Update result for username agent:', result);
-  
+
   const user = await Agent.findOne({ username: 'agent' });
   console.log('User now:', user);
 

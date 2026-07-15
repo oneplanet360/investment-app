@@ -49,8 +49,8 @@ const investmentSchema = new Schema<IInvestment>(
     roiCycleStartDate: { type: Date, required: true, default: Date.now },
     nextRoiDate: { type: Date, required: true },
     roiLog: {
-      monthIndex: { type: Number, default: 0 }
-    }
+      monthIndex: { type: Number, default: 0 },
+    },
   },
   {
     timestamps: true,

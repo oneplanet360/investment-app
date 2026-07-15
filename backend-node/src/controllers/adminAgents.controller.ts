@@ -42,7 +42,12 @@ export const getAgentsController = customAsyncWrapper(
   }
 );
 
-import { getAdminUserDetailService, impersonateUserService, toggleUserBanService, sendNotificationService } from '../services/adminUsers.service';
+import {
+  getAdminUserDetailService,
+  impersonateUserService,
+  toggleUserBanService,
+  sendNotificationService,
+} from '../services/adminUsers.service';
 import { ParsedEnvVariables } from '../configs';
 
 export const toggleBanAgentController = customAsyncWrapper(
@@ -62,7 +67,12 @@ export const sendNotificationAgentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
     const { title, message } = req.body;
-    const notification = await sendNotificationService(username as string, 'AGENT', title, message);
+    const notification = await sendNotificationService(
+      username as string,
+      'AGENT',
+      title,
+      message
+    );
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.CREATED,
@@ -75,13 +85,17 @@ export const sendNotificationAgentController = customAsyncWrapper(
 export const impersonateAgentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
-    const { user, token } = await impersonateUserService(username as string, 'AGENT');
+    const { user, token } = await impersonateUserService(
+      username as string,
+      'AGENT'
+    );
 
     const cookieMaxAge = 24 * 60 * 60 * 1000;
     res.cookie('clientAccessToken', token, {
       httpOnly: true,
       secure: ParsedEnvVariables.NODE_ENV === 'production',
-      sameSite: ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+      sameSite:
+        ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: cookieMaxAge,
     });
 
@@ -94,28 +108,28 @@ export const impersonateAgentController = customAsyncWrapper(
   }
 );
 
-        export const getAgentDetailController = customAsyncWrapper(
-          async (req: Request, res: Response) => {
-            const { username } = req.params;
-            const data = await getAdminUserDetailService(username as string, 'AGENT');
-            if (!data) {
-              return customApiResponse({
-                response: res,
-                statusCode: 404,
-                message: 'Agent not found',
-                data: null,
-              });
-            }
-            return customApiResponse({
-              response: res,
-              statusCode: HttpStatusCode.OK,
-              message: 'Agent detail retrieved successfully',
-              data,
-            });
-          }
-        );
+export const getAgentDetailController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const data = await getAdminUserDetailService(username as string, 'AGENT');
+    if (!data) {
+      return customApiResponse({
+        response: res,
+        statusCode: 404,
+        message: 'Agent not found',
+        data: null,
+      });
+    }
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: 'Agent detail retrieved successfully',
+      data,
+    });
+  }
+);
 
-        export const resetAgentPasswordController = customAsyncWrapper(
+export const resetAgentPasswordController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const agentId = req.params.id as string;
     const { newPassword } = req.body;
@@ -137,17 +151,27 @@ export const getAgentTreeAdminController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
 
-    const getDownline = async (agentId: string, currentLevel: number): Promise<any> => {
+    const getDownline = async (
+      agentId: string,
+      currentLevel: number
+    ): Promise<any> => {
       if (currentLevel >= 4) {
-        const investors = await Investor.find({ referredBy: agentId }).select('name username email kycStatus createdAt');
+        const investors = await Investor.find({ referredBy: agentId }).select(
+          'name username email kycStatus createdAt'
+        );
         return investors;
       }
 
-      const subAgents = await Agent.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
+      const subAgents = await Agent.find({ sponsor: agentId }).select(
+        'name username email level kycStatus createdAt'
+      );
       const downline = [];
       for (const sub of subAgents) {
         const subAgentData = sub.toObject();
-        const children = await getDownline(sub._id.toString(), subAgentData.level);
+        const children = await getDownline(
+          sub._id.toString(),
+          subAgentData.level
+        );
         if (subAgentData.level === 4) {
           (subAgentData as any).investors = children;
         } else {
@@ -158,7 +182,9 @@ export const getAgentTreeAdminController = customAsyncWrapper(
       return downline;
     };
 
-    const rootAgent = await Agent.findOne({ username }).select('name username email level kycStatus createdAt');
+    const rootAgent = await Agent.findOne({ username }).select(
+      'name username email level kycStatus createdAt'
+    );
     if (!rootAgent) throw new customError('Agent not found', 404);
 
     const tree = rootAgent.toObject();

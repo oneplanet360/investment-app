@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { submitKycController, getKycStatusController } from '../controllers/clientKyc.controller';
+import {
+  submitKycController,
+  getKycStatusController,
+} from '../controllers/clientKyc.controller';
 import { clientAuthMiddleware } from '../middlewares/auth.middleware';
 import multer from 'multer';
 import path from 'path';
@@ -10,7 +13,10 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)
+    );
   },
 });
 

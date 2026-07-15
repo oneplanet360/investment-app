@@ -19,16 +19,28 @@ export const submitKycController = customAsyncWrapper(
     const documentBack = files?.['documentBack']?.[0];
 
     if (!documentType || !documentFront) {
-      throw new customError('Document Type and Document Front Image are required', HttpStatusCode.BAD_REQUEST);
+      throw new customError(
+        'Document Type and Document Front Image are required',
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     const documentFrontUrl = `/uploads/kyc/${documentFront.filename}`;
-    const documentBackUrl = documentBack ? `/uploads/kyc/${documentBack.filename}` : '';
+    const documentBackUrl = documentBack
+      ? `/uploads/kyc/${documentBack.filename}`
+      : '';
 
     // Check if user already has pending or verified KYC
     const existingKyc = await Kyc.findOne({ userId: req.user._id });
-    if (existingKyc && (existingKyc.status === KycStatus.PENDING || existingKyc.status === KycStatus.APPROVED)) {
-      throw new customError(`Cannot submit. Current KYC status is ${existingKyc.status}`, HttpStatusCode.BAD_REQUEST);
+    if (
+      existingKyc &&
+      (existingKyc.status === KycStatus.PENDING ||
+        existingKyc.status === KycStatus.APPROVED)
+    ) {
+      throw new customError(
+        `Cannot submit. Current KYC status is ${existingKyc.status}`,
+        HttpStatusCode.BAD_REQUEST
+      );
     }
 
     // Create or update KYC record
@@ -52,7 +64,9 @@ export const submitKycController = customAsyncWrapper(
     }
 
     // Update user status
-    await User.findByIdAndUpdate(req.user._id, { kycStatus: KycStatus.PENDING });
+    await User.findByIdAndUpdate(req.user._id, {
+      kycStatus: KycStatus.PENDING,
+    });
 
     // Notify admins
     const admins = await Admin.find({});

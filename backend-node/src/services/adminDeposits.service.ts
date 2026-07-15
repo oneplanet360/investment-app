@@ -69,7 +69,9 @@ export const updateDepositStatusService = async (
   session.startTransaction();
 
   try {
-    const deposit = await Deposit.findOne({ trxId }).populate('userId').session(session);
+    const deposit = await Deposit.findOne({ trxId })
+      .populate('userId')
+      .session(session);
 
     if (!deposit) {
       throw new customError('Deposit not found', HttpStatusCode.NOT_FOUND);

@@ -1,6 +1,8 @@
 import { axiosInstance } from "../../../lib/axios";
 
-export const getAdminNotificationsFn = async (params: { limit?: number; unreadOnly?: boolean } = {}) => {
+export const getAdminNotificationsFn = async (
+  params: { limit?: number; unreadOnly?: boolean } = {},
+) => {
   const { data } = await axiosInstance.get("/admin/notifications", { params });
   return data;
 };

@@ -41,12 +41,23 @@ export default function RoiHistory() {
               </tr>
             ) : (
               logs.map((log: any) => (
-                <tr key={log._id} className="hover:bg-[#1a1a1a] transition-colors">
-                  <td className="px-4 py-3 font-medium text-white">{log.trxId}</td>
-                  <td className="px-4 py-3 text-white">{log.investmentId?.trxId}</td>
-                  <td className="px-4 py-3 font-medium text-emerald-400">${log.amount.toLocaleString()}</td>
+                <tr
+                  key={log._id}
+                  className="hover:bg-[#1a1a1a] transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium text-white">
+                    {log.trxId}
+                  </td>
+                  <td className="px-4 py-3 text-white">
+                    {log.investmentId?.trxId}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-emerald-400">
+                    ${log.amount.toLocaleString()}
+                  </td>
                   <td className="px-4 py-3 text-center">{log.monthIndex}</td>
-                  <td className="px-4 py-3">{new Date(log.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3">
+                    {new Date(log.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))
             )}

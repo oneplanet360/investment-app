@@ -17,7 +17,7 @@ export default function AgentDashboard() {
     activeReferrals: 0,
     totalCommissions: 0,
     level1Bonuses: 0,
-    recentCommissions: []
+    recentCommissions: [],
   };
 
   // Render dummy content depending on activeTab
@@ -104,7 +104,9 @@ export default function AgentDashboard() {
                 </div>
                 <div className="divide-y divide-[#222]">
                   {stats.recentCommissions.length === 0 && (
-                    <div className="py-4 text-sm text-zinc-500 text-center">No recent commissions</div>
+                    <div className="py-4 text-sm text-zinc-500 text-center">
+                      No recent commissions
+                    </div>
                   )}
                   {stats.recentCommissions.map((tx: any, idx: number) => (
                     <div
@@ -119,7 +121,9 @@ export default function AgentDashboard() {
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-white leading-tight">
-                            Commission from {tx.investorId?.username || 'Unknown'} (Level {tx.level})
+                            Commission from{" "}
+                            {tx.investorId?.username || "Unknown"} (Level{" "}
+                            {tx.level})
                           </p>
                           <span className="text-[11px] text-zinc-500 mt-1 block">
                             {new Date(tx.createdAt).toLocaleString()}
@@ -131,10 +135,11 @@ export default function AgentDashboard() {
                           +${tx.amount.toLocaleString()}
                         </p>
                         <span
-                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${tx.status === "PAID"
-                            ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-amber-500/10 text-amber-400"
-                            }`}
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${
+                            tx.status === "PAID"
+                              ? "bg-emerald-500/10 text-emerald-400"
+                              : "bg-amber-500/10 text-amber-400"
+                          }`}
                         >
                           {tx.status}
                         </span>
@@ -143,8 +148,6 @@ export default function AgentDashboard() {
                   ))}
                 </div>
               </div>
-
-
             </div>
           </div>
         );

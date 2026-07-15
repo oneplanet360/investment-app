@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import { customApiResponse, customAsyncWrapper } from '../utils';
 import { HttpStatusCode } from '../constants';
-import { createInvestmentService, getClientInvestmentsService, closeInvestmentRequestService } from '../services/clientInvestments.service';
+import {
+  createInvestmentService,
+  getClientInvestmentsService,
+  closeInvestmentRequestService,
+} from '../services/clientInvestments.service';
 
 export const createInvestmentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
@@ -32,7 +36,8 @@ export const createInvestmentController = customAsyncWrapper(
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.CREATED,
-      message: 'Investment request submitted successfully. Pending Admin approval.',
+      message:
+        'Investment request submitted successfully. Pending Admin approval.',
       data: investment,
     });
   }
@@ -40,8 +45,10 @@ export const createInvestmentController = customAsyncWrapper(
 
 export const getClientInvestmentsController = customAsyncWrapper(
   async (req: Request, res: Response) => {
-    const investments = await getClientInvestmentsService(req.user!._id.toString());
-    
+    const investments = await getClientInvestmentsService(
+      req.user!._id.toString()
+    );
+
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.OK,
@@ -61,8 +68,11 @@ export const closeInvestmentController = customAsyncWrapper(
       });
     }
 
-    const investment = await closeInvestmentRequestService(req.user!._id.toString(), trxId);
-    
+    const investment = await closeInvestmentRequestService(
+      req.user!._id.toString(),
+      trxId
+    );
+
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.OK,

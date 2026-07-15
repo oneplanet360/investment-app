@@ -27,7 +27,12 @@ export const getInvestorsController = customAsyncWrapper(
   }
 );
 
-import { getAdminUserDetailService, impersonateUserService, toggleUserBanService, sendNotificationService } from '../services/adminUsers.service';
+import {
+  getAdminUserDetailService,
+  impersonateUserService,
+  toggleUserBanService,
+  sendNotificationService,
+} from '../services/adminUsers.service';
 import { ParsedEnvVariables } from '../configs';
 
 export const toggleBanInvestorController = customAsyncWrapper(
@@ -47,7 +52,12 @@ export const sendNotificationInvestorController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
     const { title, message } = req.body;
-    const notification = await sendNotificationService(username as string, 'INVESTOR', title, message);
+    const notification = await sendNotificationService(
+      username as string,
+      'INVESTOR',
+      title,
+      message
+    );
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.CREATED,
@@ -60,13 +70,17 @@ export const sendNotificationInvestorController = customAsyncWrapper(
 export const impersonateInvestorController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { username } = req.params;
-    const { user, token } = await impersonateUserService(username as string, 'INVESTOR');
+    const { user, token } = await impersonateUserService(
+      username as string,
+      'INVESTOR'
+    );
 
     const cookieMaxAge = 24 * 60 * 60 * 1000;
     res.cookie('clientAccessToken', token, {
       httpOnly: true,
       secure: ParsedEnvVariables.NODE_ENV === 'production',
-      sameSite: ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
+      sameSite:
+        ParsedEnvVariables.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: cookieMaxAge,
     });
 
@@ -79,28 +93,31 @@ export const impersonateInvestorController = customAsyncWrapper(
   }
 );
 
-        export const getInvestorDetailController = customAsyncWrapper(
-          async (req: Request, res: Response) => {
-            const { username } = req.params;
-            const data = await getAdminUserDetailService(username as string, 'INVESTOR');
-            if (!data) {
-              return customApiResponse({
-                response: res,
-                statusCode: 404,
-                message: 'Investor not found',
-                data: null,
-              });
-            }
-            return customApiResponse({
-              response: res,
-              statusCode: HttpStatusCode.OK,
-              message: 'Investor detail retrieved successfully',
-              data,
-            });
-          }
-        );
+export const getInvestorDetailController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const data = await getAdminUserDetailService(
+      username as string,
+      'INVESTOR'
+    );
+    if (!data) {
+      return customApiResponse({
+        response: res,
+        statusCode: 404,
+        message: 'Investor not found',
+        data: null,
+      });
+    }
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: 'Investor detail retrieved successfully',
+      data,
+    });
+  }
+);
 
-        export const resetInvestorPasswordController = customAsyncWrapper(
+export const resetInvestorPasswordController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const { newPassword } = req.body;

@@ -78,7 +78,9 @@ export const updateWithdrawalStatusService = async (
   session.startTransaction();
 
   try {
-    const withdrawal = await Withdrawal.findOne({ trxId }).populate('userId').session(session);
+    const withdrawal = await Withdrawal.findOne({ trxId })
+      .populate('userId')
+      .session(session);
 
     if (!withdrawal) {
       throw new customError('Withdrawal not found', HttpStatusCode.NOT_FOUND);
