@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useCreateInvestment } from "../../../services/client/clientInvestments/clientInvestments.query";
 import { useClientWalletQuery, useClientWalletTransactionsQuery } from "../../../services/client/clientWallet/clientWallet.query";
 import {
   TrendingUp,

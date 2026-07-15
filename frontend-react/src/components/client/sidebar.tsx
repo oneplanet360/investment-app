@@ -17,7 +17,6 @@ import {
   ChevronRight,
   UserPlus,
   X,
-  ArrowUpCircle,
   TrendingUp,
   Network,
 } from "lucide-react";
