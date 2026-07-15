@@ -5,6 +5,7 @@ import {
 import { User } from '../database/models/user.model';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
+import mongoose from 'mongoose';
 
 export const getInvestmentsService = async (
   page: number = 1,
@@ -71,31 +72,59 @@ export const updateInvestmentStatusService = async (
   status: InvestmentStatus,
   adminRemarks?: string
 ) => {
-  const investment = await Investment.findOne({ trxId }).populate('userId');
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (!investment) {
-    throw new customError('Investment not found', HttpStatusCode.NOT_FOUND);
-  }
+  try {
+    const investment = await Investment.findOne({ trxId }).session(session);
 
-  // Handle closure requests specifically
-  if (status === InvestmentStatus.CLOSED) {
-    if (investment.status === InvestmentStatus.CLOSED) {
-      throw new customError(
-        'Investment is already closed',
-        HttpStatusCode.BAD_REQUEST
-      );
+    if (!investment) {
+      throw new customError('Investment not found', HttpStatusCode.NOT_FOUND);
     }
 
-    const user: any = investment.userId;
-    // Payout the initial deposit plus total return (example logic)
-    const payoutAmount = investment.amount + investment.totalReturn;
-    user.walletBalance = (user.walletBalance || 0) + payoutAmount;
-    await user.save();
+    if (investment.status === status) {
+      throw new customError(`Investment is already ${status}`, HttpStatusCode.BAD_REQUEST);
+    }
+
+    const user = await User.findById(investment.userId).session(session) as any;
+
+    // Handle approval logic (PENDING -> ACTIVE)
+    if (status === InvestmentStatus.ACTIVE && investment.status === InvestmentStatus.PENDING) {
+      user.investmentBalance = (user.investmentBalance || 0) + investment.amount;
+      await user.save({ session });
+    }
+
+    // Handle closure requests specifically
+    if (status === InvestmentStatus.CLOSED) {
+      if (investment.status === InvestmentStatus.CLOSED) {
+        throw new customError(
+          'Investment is already closed',
+          HttpStatusCode.BAD_REQUEST
+        );
+      }
+
+      // Decrement active investment balance if closing an active one
+      if (investment.status === InvestmentStatus.ACTIVE || investment.status === InvestmentStatus.CLOSE_REQUEST) {
+         user.investmentBalance = Math.max((user.investmentBalance || 0) - investment.amount, 0);
+      }
+      
+      // Payout the initial deposit (ROI has already been paid directly)
+      const payoutAmount = investment.amount;
+      // Since wallet is for withdrawals, we add the returned principal to the roiBalance or walletBalance?
+      // "adding money to wallet we dont need but we need to keep the money in wallet so agent and investor can withdraw it"
+      user.walletBalance = (user.walletBalance || 0) + payoutAmount;
+      await user.save({ session });
+    }
+
+    investment.status = status;
+    await investment.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+    return investment;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  investment.status = status;
-  // Investment model might not have adminRemarks currently, but usually it does. We won't set it if it doesn't exist on schema.
-
-  await investment.save();
-  return investment;
 };

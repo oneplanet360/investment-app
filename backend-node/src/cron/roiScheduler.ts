@@ -5,6 +5,7 @@ import { Investor } from '../database/models/user.model';
 import { Roi } from '../database/models/roi.model';
 import { Setting } from '../database/models/setting.model';
 import { customLogger, generateTransactionId } from '../utils';
+import { distributeCommissionService } from '../services/clientInvestments.service';
 
 export const startRoiScheduler = () => {
   // Run daily at midnight
@@ -71,6 +72,14 @@ export const startRoiScheduler = () => {
             roiRate: roiPercentage,
             monthIndex: investment.roiLog?.monthIndex ? investment.roiLog.monthIndex + 1 : 1
           }], { session });
+
+          // Distribute commissions based on the ROI amount
+          await distributeCommissionService(
+            investment.userId as mongoose.Types.ObjectId,
+            investment._id as mongoose.Types.ObjectId,
+            roiAmount,
+            session
+          );
 
           await session.commitTransaction();
           session.endSession();

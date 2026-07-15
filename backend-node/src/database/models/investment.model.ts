@@ -6,10 +6,12 @@ export enum InvestmentType {
 }
 
 export enum InvestmentStatus {
+  PENDING = 'PENDING',
   ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED', // When it finishes or is withdrawn, depending on logic
+  COMPLETED = 'COMPLETED',
   CLOSE_REQUEST = 'CLOSE_REQUEST',
   CLOSED = 'CLOSED',
+  REJECTED = 'REJECTED',
 }
 
 export interface IInvestment extends Document {
@@ -21,6 +23,7 @@ export interface IInvestment extends Document {
   totalReturn: number;
   type: InvestmentType;
   status: InvestmentStatus;
+  paymentProof?: string;
   roiCycleStartDate: Date;
   nextRoiDate: Date;
   roiLog?: { monthIndex: number };
@@ -40,8 +43,9 @@ const investmentSchema = new Schema<IInvestment>(
     status: {
       type: String,
       enum: Object.values(InvestmentStatus),
-      default: InvestmentStatus.ACTIVE,
+      default: InvestmentStatus.PENDING,
     },
+    paymentProof: { type: String },
     roiCycleStartDate: { type: Date, required: true, default: Date.now },
     nextRoiDate: { type: Date, required: true },
     roiLog: {

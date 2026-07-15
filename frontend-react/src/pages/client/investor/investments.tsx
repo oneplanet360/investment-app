@@ -1,11 +1,36 @@
-import { TrendingUp, XCircle } from "lucide-react";
-import { useClientInvestmentsQuery, useCloseInvestmentMutation } from "../../../services/client/clientInvestments/clientInvestments.query";
+import { useState, useRef } from "react";
+import { TrendingUp, XCircle, Upload } from "lucide-react";
+import { useClientInvestmentsQuery, useCloseInvestmentMutation, useCreateInvestment } from "../../../services/client/clientInvestments/clientInvestments.query";
 
 export default function Investments() {
   const { data, isLoading } = useClientInvestmentsQuery();
   const { mutate: closeInvestment, isPending } = useCloseInvestmentMutation();
+  const { mutate: createInvestment, isPending: isCreating } = useCreateInvestment();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [amount, setAmount] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const investments = data?.data || [];
+
+  const handleInvest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("amount", amount);
+    formData.append("type", "INITIAL");
+    formData.append("paymentProof", file);
+
+    createInvestment(formData, {
+      onSuccess: () => {
+        setIsModalOpen(false);
+        setAmount("");
+        setFile(null);
+      },
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -16,7 +41,10 @@ export default function Investments() {
             View your active and completed investment packages.
           </p>
         </div>
-        <button className="py-2.5 px-4 bg-orange-500 hover:bg-orange-600 transition-colors rounded-xl text-xs font-semibold text-white flex items-center gap-2">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="py-2.5 px-4 bg-orange-500 hover:bg-orange-600 transition-colors rounded-xl text-xs font-semibold text-white flex items-center gap-2"
+        >
           <TrendingUp size={16} />
           Invest Now
         </button>
@@ -78,6 +106,77 @@ export default function Investments() {
           </tbody>
         </table>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#141414] border border-[#222] rounded-2xl w-full max-w-md overflow-hidden">
+            <div className="p-6 border-b border-[#222]">
+              <h3 className="text-xl font-bold text-white">New Investment</h3>
+              <p className="text-sm text-zinc-400 mt-1">
+                Upload your payment proof to request a new investment.
+              </p>
+            </div>
+            
+            <form onSubmit={handleInvest} className="p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">
+                  Amount ($)
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  step="0.01"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="e.g. 1000"
+                  className="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">
+                  Payment Proof (Image)
+                </label>
+                <div 
+                  className="w-full border-2 border-dashed border-[#333] hover:border-orange-500/50 rounded-xl p-6 text-center cursor-pointer transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="mx-auto text-zinc-500 mb-2" size={24} />
+                  <p className="text-sm text-zinc-400">
+                    {file ? file.name : "Click to upload payment proof"}
+                  </p>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:text-white hover:bg-[#222] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreating || !amount || !file}
+                  className="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-xl text-sm font-semibold text-white"
+                >
+                  {isCreating ? "Processing..." : "Submit Investment"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

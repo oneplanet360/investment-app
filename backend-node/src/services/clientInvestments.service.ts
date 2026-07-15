@@ -31,7 +31,8 @@ export const closeInvestmentRequestService = async (userId: string, trxId: strin
 export const createInvestmentService = async (
   userId: string,
   amount: number,
-  type: InvestmentType = InvestmentType.INITIAL
+  type: InvestmentType = InvestmentType.INITIAL,
+  paymentProof: string
 ) => {
   if (amount <= 0) {
     throw new customError('Investment amount must be greater than 0', HttpStatusCode.BAD_REQUEST);
@@ -50,21 +51,6 @@ export const createInvestmentService = async (
       throw new customError('KYC must be APPROVED to invest', HttpStatusCode.BAD_REQUEST);
     }
 
-    if (investor.walletBalance < amount) {
-      throw new customError('Insufficient wallet balance to invest', HttpStatusCode.BAD_REQUEST);
-    }
-
-    // Atomic update for balances to prevent double spending
-    const updatedInvestor = await Investor.findOneAndUpdate(
-      { _id: investor._id, walletBalance: { $gte: amount } },
-      { $inc: { walletBalance: -amount, investmentBalance: amount } },
-      { new: true, session }
-    );
-
-    if (!updatedInvestor) {
-      throw new customError('Insufficient balance or concurrent update', HttpStatusCode.BAD_REQUEST);
-    }
-
     const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
 
     const nextRoiDate = new Date();
@@ -75,12 +61,11 @@ export const createInvestmentService = async (
       trxId,
       amount,
       type,
-      status: InvestmentStatus.ACTIVE,
+      status: InvestmentStatus.PENDING,
+      paymentProof,
       roiCycleStartDate: new Date(),
       nextRoiDate: nextRoiDate,
     }], { session });
-
-    await distributeCommissionService(investor._id as Types.ObjectId, investment[0]._id as Types.ObjectId, amount, session);
 
     await session.commitTransaction();
     session.endSession();
@@ -94,7 +79,7 @@ export const createInvestmentService = async (
 };
 
 /**
- * Distributes commission to agents up to 4 levels deep.
+ * Distributes commission to agents dynamically based on commissionLevels settings.
  */
 export const distributeCommissionService = async (
   investorId: Types.ObjectId,
@@ -113,8 +98,9 @@ export const distributeCommissionService = async (
   }
 
   let currentAgentId: Types.ObjectId | undefined = investor.referredBy;
+  const maxLevel = Math.max(...settings.commissionLevels.map(l => l.level));
 
-  for (let currentLevel = 1; currentLevel <= 4; currentLevel++) {
+  for (let currentLevel = 1; currentLevel <= maxLevel; currentLevel++) {
     if (!currentAgentId) {
       break; 
     }

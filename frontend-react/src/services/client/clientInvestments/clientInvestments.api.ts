@@ -3,12 +3,15 @@ import type { ApiResponse, IInvestment } from "../../../types";
 
 const CLIENT_INVESTMENT_URL = `/client/investments`;
 
-export const createInvestmentFn = async (payload: {
-  amount: number;
-}): Promise<ApiResponse<IInvestment>> => {
+export const createInvestmentFn = async (payload: FormData): Promise<ApiResponse<IInvestment>> => {
   const response = await axiosInstance.post(
     `${CLIENT_INVESTMENT_URL}/create`,
     payload,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
   return response.data;
 };

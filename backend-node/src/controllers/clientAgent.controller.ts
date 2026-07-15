@@ -41,9 +41,6 @@ export const assignAgentController = customAsyncWrapper(
     }
 
     const sponsor = req.user as any;
-    if (sponsor.level >= 4) {
-      throw new customError('Agents at level 4 cannot assign sub-agents', HttpStatusCode.FORBIDDEN);
-    }
 
     const { username } = req.body;
     if (!username) throw new customError('Username is required', HttpStatusCode.BAD_REQUEST);
@@ -78,9 +75,6 @@ export const assignInvestorController = customAsyncWrapper(
     }
 
     const agent = req.user as any;
-    if (agent.level !== 4) {
-      throw new customError('Only Level 4 agents can assign investors', HttpStatusCode.FORBIDDEN);
-    }
 
     const { username } = req.body;
     if (!username) throw new customError('Username is required', HttpStatusCode.BAD_REQUEST);
@@ -125,9 +119,6 @@ export const createInvestorController = customAsyncWrapper(
     }
 
     const agent = req.user as any;
-    if (agent.level !== 4) {
-      throw new customError('Only Level 4 agents can create investors', HttpStatusCode.FORBIDDEN);
-    }
 
     const { name, email, username, password, mobile } = req.body;
     
@@ -210,24 +201,20 @@ export const getAgentTreeController = customAsyncWrapper(
     }
 
     const getDownline = async (agentId: string, currentLevel: number): Promise<any> => {
-      if (currentLevel >= 4) {
-        const investors = await Investor.find({ referredBy: agentId }).select('name username email kycStatus createdAt');
-        return investors;
-      }
-
+      const investors = await Investor.find({ referredBy: agentId }).select('name username email kycStatus createdAt');
       const subAgents = await Agent.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
+      
       const downline = [];
+      
       for (const sub of subAgents) {
         const subAgentData = sub.toObject();
         const children = await getDownline(sub._id.toString(), subAgentData.level);
-        if (subAgentData.level === 4) {
-          (subAgentData as any).investors = children;
-        } else {
-          (subAgentData as any).subAgents = children;
-        }
+        (subAgentData as any).subAgents = children.subAgents;
+        (subAgentData as any).investors = children.investors;
         downline.push(subAgentData);
       }
-      return downline;
+      
+      return { subAgents: downline, investors };
     };
 
     const rootAgent = await Agent.findById(req.user._id).select('name username email level kycStatus createdAt');
@@ -235,11 +222,8 @@ export const getAgentTreeController = customAsyncWrapper(
 
     const tree = rootAgent.toObject();
     const children = await getDownline(req.user._id.toString(), tree.level);
-    if (tree.level === 4) {
-      (tree as any).investors = children;
-    } else {
-      (tree as any).subAgents = children;
-    }
+    (tree as any).subAgents = children.subAgents;
+    (tree as any).investors = children.investors;
 
     res.status(HttpStatusCode.OK).json({
       success: true,

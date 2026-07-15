@@ -6,6 +6,7 @@ import { createInvestmentService, getClientInvestmentsService, closeInvestmentRe
 export const createInvestmentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { amount, type } = req.body;
+    const paymentProof = req.file?.filename;
 
     if (!amount || amount <= 0) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({
@@ -14,16 +15,24 @@ export const createInvestmentController = customAsyncWrapper(
       });
     }
 
+    if (!paymentProof) {
+      return res.status(HttpStatusCode.BAD_REQUEST).json({
+        success: false,
+        message: 'Payment proof is required',
+      });
+    }
+
     const investment = await createInvestmentService(
       req.user!._id.toString(),
       Number(amount),
-      type
+      type,
+      paymentProof
     );
 
     return customApiResponse({
       response: res,
       statusCode: HttpStatusCode.CREATED,
-      message: 'Investment created successfully and commissions distributed',
+      message: 'Investment request submitted successfully. Pending Admin approval.',
       data: investment,
     });
   }

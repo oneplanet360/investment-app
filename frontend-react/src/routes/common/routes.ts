@@ -56,10 +56,6 @@ export const PROTECTED_ROUTES = {
   ADMINKYCREJECTED: "/admin/kyc/rejected",
   ADMINKYCDETAILS: "/admin/kyc/detail/:id",
 
-  // Top-ups
-  ADMINTOPUPSALL: "/admin/topups",
-  ADMINTOPUPSDETAILS: "/admin/topups/detail/:trxId",
-
   // ROI
   ADMINROILOG: "/admin/roi",
 
@@ -100,7 +96,6 @@ export const INVESTOR_PROTECTED_ROUTES = {
   INVESTMENTS: "/investor/investments",
   KYC: "/investor/kyc",
   ROI_HISTORY: "/investor/roi-history",
-  TOP_UPS: "/investor/top-ups",
   WALLET: "/investor/wallet",
   WITHDRAWALS: "/investor/withdrawals",
   PROFILE_SETTING: "/investor/profile-setting",

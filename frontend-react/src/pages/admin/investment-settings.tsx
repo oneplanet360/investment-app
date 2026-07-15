@@ -12,6 +12,8 @@ import {
   Users,
   ShieldCheck,
   Landmark,
+  PlusCircle,
+  Trash2,
 } from "lucide-react";
 
 const Section = ({
@@ -53,7 +55,7 @@ const Field = ({
 export default function InvestmentSettings() {
   const [sys, setSys] = useState({ ...systemSettings });
   const [roi, setRoi] = useState({ ...roiSettings });
-  const [com, setCom] = useState({ ...commissionSettings });
+  const [com, setCom] = useState([...commissionSettings]);
 
   const setSysField = (k: keyof typeof sys, v: string | boolean) =>
     setSys((p) => ({
@@ -226,37 +228,55 @@ export default function InvestmentSettings() {
 
         {/* Commission Settings */}
         <Section icon={<Users size={16} />} title="Agent Commission Rates">
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { key: "level1Rate" as const, label: "Level 1 (%)" },
-              { key: "level2Rate" as const, label: "Level 2 (%)" },
-              { key: "level3Rate" as const, label: "Level 3 (%)" },
-              { key: "level4Rate" as const, label: "Level 4 (%)" },
-            ].map(({ key, label }) => (
-              <Field key={key} label={label}>
-                <input
-                  className={inputCls}
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={com[key]}
-                  onChange={(e) =>
-                    setCom((p) => ({ ...p, [key]: +e.target.value }))
-                  }
-                />
-              </Field>
+          <div className="flex flex-col gap-4">
+            {com.map((levelObj, index) => (
+              <div key={index} className="flex items-end gap-4">
+                <div className="flex-1">
+                  <Field label={`Level ${levelObj.level} (%)`}>
+                    <input
+                      className={inputCls}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={levelObj.percentage}
+                      onChange={(e) => {
+                        const newCom = [...com];
+                        newCom[index].percentage = +e.target.value;
+                        setCom(newCom);
+                      }}
+                    />
+                  </Field>
+                </div>
+                {index === com.length - 1 && index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newCom = [...com];
+                      newCom.pop();
+                      setCom(newCom);
+                    }}
+                    className="p-2.5 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
+              </div>
             ))}
+            
+            <button
+              type="button"
+              onClick={() => {
+                setCom([...com, { level: com.length + 1, percentage: 0 }]);
+              }}
+              className="flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 w-fit"
+            >
+              <PlusCircle size={16} /> Add Next Level
+            </button>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 mt-4 border-t border-gray-100 pt-4">
             Total:{" "}
             <strong>
-              {(
-                com.level1Rate +
-                com.level2Rate +
-                com.level3Rate +
-                com.level4Rate
-              ).toFixed(2)}
-              %
+              {com.reduce((acc, curr) => acc + curr.percentage, 0).toFixed(2)}%
             </strong>{" "}
             (target: 4.00%)
           </p>

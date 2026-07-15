@@ -144,29 +144,7 @@ export default function AgentDashboard() {
                 </div>
               </div>
 
-              {/* Promo Banner / Agency Summary */}
-              <div className="bg-gradient-to-br from-[#2a170d] to-[#141414] border border-orange-500/10 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-                <div>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-orange-500 bg-orange-500/15 px-2.5 py-1 rounded-full">
-                    Agency Level Up
-                  </span>
-                  <h4 className="text-lg font-bold text-white mt-4 leading-snug">
-                    Unlock{" "}
-                    <span className="text-orange-500">Tier-4 Commission</span>{" "}
-                    Rewards
-                  </h4>
-                  <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-                    Refer 8 more active depositors to level up your agent rank
-                    and earn direct 12% bonuses from all downstream upgrades.
-                  </p>
-                </div>
-                <div className="mt-8">
-                  <button className="w-full py-3 px-4 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all rounded-xl text-xs font-bold text-white shadow-lg shadow-orange-500/20">
-                    Get Referral Link
-                  </button>
-                </div>
-              </div>
+
             </div>
           </div>
         );

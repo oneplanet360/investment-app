@@ -30,23 +30,7 @@ const Subscribers = lazy(() => import("../../pages/admin/subscribers"));
 const InvestmentReport = lazy(
   () => import("../../pages/admin/investment-report"),
 );
-const AllDeposits = lazy(() => import("../../pages/admin/deposits/all"));
-const PendingDeposits = lazy(
-  () => import("../../pages/admin/deposits/pending"),
-);
-const ApprovedDeposits = lazy(
-  () => import("../../pages/admin/deposits/approved"),
-);
-const SuccessfulDeposits = lazy(
-  () => import("../../pages/admin/deposits/successful"),
-);
-const RejectedDeposits = lazy(
-  () => import("../../pages/admin/deposits/rejected"),
-);
-const InitiatedDeposits = lazy(
-  () => import("../../pages/admin/deposits/initiated"),
-);
-const DepositDetail = lazy(() => import("../../pages/admin/deposits/detail"));
+
 const AllWithdrawals = lazy(() => import("../../pages/admin/withdrawals/all"));
 const PendingWithdrawals = lazy(
   () => import("../../pages/admin/withdrawals/pending"),
@@ -88,8 +72,6 @@ const PendingKyc = lazy(() => import("../../pages/admin/kyc/pending"));
 const ApprovedKyc = lazy(() => import("../../pages/admin/kyc/approved"));
 const RejectedKyc = lazy(() => import("../../pages/admin/kyc/rejected"));
 const KycDetail = lazy(() => import("../../pages/admin/kyc/detail"));
-const AllTopUps = lazy(() => import("../../pages/admin/topups/all"));
-const TopUpDetail = lazy(() => import("../../pages/admin/topups/detail"));
 const RoiLog = lazy(() => import("../../pages/admin/roi"));
 const CommissionsLog = lazy(() => import("../../pages/admin/commissions"));
 const InvestmentSettings = lazy(
@@ -141,9 +123,7 @@ const ClientInvestorInvestments = lazy(
 const ClientInvestorRoiHistory = lazy(
   () => import("../../pages/client/investor/roi-history"),
 );
-const ClientInvestorTopUps = lazy(
-  () => import("../../pages/client/investor/top-ups"),
-);
+
 const ClientInvestorWallet = lazy(
   () => import("../../pages/client/investor/wallet"),
 );
@@ -230,26 +210,6 @@ export const protectedRoutesPaths = [
     element: <InvestmentDetail />,
   },
 
-  // Deposits
-  { path: PROTECTED_ROUTES.ADMINDEPOSITSALL, element: <AllDeposits /> },
-  { path: PROTECTED_ROUTES.ADMINDEPOSITSPENDING, element: <PendingDeposits /> },
-  {
-    path: PROTECTED_ROUTES.ADMINDEPOSITSAPPROVED,
-    element: <ApprovedDeposits />,
-  },
-  {
-    path: PROTECTED_ROUTES.ADMINDEPOSITSSUCCESSFUL,
-    element: <SuccessfulDeposits />,
-  },
-  {
-    path: PROTECTED_ROUTES.ADMINDEPOSITSREJECTED,
-    element: <RejectedDeposits />,
-  },
-  {
-    path: PROTECTED_ROUTES.ADMINDEPOSITSINITIATED,
-    element: <InitiatedDeposits />,
-  },
-  { path: PROTECTED_ROUTES.ADMINDEPOSITSDETAILS, element: <DepositDetail /> },
 
   // Withdrawals (Investor)
   { path: PROTECTED_ROUTES.ADMINWITHDRAWALSALL, element: <AllWithdrawals /> },
@@ -287,9 +247,6 @@ export const protectedRoutesPaths = [
   { path: PROTECTED_ROUTES.ADMINKYCREJECTED, element: <RejectedKyc /> },
   { path: PROTECTED_ROUTES.ADMINKYCDETAILS, element: <KycDetail /> },
 
-  // Top-ups
-  { path: PROTECTED_ROUTES.ADMINTOPUPSALL, element: <AllTopUps /> },
-  { path: PROTECTED_ROUTES.ADMINTOPUPSDETAILS, element: <TopUpDetail /> },
 
   // ROI
   { path: PROTECTED_ROUTES.ADMINROILOG, element: <RoiLog /> },
@@ -376,10 +333,6 @@ export const investorProtectedRoutesPaths = [
   {
     path: INVESTOR_PROTECTED_ROUTES.ROI_HISTORY,
     element: <ClientInvestorRoiHistory />,
-  },
-  {
-    path: INVESTOR_PROTECTED_ROUTES.TOP_UPS,
-    element: <ClientInvestorTopUps />,
   },
   { path: INVESTOR_PROTECTED_ROUTES.WALLET, element: <ClientInvestorWallet /> },
   {

@@ -84,7 +84,6 @@ export default function Sidebar({
   const investorMenuItems: MenuItem[] = [
     { label: "Dashboard", icon: Gauge, path: "dashboard" },
     { label: "Investments", icon: Coins, path: "investments" },
-    { label: "Top-ups", icon: ArrowUpCircle, path: "top-ups" },
     { label: "ROI History", icon: TrendingUp, path: "roi-history" },
     { label: "Wallet", icon: CreditCard, path: "wallet" },
     { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },

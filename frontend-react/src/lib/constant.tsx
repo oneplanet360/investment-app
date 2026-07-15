@@ -66,43 +66,6 @@ export const sidebarMenu: SidebarMenuItem[] = [
     ],
   },
   {
-    label: "Top-ups",
-    icon: ArrowUpCircle,
-    children: [{ label: "All Top-ups", href: "/admin/topups", icon: List }],
-  },
-  {
-    label: "Deposits",
-    icon: ArrowDownCircle,
-    children: [
-      { label: "All Deposits", href: "/admin/deposits", icon: List },
-      {
-        label: "Pending Deposits",
-        href: "/admin/deposits/pending",
-        icon: Clock,
-      },
-      {
-        label: "Approved Deposits",
-        href: "/admin/deposits/approved",
-        icon: CheckCircle,
-      },
-      {
-        label: "Successful Deposits",
-        href: "/admin/deposits/successful",
-        icon: CheckSquare,
-      },
-      {
-        label: "Rejected Deposits",
-        href: "/admin/deposits/rejected",
-        icon: XCircle,
-      },
-      {
-        label: "Initiated Deposits",
-        href: "/admin/deposits/initiated",
-        icon: PlayCircle,
-      },
-    ],
-  },
-  {
     label: "Withdrawals",
     icon: Landmark,
     children: [

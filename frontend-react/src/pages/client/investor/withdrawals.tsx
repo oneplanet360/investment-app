@@ -4,6 +4,7 @@ import {
   getClientWithdrawalsFn,
   requestClientWithdrawalFn,
 } from "../../../services/client/clientWithdrawal/clientWithdrawal.api";
+import { useClientKycStatusQuery } from "../../../services/client/clientKyc/clientKyc.queries";
 import { toast } from "sonner";
 import type { IWithdrawal } from "../../../types";
 
@@ -16,6 +17,8 @@ export default function InvestorWithdrawals() {
     amount: "",
     gateway: "",
   });
+
+  const { data: kycStatus } = useClientKycStatusQuery();
 
   const fetchWithdrawals = async () => {
     try {
@@ -82,7 +85,13 @@ export default function InvestorWithdrawals() {
           </p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (kycStatus?.status !== "APPROVED") {
+              toast.error("You must be KYC Verified to request a withdrawal.");
+              return;
+            }
+            setShowForm(!showForm);
+          }}
           className="flex items-center gap-2 py-2.5 px-6 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all rounded-xl text-sm font-bold text-white shadow-lg shadow-orange-500/20"
         >
           {showForm ? (

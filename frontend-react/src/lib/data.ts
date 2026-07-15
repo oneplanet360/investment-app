@@ -3567,12 +3567,12 @@ export const commissionLogs: CommissionLog[] = [
   },
 ];
 
-export const commissionSettings = {
-  level1Rate: 2.0,
-  level2Rate: 0.5,
-  level3Rate: 0.75,
-  level4Rate: 0.75,
-};
+export const commissionSettings = [
+  { level: 1, percentage: 2.0 },
+  { level: 2, percentage: 0.5 },
+  { level: 3, percentage: 0.75 },
+  { level: 4, percentage: 0.75 },
+];
 
 // ─── TOP-UPS ──────────────────────────────────────────────────────────────────
 

@@ -13,14 +13,12 @@ import {
 
 export default function InvestorDashboard() {
   const [activeTab] = useState("dashboard");
-  const { mutate: createInvestment, isPending } = useCreateInvestment();
   const { data: walletData } = useClientWalletQuery();
   const { data: txData } = useClientWalletTransactionsQuery();
 
   const wallet: any = (walletData as any)?.data || {};
   const transactions: any[] = (txData as any)?.transactions || [];
 
-  // Render dummy content depending on activeTab
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
@@ -110,11 +108,10 @@ export default function InvestorDashboard() {
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`p-2 rounded-xl ${
-                            tx.transactionType === "DEPOSIT"
-                              ? "bg-emerald-500/10 text-emerald-500"
-                              : "bg-red-500/10 text-red-500"
-                          }`}
+                          className={`p-2 rounded-xl ${tx.transactionType === "DEPOSIT"
+                            ? "bg-emerald-500/10 text-emerald-500"
+                            : "bg-red-500/10 text-red-500"
+                            }`}
                         >
                           {tx.transactionType === "DEPOSIT" ? (
                             <ArrowDownLeft size={16} />
@@ -133,20 +130,18 @@ export default function InvestorDashboard() {
                       </div>
                       <div className="text-right">
                         <p
-                          className={`text-sm font-bold ${
-                            tx.transactionType === "DEPOSIT"
-                              ? "text-emerald-500"
-                              : "text-zinc-300"
-                          }`}
+                          className={`text-sm font-bold ${tx.transactionType === "DEPOSIT"
+                            ? "text-emerald-500"
+                            : "text-zinc-300"
+                            }`}
                         >
                           {tx.amountDisplay}
                         </p>
                         <span
-                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${
-                            tx.status === "SUCCESSFUL" || tx.status === "APPROVED"
-                              ? "bg-emerald-500/10 text-emerald-400"
-                              : "bg-amber-500/10 text-amber-400"
-                          }`}
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${tx.status === "SUCCESSFUL" || tx.status === "APPROVED"
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : "bg-amber-500/10 text-amber-400"
+                            }`}
                         >
                           {tx.status}
                         </span>
@@ -156,32 +151,7 @@ export default function InvestorDashboard() {
                 </div>
               </div>
 
-              {/* Promo Banner / Investment Summary */}
-              <div className="bg-linear-to-br from-[#2a170d] to-[#141414] border border-orange-500/10 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-                <div>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-orange-500 bg-orange-500/15 px-2.5 py-1 rounded-full">
-                    Special Offer
-                  </span>
-                  <h4 className="text-lg font-bold text-white mt-4 leading-snug">
-                    Get up to <span className="text-orange-500">18.5% APY</span>{" "}
-                    on Ethereum Fixed Deposits
-                  </h4>
-                  <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-                    Stake your Ethereum for a minimum of 90 days and unlock
-                    premium rewards with instant daily compounding payouts.
-                  </p>
-                </div>
-                <div className="mt-8">
-                  <button
-                    disabled={isPending}
-                    onClick={() => createInvestment({ amount: 100 })}
-                    className="w-full py-3 px-4 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all rounded-xl text-xs font-bold text-white shadow-lg shadow-orange-500/20"
-                  >
-                    {isPending ? "Processing..." : "Invest $100 (Test MLM)"}
-                  </button>
-                </div>
-              </div>
+
             </div>
           </div>
         );
