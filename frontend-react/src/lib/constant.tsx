@@ -110,6 +110,16 @@ export const sidebarMenu: SidebarMenuItem[] = [
     ],
   },
   {
+    label: "Nominee Management",
+    icon: ShieldCheck,
+    children: [
+      { label: "All Nominee", href: "/admin/nominee", icon: List },
+      { label: "Pending Nominee", href: "/admin/nominee/pending", icon: Clock },
+      { label: "Approved Nominee", href: "/admin/nominee/approved", icon: CheckCircle },
+      { label: "Rejected Nominee", href: "/admin/nominee/rejected", icon: XCircle },
+    ],
+  },
+  {
     label: "Agent Management",
     icon: Briefcase,
     children: [

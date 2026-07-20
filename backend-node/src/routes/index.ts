@@ -12,6 +12,7 @@ import adminCommissionsRoute from './adminCommissions.route';
 import adminReportsRoute from './adminReports.route';
 import adminDashboardRoute from './adminDashboard.route';
 import adminNotificationsRoute from './adminNotifications.route';
+import adminNomineeRoute from './adminNominee.route';
 
 // Client Routes
 import clientProfileRoute from './clientProfile.route';
@@ -23,6 +24,7 @@ import clientKycRoute from './clientKyc.route';
 import clientInvestmentsRoute from './clientInvestments.route';
 import clientDepositsRoute from './clientDeposits.route';
 import clientRoiRoute from './clientRoi.route';
+import clientNomineeRoute from './clientNominee.route';
 
 export {
   authRoutes,
@@ -39,6 +41,7 @@ export {
   adminReportsRoute,
   adminDashboardRoute,
   adminNotificationsRoute,
+  adminNomineeRoute,
   // Client Routes
   clientProfileRoute,
   clientWalletRoute,
@@ -49,4 +52,5 @@ export {
   clientInvestmentsRoute,
   clientDepositsRoute,
   clientRoiRoute,
+  clientNomineeRoute,
 };

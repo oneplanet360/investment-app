@@ -3,6 +3,7 @@ import {
   InvestmentStatus,
 } from '../database/models/investment.model';
 import { User } from '../database/models/user.model';
+import { Setting } from '../database/models/setting.model';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
 import mongoose from 'mongoose';
@@ -108,11 +109,27 @@ export const updateInvestmentStatusService = async (
          user.investmentBalance = Math.max((user.investmentBalance || 0) - investment.amount, 0);
       }
       
-      // Payout the initial deposit (ROI has already been paid directly)
+      // Payout the initial deposit
       const payoutAmount = investment.amount;
-      // Since wallet is for withdrawals, we add the returned principal to the roiBalance or walletBalance?
-      // "adding money to wallet we dont need but we need to keep the money in wallet so agent and investor can withdraw it"
       user.walletBalance = (user.walletBalance || 0) + payoutAmount;
+
+      // Calculate and payout pro-rated ROI
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const daysPassed = Math.floor((Date.now() - investment.roiCycleStartDate.getTime()) / msPerDay);
+      
+      if (daysPassed > 0) {
+        const setting = await Setting.findOne().session(session);
+        const monthlyRoiPercentage = setting?.monthlyRoiPercentage || 5;
+        const dailyRoiPercentage = monthlyRoiPercentage / 30; // Assuming standard 30-day month
+        
+        const proRatedRoi = investment.amount * (dailyRoiPercentage / 100) * daysPassed;
+        
+        if (proRatedRoi > 0) {
+           user.roiBalance = (user.roiBalance || 0) + proRatedRoi;
+           investment.totalReturn = (investment.totalReturn || 0) + proRatedRoi;
+        }
+      }
+
       await user.save({ session });
     }
 

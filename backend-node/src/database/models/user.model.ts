@@ -28,6 +28,7 @@ export interface IUser extends Document {
   role: UserRole;
   isActive: boolean;
   kycStatus: KycStatus;
+  nomineeStatus: KycStatus;
   walletBalance: number;
   createdAt: Date;
   updatedAt: Date;
@@ -55,6 +56,11 @@ const userSchema = new Schema<IUser>(
     zip: { type: String },
     isActive: { type: Boolean, default: true },
     kycStatus: {
+      type: String,
+      enum: Object.values(KycStatus),
+      default: KycStatus.UNVERIFIED,
+    },
+    nomineeStatus: {
       type: String,
       enum: Object.values(KycStatus),
       default: KycStatus.UNVERIFIED,

@@ -22,8 +22,8 @@ export const submitKycController = customAsyncWrapper(
       throw new customError('Document Type and Document Front Image are required', HttpStatusCode.BAD_REQUEST);
     }
 
-    const documentFrontUrl = `/uploads/kyc/${documentFront.filename}`;
-    const documentBackUrl = documentBack ? `/uploads/kyc/${documentBack.filename}` : '';
+    const documentFrontUrl = documentFront.path;
+    const documentBackUrl = documentBack ? documentBack.path : '';
 
     // Check if user already has pending or verified KYC
     const existingKyc = await Kyc.findOne({ userId: req.user._id });

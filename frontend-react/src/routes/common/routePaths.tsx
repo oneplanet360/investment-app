@@ -72,6 +72,11 @@ const PendingKyc = lazy(() => import("../../pages/admin/kyc/pending"));
 const ApprovedKyc = lazy(() => import("../../pages/admin/kyc/approved"));
 const RejectedKyc = lazy(() => import("../../pages/admin/kyc/rejected"));
 const KycDetail = lazy(() => import("../../pages/admin/kyc/detail"));
+const AllNominee = lazy(() => import("../../pages/admin/nominee/all"));
+const PendingNominee = lazy(() => import("../../pages/admin/nominee/pending"));
+const ApprovedNominee = lazy(() => import("../../pages/admin/nominee/approved"));
+const RejectedNominee = lazy(() => import("../../pages/admin/nominee/rejected"));
+const NomineeDetail = lazy(() => import("../../pages/admin/nominee/detail"));
 const RoiLog = lazy(() => import("../../pages/admin/roi"));
 const CommissionsLog = lazy(() => import("../../pages/admin/commissions"));
 const InvestmentSettings = lazy(
@@ -145,6 +150,7 @@ const ClientNotifications = lazy(
   () => import("../../pages/client/shared/notifications"),
 );
 const ClientSharedKyc = lazy(() => import("../../pages/client/shared/kyc"));
+const ClientSharedNominee = lazy(() => import("../../pages/client/shared/nominee"));
 
 export const adminAuthPaths = [
   { path: AUTH_ROUTES.ADMINSIGNIN, element: <SignInPage /> },
@@ -247,6 +253,12 @@ export const protectedRoutesPaths = [
   { path: PROTECTED_ROUTES.ADMINKYCREJECTED, element: <RejectedKyc /> },
   { path: PROTECTED_ROUTES.ADMINKYCDETAILS, element: <KycDetail /> },
 
+  // Nominee
+  { path: PROTECTED_ROUTES.ADMINNOMINEEALL, element: <AllNominee /> },
+  { path: PROTECTED_ROUTES.ADMINNOMINEEPENDING, element: <PendingNominee /> },
+  { path: PROTECTED_ROUTES.ADMINNOMINEEAPPROVED, element: <ApprovedNominee /> },
+  { path: PROTECTED_ROUTES.ADMINNOMINEEREJECTED, element: <RejectedNominee /> },
+  { path: PROTECTED_ROUTES.ADMINNOMINEEDETAILS, element: <NomineeDetail /> },
 
   // ROI
   { path: PROTECTED_ROUTES.ADMINROILOG, element: <RoiLog /> },
@@ -318,6 +330,7 @@ export const agentProtectedRoutesPaths = [
     element: <ClientNotifications />,
   },
   { path: AGENT_PROTECTED_ROUTES.KYC, element: <ClientSharedKyc /> },
+  { path: AGENT_PROTECTED_ROUTES.NOMINEE, element: <ClientSharedNominee /> },
 ];
 
 export const investorProtectedRoutesPaths = [
@@ -352,4 +365,5 @@ export const investorProtectedRoutesPaths = [
     path: INVESTOR_PROTECTED_ROUTES.NOTIFICATIONS,
     element: <ClientNotifications />,
   },
+  { path: INVESTOR_PROTECTED_ROUTES.NOMINEE, element: <ClientSharedNominee /> },
 ];

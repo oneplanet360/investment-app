@@ -56,6 +56,13 @@ export const PROTECTED_ROUTES = {
   ADMINKYCREJECTED: "/admin/kyc/rejected",
   ADMINKYCDETAILS: "/admin/kyc/detail/:id",
 
+  // Nominee
+  ADMINNOMINEEALL: "/admin/nominee",
+  ADMINNOMINEEPENDING: "/admin/nominee/pending",
+  ADMINNOMINEEAPPROVED: "/admin/nominee/approved",
+  ADMINNOMINEEREJECTED: "/admin/nominee/rejected",
+  ADMINNOMINEEDETAILS: "/admin/nominee/detail/:id",
+
   // ROI
   ADMINROILOG: "/admin/roi",
 
@@ -89,6 +96,7 @@ export const AGENT_PROTECTED_ROUTES = {
   TWO_FA: "/agent/2fa-security",
   NOTIFICATIONS: "/agent/notifications",
   KYC: "/agent/kyc",
+  NOMINEE: "/agent/nominee",
 };
 
 export const INVESTOR_PROTECTED_ROUTES = {
@@ -102,4 +110,5 @@ export const INVESTOR_PROTECTED_ROUTES = {
   CHANGE_PASSWORD: "/investor/change-password",
   TWO_FA: "/investor/2fa-security",
   NOTIFICATIONS: "/investor/notifications",
+  NOMINEE: "/investor/nominee",
 };

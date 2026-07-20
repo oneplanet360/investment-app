@@ -6,7 +6,7 @@ import { createInvestmentService, getClientInvestmentsService, closeInvestmentRe
 export const createInvestmentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
     const { amount, type } = req.body;
-    const paymentProof = req.file?.filename;
+    const paymentProof = req.file?.path;
 
     if (!amount || amount <= 0) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({

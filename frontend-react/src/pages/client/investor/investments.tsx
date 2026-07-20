@@ -8,6 +8,7 @@ export default function Investments() {
   const { mutate: createInvestment, isPending: isCreating } = useCreateInvestment();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [closeConfirmId, setCloseConfirmId] = useState<string | null>(null);
   const [amount, setAmount] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -92,11 +93,11 @@ export default function Investments() {
                   <td className="px-4 py-3 text-right">
                     {inv.status === 'ACTIVE' && (
                       <button 
-                        onClick={() => closeInvestment({ trxId: inv.trxId })}
+                        onClick={() => setCloseConfirmId(inv.trxId)}
                         disabled={isPending}
                         className="text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1 text-xs"
                       >
-                        <XCircle size={14} /> Close
+                        <XCircle size={14} /> Close Investment
                       </button>
                     )}
                   </td>
@@ -174,6 +175,44 @@ export default function Investments() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {closeConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#141414] border border-[#222] rounded-2xl w-full max-w-sm overflow-hidden">
+            <div className="p-6 border-b border-[#222]">
+              <h3 className="text-lg font-bold text-white">Close Investment</h3>
+            </div>
+            <div className="p-6 text-sm text-zinc-400">
+              Are you sure you want to request closing this investment? This action cannot be undone.
+            </div>
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#222] bg-[#1a1a1a]">
+              <button
+                type="button"
+                onClick={() => setCloseConfirmId(null)}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-[#333] transition-colors"
+                disabled={isPending}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  closeInvestment(
+                    { trxId: closeConfirmId },
+                    {
+                      onSuccess: () => setCloseConfirmId(null),
+                    }
+                  );
+                }}
+                disabled={isPending}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 transition-colors rounded-lg text-sm font-semibold text-white"
+              >
+                {isPending ? "Processing..." : "Confirm Close"}
+              </button>
+            </div>
           </div>
         </div>
       )}

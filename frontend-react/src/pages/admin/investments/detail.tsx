@@ -1,50 +1,15 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Search } from "lucide-react";
 import { useAdminInvestmentDetail } from "../../../services/admin/adminInvestments/adminInvestments.query";
 import { useUpdateInvestmentStatusMutation } from "../../../services/admin/adminInvestments/adminInvestments.mutation";
-import type { IInvestment } from "../../../services/admin/adminInvestments/adminInvestments.types";
-import Pagination from "../../../components/common/pagination";
-
-const PER_PAGE = 10;
-
-type Contribution = {
-  id: string;
-  trxId: string;
-  amount: number;
-  penalty: number;
-  status: "completed" | "pending" | "rejected";
-  contributedAt: string;
-};
-
-function buildContributions(inv: IInvestment): Contribution[] {
-  const totalPaidContributions: number = 12; // mock value
-  if (totalPaidContributions === 0) return [];
-  return Array.from({ length: totalPaidContributions }, (_, i) => {
-    const d = new Date(inv.createdAt);
-    d.setDate(d.getDate() + i + 1);
-    return {
-      id: String(i + 1),
-      trxId: `CTX${inv.trxId.slice(0, 6)}${String(i + 1).padStart(3, "0")}`,
-      amount: inv.contributionAmount,
-      penalty: 0,
-      status: "completed" as const,
-      contributedAt: d.toISOString(),
-    };
-  });
-}
-
-const statusStyle: Record<string, string> = {
-  completed: "bg-green-100 text-green-700",
-  pending: "bg-yellow-100 text-yellow-700",
-  rejected: "bg-red-100 text-red-700",
-};
 
 const invStatusStyle: Record<string, string> = {
-  ACTIVE: "border border-indigo-400 text-indigo-600",
-  COMPLETED: "border border-green-500 text-green-600",
-  CLOSE_REQUEST: "border border-orange-400 text-orange-600",
-  CLOSED: "border border-gray-400 text-gray-500",
+  PENDING: "border border-yellow-400 text-yellow-600 bg-yellow-50",
+  ACTIVE: "border border-indigo-400 text-indigo-600 bg-indigo-50",
+  COMPLETED: "border border-green-500 text-green-600 bg-green-50",
+  CLOSE_REQUEST: "border border-orange-400 text-orange-600 bg-orange-50",
+  CLOSED: "border border-gray-400 text-gray-500 bg-gray-50",
+  REJECTED: "border border-red-400 text-red-600 bg-red-50",
 };
 
 function fmt(d: string) {
@@ -67,9 +32,7 @@ export default function InvestmentDetail() {
     trxId || "",
   );
   const inv = data?.data;
-
-  const [cTrxQuery, setCTrxQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [mode, setMode] = useState("auto");
 
   if (isLoading) {
     return (
@@ -84,7 +47,7 @@ export default function InvestmentDetail() {
       <div className="min-h-full bg-[var(--theme-bg)] p-6 flex flex-col items-center justify-center gap-3">
         <p className="text-gray-500">Investment not found.</p>
         <Link
-          to="/investments/all"
+          to="/admin/investments"
           className="text-sm text-indigo-600 hover:underline"
         >
           ← Back to Investments
@@ -92,23 +55,6 @@ export default function InvestmentDetail() {
       </div>
     );
   }
-
-  const allContributions = buildContributions(inv);
-  const filteredContributions = cTrxQuery.trim()
-    ? allContributions.filter((c) =>
-        c.trxId.toLowerCase().includes(cTrxQuery.toLowerCase()),
-      )
-    : allContributions;
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredContributions.length / PER_PAGE),
-  );
-  const currentPage = Math.min(page, totalPages);
-  const slice = filteredContributions.slice(
-    (currentPage - 1) * PER_PAGE,
-    currentPage * PER_PAGE,
-  );
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-5">
@@ -257,106 +203,53 @@ export default function InvestmentDetail() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-700">
-            All Contributions
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex items-center gap-2 border border-gray-200 rounded px-3 py-1.5 w-full sm:w-48 focus-within:border-indigo-400 transition-colors">
-              <input
-                type="text"
-                value={cTrxQuery}
-                onChange={(e) => {
-                  setCTrxQuery(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Transaction Id"
-                className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent min-w-0"
-              />
-              <button className="shrink-0 w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-                <Search size={12} className="text-white" />
-              </button>
-            </div>
-            <div className="flex items-center gap-2 border border-gray-200 rounded px-3 py-1.5 w-full sm:w-44 focus-within:border-indigo-400 transition-colors">
-              <input
-                type="text"
-                placeholder="Start Date – End Date"
-                className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent min-w-0"
-              />
-              <button className="shrink-0 w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-                <Search size={12} className="text-white" />
-              </button>
-            </div>
+      {inv.status === "PENDING" && (
+        <div className="bg-white rounded-lg shadow-sm p-5 flex flex-col gap-4">
+          <div className="flex flex-wrap gap-3">
+            <button
+              disabled={isPending}
+              onClick={() => updateStatus({ status: "ACTIVE" })}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+            >
+              Approve Investment
+            </button>
+            <button
+              disabled={isPending}
+              onClick={() => updateStatus({ status: "REJECTED" })}
+              className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-sm font-medium px-5 py-2 rounded transition-colors disabled:opacity-50"
+            >
+              Reject Investment
+            </button>
           </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-gray-700">Mode:</span>
+            <select
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
+              className="text-sm border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-indigo-400 bg-transparent cursor-pointer hover:border-gray-400 transition-colors"
+            >
+              <option value="auto">Auto</option>
+              <option value="manual">Manual</option>
+            </select>
+          </div>
+          {mode === "manual" && (
+            <div className="flex flex-col sm:flex-row gap-4 mt-2">
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer border border-gray-200 rounded px-4 py-2 hover:bg-gray-50 transition-colors">
+                <input type="radio" name="manualPaymentMethod" value="card" className="cursor-pointer accent-indigo-600" />
+                Card
+              </label>
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer border border-gray-200 rounded px-4 py-2 hover:bg-gray-50 transition-colors">
+                <input type="radio" name="manualPaymentMethod" value="upi" className="cursor-pointer accent-indigo-600" />
+                UPI
+              </label>
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer border border-gray-200 rounded px-4 py-2 hover:bg-gray-50 transition-colors">
+                <input type="radio" name="manualPaymentMethod" value="bank_transfer" className="cursor-pointer accent-indigo-600" />
+                Bank Transfer
+              </label>
+            </div>
+          )}
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-150">
-            <thead>
-              <tr className="bg-indigo-600 text-white">
-                <th className="text-left px-5 py-3 font-medium">
-                  Transaction ID
-                </th>
-                <th className="text-right px-4 py-3 font-medium">
-                  Contribution Amount
-                </th>
-                <th className="text-right px-4 py-3 font-medium">
-                  Penalty Amount
-                </th>
-                <th className="text-center px-4 py-3 font-medium">Status</th>
-                <th className="text-left px-5 py-3 font-medium">
-                  Contributed At
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {slice.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="text-center py-10 text-gray-400 text-sm"
-                  >
-                    Data not found
-                  </td>
-                </tr>
-              ) : (
-                slice.map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3.5 font-mono text-xs font-semibold text-gray-800 tracking-wide">
-                      {c.trxId}
-                    </td>
-                    <td className="px-4 py-3.5 text-right text-sm font-medium text-gray-700">
-                      ${c.amount.toFixed(2)} USD
-                    </td>
-                    <td className="px-4 py-3.5 text-right text-sm text-gray-600">
-                      ${c.penalty.toFixed(2)} USD
-                    </td>
-                    <td className="px-4 py-3.5 text-center">
-                      <span
-                        className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium ${statusStyle[c.status]}`}
-                      >
-                        {c.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-gray-500">
-                      {fmt(c.contributedAt)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalResults={filteredContributions.length}
-          perPage={PER_PAGE}
-          onPageChange={setPage}
-        />
-      </div>
+      )}
     </div>
   );
 }

@@ -72,7 +72,14 @@ export default function Sidebar({
     { label: "Commissions", icon: Coins, path: "commissions" },
     { label: "Wallet", icon: CreditCard, path: "wallet" },
     { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },
-    { label: "KYC Verification", icon: ShieldCheck, path: "kyc" },
+    { 
+      label: "Verification", 
+      icon: ShieldCheck, 
+      children: [
+        { label: "KYC Verification", path: "kyc" },
+        { label: "Nominee Verification", path: "nominee" },
+      ]
+    },
     { label: "Profile Setting", icon: User, path: "profile-setting" },
     { label: "Change Password", icon: Key, path: "change-password" },
     { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
@@ -86,7 +93,14 @@ export default function Sidebar({
     { label: "ROI History", icon: TrendingUp, path: "roi-history" },
     { label: "Wallet", icon: CreditCard, path: "wallet" },
     { label: "Withdrawals", icon: ArrowDownToLine, path: "withdrawals" },
-    { label: "KYC Verification", icon: ShieldCheck, path: "kyc" },
+    { 
+      label: "Verification", 
+      icon: ShieldCheck, 
+      children: [
+        { label: "KYC Verification", path: "kyc" },
+        { label: "Nominee Verification", path: "nominee" },
+      ]
+    },
     { label: "Profile Setting", icon: User, path: "profile-setting" },
     { label: "Change Password", icon: Key, path: "change-password" },
     { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },

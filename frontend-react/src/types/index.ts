@@ -92,7 +92,7 @@ export interface IAdminSetting {
 export type InvestmentType = "INITIAL" | "TOP_UP";
 
 export type InvestmentStatus =
-  "ACTIVE" | "COMPLETED" | "CLOSE_REQUEST" | "CLOSED";
+  "PENDING" | "ACTIVE" | "COMPLETED" | "CLOSE_REQUEST" | "CLOSED" | "REJECTED";
 
 export interface IInvestment {
   _id: string;
@@ -167,4 +167,19 @@ export interface IKyc {
   status: KycStatus;
   adminRemarks?: string;
   createdAt: string;
+}
+
+export interface INominee {
+  _id: string;
+  userId: string | IUser;
+  nomineeName: string;
+  relation: string;
+  documentType: string;
+  documentNumber: string;
+  documentFrontUrl: string;
+  documentBackUrl?: string;
+  status: KycStatus;
+  adminRemarks?: string;
+  createdAt: string;
+  updatedAt: string;
 }
