@@ -1,5 +1,5 @@
 export const AUTH_ROUTES = {
-  ADMINSIGNIN: "/admin/signin",
+  ADMINSIGNIN: "/admin",
   CLIENTSIGIN: "/",
 };
 
