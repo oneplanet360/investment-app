@@ -79,14 +79,14 @@ export default function AssignUser() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+        <div className="w-10 h-10 rounded-xl bg-client-bg-secondary flex items-center justify-center text-brand-primary">
           {isLevel4 ? <UserCheck size={20} /> : <UserPlus size={20} />}
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl font-bold text-client-text tracking-tight">
             {isLevel4 ? "Create Investor" : "Assign User"}
           </h1>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-client-text-secondary">
             {isLevel4 
               ? "Create a new investor and add them directly under your downline." 
               : "Search for unassigned users and add them as your sub-agent."}
@@ -95,10 +95,10 @@ export default function AssignUser() {
       </div>
 
       {isLevel4 ? (
-        <div className="bg-[#18181b] border border-[#222] rounded-2xl p-6">
+        <div className="bg-client-card border border-client-border rounded-2xl p-6">
           <form onSubmit={handleCreateInvestor} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-client-text-secondary mb-1">Full Name</label>
               <input
                 type="text"
                 name="name"
@@ -106,13 +106,13 @@ export default function AssignUser() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter full name"
-                className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
               />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Email</label>
+                <label className="block text-sm font-medium text-client-text-secondary mb-1">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -120,25 +120,25 @@ export default function AssignUser() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter email address"
-                  className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                  className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Mobile (Optional)</label>
+                <label className="block text-sm font-medium text-client-text-secondary mb-1">Mobile (Optional)</label>
                 <input
                   type="text"
                   name="mobile"
                   value={formData.mobile}
                   onChange={handleChange}
                   placeholder="Enter mobile number"
-                  className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                  className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Username</label>
+                <label className="block text-sm font-medium text-client-text-secondary mb-1">Username</label>
                 <input
                   type="text"
                   name="username"
@@ -146,11 +146,11 @@ export default function AssignUser() {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="Enter username"
-                  className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                  className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">Password</label>
+                <label className="block text-sm font-medium text-client-text-secondary mb-1">Password</label>
                 <input
                   type="password"
                   name="password"
@@ -158,7 +158,7 @@ export default function AssignUser() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter password"
-                  className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                  className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
                 />
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function AssignUser() {
             <button
               type="submit"
               disabled={isCreatingInvestor}
-              className="w-full mt-4 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+              className="w-full mt-4 px-6 py-3 bg-brand-primary hover:bg-brand-hover text-client-text text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
             >
               {isCreatingInvestor ? "Creating Investor..." : "Create Investor"}
             </button>
@@ -174,41 +174,47 @@ export default function AssignUser() {
         </div>
       ) : (
         <>
-          <div className="bg-[#18181b] border border-[#222] rounded-2xl p-6">
-            <form onSubmit={handleSearch} className="flex gap-4">
-              <div className="relative flex-1">
-                <Search
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={18}
-                />
-                <input
-                  type="text"
-                  value={searchUsername}
-                  onChange={(e) => setSearchUsername(e.target.value)}
-                  placeholder="Enter exact username to search"
-                  className="w-full bg-[#111] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isSearching || !searchUsername}
-                className="px-6 py-3 bg-[#222] hover:bg-[#2c2c2c] text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
-              >
-                {isSearching ? "Searching..." : "Search"}
-              </button>
-            </form>
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-brand-primary/10 to-transparent rounded-3xl blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
+            <div className="relative bg-client-card border border-client-border rounded-2xl p-6 md:p-8 shadow-sm">
+              <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1 group/input">
+                  <Search
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    value={searchUsername}
+                    onChange={(e) => setSearchUsername(e.target.value)}
+                    placeholder="Enter exact username to search"
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-3 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSearching || !searchUsername}
+                  className="shrink-0 flex items-center justify-center gap-2 py-3 px-8 bg-brand-primary hover:bg-brand-hover active:scale-[0.98] transition-all rounded-xl text-sm font-bold text-client-text shadow-lg shadow-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed group/btn overflow-hidden relative"
+                >
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+                  <span className="relative z-10">
+                    {isSearching ? "Searching..." : "Search"}
+                  </span>
+                </button>
+              </form>
+            </div>
           </div>
 
           {searchResult && (
-            <div className="p-5 rounded-xl border border-orange-500/30 bg-[#141414] flex items-center justify-between">
+            <div className="p-5 rounded-xl border border-brand-primary/30 bg-client-card flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
+                <div className="w-12 h-12 rounded-full bg-client-bg flex items-center justify-center text-client-text-secondary">
                   <User size={24} />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">{searchResult.name}</h3>
-                  <p className="text-sm text-zinc-400">@{searchResult.username}</p>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <h3 className="text-client-text font-semibold">{searchResult.name}</h3>
+                  <p className="text-sm text-client-text-secondary">@{searchResult.username}</p>
+                  <p className="text-xs text-client-text-secondary mt-1">
                     Joined{" "}
                     {new Date(searchResult.createdAt).toLocaleDateString("en-US", {
                       month: "short",
@@ -222,7 +228,7 @@ export default function AssignUser() {
                 <button
                   onClick={handleAssignSubAgent}
                   disabled={isAssigningSubAgent}
-                  className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-brand-primary hover:bg-brand-hover text-client-text text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
                 >
                   {isAssigningSubAgent ? "Assigning..." : "Assign as Sub-Agent"}
                 </button>
@@ -231,11 +237,11 @@ export default function AssignUser() {
           )}
 
           {searchResult === null && (
-            <div className="p-8 text-center border border-dashed border-[#333] rounded-xl">
-              <p className="text-zinc-400">
+            <div className="p-8 text-center border border-dashed border-client-border rounded-xl">
+              <p className="text-client-text-secondary">
                 No available user found with that username.
               </p>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-client-text-secondary mt-1">
                 They might not exist, or they already have a sponsor.
               </p>
             </div>

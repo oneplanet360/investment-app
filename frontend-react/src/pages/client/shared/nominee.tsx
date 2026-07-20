@@ -41,7 +41,7 @@ export default function Nominee() {
 
   if (isLoading) {
     return (
-      <div className="p-8 text-center text-zinc-500">Loading Nominee status...</div>
+      <div className="p-8 text-center text-client-text-secondary">Loading Nominee status...</div>
     );
   }
 
@@ -54,14 +54,14 @@ export default function Nominee() {
     return (
       <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+          <div className="w-10 h-10 rounded-xl bg-client-bg-secondary flex items-center justify-center text-brand-primary">
             <ShieldCheck size={20} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">
+            <h1 className="text-2xl font-bold text-client-text tracking-tight">
               Nominee Verification
             </h1>
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-client-text-secondary">
               View your current Nominee Verification status
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function Nominee() {
             isVerified
               ? "border-green-500/30 bg-green-500/5"
               : isRejected
-                ? "border-red-500/30 bg-red-500/5"
+                ? "border-client-error/30 bg-client-error/5"
                 : "border-yellow-500/30 bg-yellow-500/5"
           }`}
         >
@@ -81,17 +81,17 @@ export default function Nominee() {
           )}
           {isPending && <FileText size={48} className="text-yellow-500 mb-4" />}
           {isRejected && (
-            <AlertCircle size={48} className="text-red-500 mb-4" />
+            <AlertCircle size={48} className="text-client-error mb-4" />
           )}
 
-          <h2 className="text-xl font-bold text-white mb-2">
+          <h2 className="text-xl font-bold text-client-text mb-2">
             {isVerified
               ? "Verification Successful"
               : isPending
                 ? "Verification Pending"
                 : "Verification Rejected"}
           </h2>
-          <p className="text-zinc-400 mb-6 max-w-md">
+          <p className="text-client-text-secondary mb-6 max-w-md">
             {isVerified
               ? "Your nominee details have been verified."
               : isPending
@@ -102,7 +102,7 @@ export default function Nominee() {
           {isRejected && (
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-[#222] hover:bg-[#333] text-white rounded-lg transition-colors"
+              className="px-6 py-2 bg-client-card hover:bg-[#333] text-client-text rounded-lg transition-colors"
             >
               Try Again
             </button>
@@ -116,24 +116,24 @@ export default function Nominee() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+        <div className="w-10 h-10 rounded-xl bg-client-bg-secondary flex items-center justify-center text-brand-primary">
           <ShieldCheck size={20} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl font-bold text-client-text tracking-tight">
             Nominee Verification
           </h1>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-client-text-secondary">
             Submit your nominee details and documents
           </p>
         </div>
       </div>
 
-      <div className="bg-[#111] border border-[#222] rounded-2xl p-6 sm:p-8">
+      <div className="bg-client-card border border-client-border rounded-2xl p-6 sm:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-400">
+              <label className="text-sm font-medium text-client-text-secondary">
                 Nominee Name *
               </label>
               <input
@@ -142,12 +142,12 @@ export default function Nominee() {
                 required
                 onChange={(e) => setNomineeName(e.target.value)}
                 placeholder="Full Name"
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
               />
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-400">
+              <label className="text-sm font-medium text-client-text-secondary">
                 Relation with Nominee *
               </label>
               <input
@@ -156,20 +156,20 @@ export default function Nominee() {
                 required
                 onChange={(e) => setRelation(e.target.value)}
                 placeholder="e.g. Spouse, Sibling"
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-400">
+              <label className="text-sm font-medium text-client-text-secondary">
                 Document Type
               </label>
               <select
                 value={documentType}
                 onChange={(e) => setDocumentType(e.target.value)}
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
               >
                 <option value="Passport">Passport</option>
                 <option value="National ID">National ID Card</option>
@@ -178,7 +178,7 @@ export default function Nominee() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-400">
+              <label className="text-sm font-medium text-client-text-secondary">
                 Document Number (Optional)
               </label>
               <input
@@ -186,18 +186,18 @@ export default function Nominee() {
                 value={documentNumber}
                 onChange={(e) => setDocumentNumber(e.target.value)}
                 placeholder="e.g. A12345678"
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                className="w-full bg-client-card border border-client-border rounded-xl px-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-400">
+            <label className="text-sm font-medium text-client-text-secondary">
               Document Front Image *
             </label>
             <div className="relative">
               <UploadCloud
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-client-text-secondary"
                 size={18}
               />
               <input
@@ -205,25 +205,25 @@ export default function Nominee() {
                 accept="image/*,application/pdf"
                 required
                 onChange={(e) => setDocumentFront(e.target.files?.[0] || null)}
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-500/10 file:text-orange-500 hover:file:bg-orange-500/20"
+                className="w-full bg-client-card border border-client-border rounded-xl pl-10 pr-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-client-bg-secondary file:text-brand-primary hover:file:bg-brand-primary/20"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-400">
+            <label className="text-sm font-medium text-client-text-secondary">
               Document Back Image (Optional)
             </label>
             <div className="relative">
               <UploadCloud
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-client-text-secondary"
                 size={18}
               />
               <input
                 type="file"
                 accept="image/*,application/pdf"
                 onChange={(e) => setDocumentBack(e.target.files?.[0] || null)}
-                className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-500/10 file:text-orange-500 hover:file:bg-orange-500/20"
+                className="w-full bg-client-card border border-client-border rounded-xl pl-10 pr-4 py-3 text-sm text-client-text focus:outline-none focus:border-brand-primary transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-client-bg-secondary file:text-brand-primary hover:file:bg-brand-primary/20"
               />
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function Nominee() {
             <button
               type="submit"
               disabled={isPending}
-              className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-8 py-3 bg-brand-primary hover:bg-brand-hover text-client-text font-semibold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {isPending ? "Submitting..." : "Submit Verification"}
             </button>

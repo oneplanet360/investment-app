@@ -269,6 +269,45 @@ export const getAgentDashboardStatsController = customAsyncWrapper(
       .sort({ createdAt: -1 })
       .limit(5);
 
+    // Analytics Chart Data (Last 6 Months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+    sixMonthsAgo.setDate(1);
+    sixMonthsAgo.setHours(0, 0, 0, 0);
+
+    const recentCommissionsAll = await Commission.find({
+      agentId: req.user._id,
+      createdAt: { $gte: sixMonthsAgo }
+    });
+
+    const recentInvestors = await Investor.find({
+      referredBy: req.user._id,
+      createdAt: { $gte: sixMonthsAgo }
+    });
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const commissionChartData = [];
+    const downlineChartData = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthStr = monthNames[d.getMonth()];
+      const yearStr = d.getFullYear().toString().slice(-2);
+      const label = `${monthStr} '${yearStr}`;
+      
+      const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+      const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59, 999);
+
+      const monthCommissions = recentCommissionsAll.filter(c => c.createdAt >= monthStart && c.createdAt <= monthEnd);
+      const sumCommissions = monthCommissions.reduce((sum, c) => sum + c.amount, 0);
+
+      const monthInvestors = recentInvestors.filter(inv => inv.createdAt >= monthStart && inv.createdAt <= monthEnd);
+      
+      commissionChartData.push({ name: label, earnings: sumCommissions });
+      downlineChartData.push({ name: label, users: monthInvestors.length });
+    }
+
     res.status(HttpStatusCode.OK).json({
       success: true,
       stats: {
@@ -277,6 +316,8 @@ export const getAgentDashboardStatsController = customAsyncWrapper(
         totalCommissions,
         level1Bonuses: level1Commissions,
         recentCommissions,
+        commissionChartData,
+        downlineChartData
       }
     });
   }

@@ -67,7 +67,7 @@ export default function WithdrawalTable({
             <thead>
               <tr className="bg-indigo-600 text-white">
                 <th className="text-left px-5 py-3 font-medium">
-                  Method | Trx
+                  Trx ID
                 </th>
                 <th className="text-left px-5 py-3 font-medium">Initiated</th>
                 <th className="text-left px-5 py-3 font-medium">User</th>
@@ -94,10 +94,7 @@ export default function WithdrawalTable({
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-5 py-3.5">
-                      <p className="font-semibold text-gray-800 text-sm">
-                        {w.gateway}
-                      </p>
-                      <p className="text-xs font-mono text-indigo-500">
+                      <p className="text-xs font-mono font-semibold text-indigo-500">
                         {w.trxId}
                       </p>
                     </td>

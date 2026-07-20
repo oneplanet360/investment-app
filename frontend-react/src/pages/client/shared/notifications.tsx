@@ -12,7 +12,7 @@ export default function NotificationsPage() {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <p className="text-zinc-400">Loading notifications...</p>
+        <p className="text-client-text-secondary">Loading notifications...</p>
       </div>
     );
   }
@@ -20,59 +20,94 @@ export default function NotificationsPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="flex items-center gap-3">
-        <Bell className="text-orange-500" size={24} />
-        <h1 className="text-2xl font-bold text-white tracking-tight">
+        <Bell className="text-brand-primary" size={24} />
+        <h1 className="text-2xl font-bold text-client-text tracking-tight">
           Notifications
         </h1>
       </div>
 
-      <div className="bg-[#18181b] rounded-2xl border border-zinc-800 overflow-hidden">
+      <div className="bg-client-card rounded-2xl border border-client-border overflow-hidden">
         {notifications.length === 0 ? (
-          <div className="p-8 text-center text-zinc-500">
+          <div className="p-8 text-center text-client-text-secondary">
             No notifications available.
           </div>
         ) : (
-          <div className="divide-y divide-zinc-800/50">
-            {notifications.map(
-              (
-                notif: Record<string, unknown> & {
-                  _id: string;
-                  title: string;
-                  message: string;
-                  createdAt: string;
-                  isRead: boolean;
-                },
-              ) => (
-                <div
-                  key={notif._id}
-                  className={`p-4 sm:p-5 transition-colors cursor-pointer hover:bg-[#202024] ${!notif.isRead ? "bg-[#202024]" : ""}`}
-                  onClick={() => {
-                    if (!notif.isRead) markAsRead(notif._id);
-                  }}
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h3
-                        className={`text-sm font-semibold mb-1 ${!notif.isRead ? "text-white" : "text-zinc-300"}`}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-client-border bg-client-card">
+                  <th className="py-4 px-6 font-medium text-sm text-client-text-secondary w-16 text-center">
+                    Status
+                  </th>
+                  <th className="py-4 px-6 font-medium text-sm text-client-text-secondary w-1/4">
+                    Title
+                  </th>
+                  <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
+                    Message
+                  </th>
+                  <th className="py-4 px-6 font-medium text-sm text-client-text-secondary w-48">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {notifications.map(
+                  (
+                    notif: Record<string, unknown> & {
+                      _id: string;
+                      title: string;
+                      message: string;
+                      createdAt: string;
+                      isRead: boolean;
+                    },
+                  ) => (
+                    <tr
+                      key={notif._id}
+                      onClick={() => {
+                        if (!notif.isRead) markAsRead(notif._id);
+                      }}
+                      className={`border-b border-client-border cursor-pointer transition-colors ${
+                        !notif.isRead
+                          ? "bg-brand-primary/5 hover:bg-brand-primary/10"
+                          : "hover:bg-client-card/50"
+                      }`}
+                    >
+                      <td className="py-4 px-6 text-center">
+                        <span
+                          className={`inline-block w-2.5 h-2.5 rounded-full shadow-sm ${
+                            !notif.isRead
+                              ? "bg-brand-primary shadow-brand-primary/50"
+                              : "bg-client-border"
+                          }`}
+                        />
+                      </td>
+                      <td
+                        className={`py-4 px-6 text-sm font-bold whitespace-nowrap ${
+                          !notif.isRead ? "text-client-text" : "text-client-text-secondary"
+                        }`}
                       >
                         {notif.title}
-                      </h3>
-                      <p
-                        className={`text-sm ${!notif.isRead ? "text-zinc-300" : "text-zinc-500"}`}
+                      </td>
+                      <td
+                        className={`py-4 px-6 text-sm ${
+                          !notif.isRead ? "text-client-text" : "text-client-text-secondary"
+                        }`}
                       >
                         {notif.message}
-                      </p>
-                    </div>
-                    {!notif.isRead && (
-                      <span className="shrink-0 w-2 h-2 rounded-full bg-orange-500 mt-1" />
-                    )}
-                  </div>
-                  <div className="mt-3 text-xs text-zinc-600">
-                    {new Date(notif.createdAt).toLocaleString()}
-                  </div>
-                </div>
-              ),
-            )}
+                      </td>
+                      <td className="py-4 px-6 text-sm text-client-text-secondary whitespace-nowrap">
+                        {new Date(notif.createdAt).toLocaleString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

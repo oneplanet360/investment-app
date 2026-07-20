@@ -19,6 +19,7 @@ import {
   X,
   TrendingUp,
   Network,
+  Bell,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -83,6 +84,7 @@ export default function Sidebar({
     { label: "Profile Setting", icon: User, path: "profile-setting" },
     { label: "Change Password", icon: Key, path: "change-password" },
     { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
+    { label: "Notifications", icon: Bell, path: "notifications" },
     { label: "Log Out", icon: LogOut, path: "logout" },
   ];
 
@@ -104,6 +106,7 @@ export default function Sidebar({
     { label: "Profile Setting", icon: User, path: "profile-setting" },
     { label: "Change Password", icon: Key, path: "change-password" },
     { label: "2FA Security", icon: ShieldCheck, path: "2fa-security" },
+    { label: "Notifications", icon: Bell, path: "notifications" },
     { label: "Log Out", icon: LogOut, path: "logout" },
   ];
 
@@ -144,30 +147,30 @@ export default function Sidebar({
       {/* Backdrop for Mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-client-bg/60 z-40 lg:hidden backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar Drawer */}
       <aside
-        className={`fixed top-0 left-0 h-full w-72 z-50 flex flex-col bg-[#141414] border-r border-[#222] transition-transform duration-300 lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:z-auto ${
+        className={`fixed top-0 left-0 h-full w-72 z-50 flex flex-col bg-client-bg-secondary border-r border-client-border transition-transform duration-300 lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:z-auto ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Brand Header */}
-        <div className="flex items-center justify-between px-6 py-6 border-b border-[#222]">
+        <div className="flex items-center justify-between px-6 py-6 border-b border-client-border">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-linear-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-orange-500/20">
-              F
+            <div className="w-9 h-9 rounded-lg bg-linear-to-tr from-brand-primary to-brand-hover flex items-center justify-center font-bold text-client-text text-lg shadow-lg shadow-brand-primary/20">
+              O
             </div>
-            <span className="text-xl font-extrabold tracking-wide text-white font-sans">
-              Fin<span className="text-orange-500">zip</span>
+            <span className="text-xl font-extrabold tracking-wide text-client-text font-sans">
+              One<span className="text-brand-primary"> Planet</span>
             </span>
           </div>
           <button
             onClick={onClose}
-            className="lg:hidden text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="lg:hidden text-client-text-secondary hover:text-client-text p-1.5 rounded-lg hover:bg-client-bg transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -198,8 +201,8 @@ export default function Sidebar({
               w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 select-none cursor-pointer
               ${
                 isActive
-                  ? "bg-[#2b1b12] text-orange-500"
-                  : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"
+                  ? "bg-client-bg-secondary text-brand-primary"
+                  : "text-client-text-secondary hover:text-client-text hover:bg-black/[0.03]"
               }
             `.trim();
 
@@ -212,7 +215,7 @@ export default function Sidebar({
                   >
                     <item.icon
                       className={`w-5 h-5 shrink-0 ${
-                        isActive ? "text-orange-500" : "text-zinc-400"
+                        isActive ? "text-brand-primary" : "text-client-text-secondary"
                       }`}
                     />
                     <span className="flex-1 text-left">{item.label}</span>
@@ -220,15 +223,15 @@ export default function Sidebar({
                       size={16}
                       className={`shrink-0 transition-transform duration-200 ${
                         isSubMenuOpen
-                          ? "rotate-90 text-orange-500"
-                          : "text-zinc-500"
+                          ? "rotate-90 text-brand-primary"
+                          : "text-client-text-secondary"
                       }`}
                     />
                   </div>
 
                   {/* Submenu List */}
                   {isSubMenuOpen && (
-                    <div className="mt-1 ml-4 pl-4 border-l border-[#2c2c2c] space-y-1 transition-all">
+                    <div className="mt-1 ml-4 pl-4 border-l border-client-border space-y-1 transition-all">
                       {item.children?.map((child) => {
                         const childPath = `/${role}/${child.path}`;
                         const isSubActive = location.pathname === childPath;
@@ -242,16 +245,16 @@ export default function Sidebar({
                               flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-200
                               ${
                                 isSubActive
-                                  ? "text-orange-500"
-                                  : "text-zinc-400 hover:text-white hover:bg-white/2"
+                                  ? "text-brand-primary"
+                                  : "text-client-text-secondary hover:text-client-text hover:bg-white/2"
                               }
                             `.trim()}
                           >
                             <span
                               className={`w-1.5 h-1.5 rounded-full border shrink-0 transition-colors ${
                                 isSubActive
-                                  ? "border-orange-500 bg-orange-500/20"
-                                  : "border-zinc-500"
+                                  ? "border-brand-primary bg-brand-primary/20"
+                                  : "border-client-border"
                               }`}
                             />
                             <span>{child.label}</span>
@@ -277,7 +280,7 @@ export default function Sidebar({
                 >
                   <item.icon
                     className={`w-5 h-5 shrink-0 ${
-                      isActive ? "text-orange-500" : "text-zinc-400"
+                      isActive ? "text-brand-primary" : "text-client-text-secondary"
                     }`}
                   />
                   <span className="flex-1 text-left">{item.label}</span>
@@ -294,7 +297,7 @@ export default function Sidebar({
               >
                 <item.icon
                   className={`w-5 h-5 shrink-0 ${
-                    isActive ? "text-orange-500" : "text-zinc-400"
+                    isActive ? "text-brand-primary" : "text-client-text-secondary"
                   }`}
                 />
                 <span className="flex-1 text-left">{item.label}</span>
@@ -304,21 +307,21 @@ export default function Sidebar({
         </nav>
 
         {/* Footer Info */}
-        <div className="p-4 border-t border-[#222] bg-[#111] flex items-center justify-between">
+        <div className="p-4 border-t border-client-border bg-client-bg-secondary flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-client-bg flex items-center justify-center text-xs font-bold text-client-text-secondary">
               {footerUser.initials}
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-semibold text-white leading-none">
+              <span className="text-xs font-semibold text-client-text leading-none">
                 {footerUser.name}
               </span>
-              <span className="text-[10px] text-zinc-500 mt-0.5">
+              <span className="text-[10px] text-client-text-secondary mt-0.5">
                 {footerUser.label}
               </span>
             </div>
           </div>
-          <span className="text-[10px] tracking-wider text-orange-500 font-bold bg-orange-500/10 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] tracking-wider text-brand-primary font-bold bg-client-bg-secondary px-2 py-0.5 rounded-full">
             {footerUser.tag}
           </span>
         </div>

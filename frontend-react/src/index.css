@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #7c3aed;
+  --color-brand-hover: #6d28d9;
+  --color-brand-dark: #5b21b6;
+  --color-client-bg: #DCD6FA;
+  --color-client-bg-secondary: #EBE6FE;
+  --color-client-card: #FFFFFF;
+  --color-client-border: #C9BEF6;
+  --color-client-text: #1e1b4b;
+  --color-client-text-secondary: #4b5563;
+  --color-client-success: #16a34a;
+  --color-client-warning: #d97706;
+  --color-client-error: #dc2626;
+  --color-client-info: #2563eb;
+}

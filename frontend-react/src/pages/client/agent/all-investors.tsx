@@ -24,7 +24,7 @@ export default function AllInvestors() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64 text-orange-500">
+      <div className="flex justify-center items-center h-64 text-brand-primary">
         <Loader2 className="animate-spin" size={32} />
       </div>
     );
@@ -33,38 +33,38 @@ export default function AllInvestors() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-white">
+        <h2 className="text-2xl font-bold tracking-tight text-client-text">
           All Investors
         </h2>
-        <p className="text-sm text-zinc-400 mt-1">
+        <p className="text-sm text-client-text-secondary mt-1">
           View and manage all investors in your downline network.
         </p>
       </div>
 
-      <div className="bg-[#141414] border border-[#222] rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-[#222] flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Users size={20} className="text-orange-500" />
+      <div className="bg-client-card border border-client-border rounded-2xl overflow-hidden">
+        <div className="p-6 border-b border-client-border flex items-center justify-between">
+          <h3 className="text-lg font-bold text-client-text flex items-center gap-2">
+            <Users size={20} className="text-brand-primary" />
             Your Referrals ({investors.length})
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#222] bg-[#1a1a1a]">
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+              <tr className="border-b border-client-border bg-client-card">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Name / Username
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Contact
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Country
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Status
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Joined Date
                 </th>
               </tr>
@@ -74,7 +74,7 @@ export default function AllInvestors() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="py-8 text-center text-zinc-500 text-sm"
+                    className="py-8 text-center text-client-text-secondary text-sm"
                   >
                     No investors found in your network.
                   </td>
@@ -83,18 +83,18 @@ export default function AllInvestors() {
                 investors.map((user: IInvestor) => (
                   <tr
                     key={user._id}
-                    className="border-b border-[#222] hover:bg-[#1a1a1a]/50 transition-colors"
+                    className="border-b border-client-border hover:bg-client-card/50 transition-colors"
                   >
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-client-bg-secondary flex items-center justify-center text-brand-primary font-bold shrink-0">
                           {user.name?.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white">
+                          <p className="text-sm font-bold text-client-text">
                             {user.name}
                           </p>
-                          <p className="text-xs text-zinc-400">
+                          <p className="text-xs text-client-text-secondary">
                             @{user.username}
                           </p>
                         </div>
@@ -102,21 +102,21 @@ export default function AllInvestors() {
                     </td>
                     <td className="py-4 px-6">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-sm text-zinc-300">
-                          <Mail size={14} className="text-zinc-500" />
+                        <div className="flex items-center gap-2 text-sm text-client-text-secondary">
+                          <Mail size={14} className="text-client-text-secondary" />
                           {user.email}
                         </div>
                         {user.mobile && (
-                          <div className="flex items-center gap-2 text-sm text-zinc-400">
-                            <Phone size={14} className="text-zinc-500" />
+                          <div className="flex items-center gap-2 text-sm text-client-text-secondary">
+                            <Phone size={14} className="text-client-text-secondary" />
                             {user.mobile}
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="py-4 px-6">
-                      <div className="flex items-center gap-2 text-sm text-zinc-300">
-                        <MapPin size={14} className="text-zinc-500" />
+                      <div className="flex items-center gap-2 text-sm text-client-text-secondary">
+                        <MapPin size={14} className="text-client-text-secondary" />
                         {user.country || "N/A"}
                       </div>
                     </td>
@@ -127,7 +127,7 @@ export default function AllInvestors() {
                             ? "bg-green-500/10 text-green-500"
                             : user.kycStatus === "PENDING"
                               ? "bg-yellow-500/10 text-yellow-500"
-                              : "bg-red-500/10 text-red-500"
+                              : "bg-client-error/10 text-client-error"
                         }`}
                       >
                         {user.kycStatus === "APPROVED"
@@ -135,7 +135,7 @@ export default function AllInvestors() {
                           : "Unverified"}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-sm text-zinc-400">
+                    <td className="py-4 px-6 text-sm text-client-text-secondary">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                   </tr>

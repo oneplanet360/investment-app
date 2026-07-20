@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Phone, MapPin, Save, Loader2 } from "lucide-react";
+import { User, Phone, MapPin, Save, Loader2, Globe, Building, Map } from "lucide-react";
 import {
   getClientProfileFn,
   updateClientProfileFn,
@@ -64,185 +64,211 @@ export default function ProfileSetting() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64 text-orange-500">
+      <div className="flex justify-center items-center h-64 text-brand-primary">
         <Loader2 className="animate-spin" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-white">
+    <div className="space-y-4 max-w-4xl mt-2 mx-auto">
+      <div className="text-center">
+        <h2 className="text-3xl font-extrabold tracking-tight text-client-text">
           Profile Settings
         </h2>
-        <p className="text-sm text-zinc-400 mt-1">
-          Manage your personal information and contact details.
+        <p className="text-sm text-client-text-secondary mt-2 max-w-lg mx-auto">
+          Manage your personal information and contact details. Keeping this up to date helps us serve you better.
         </p>
       </div>
 
-      <div className="bg-[#141414] border border-[#222] rounded-2xl p-6 md:p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">
-                First Name
-              </label>
-              <div className="relative">
-                <User
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter first name"
-                />
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Personal Information Section */}
+        <div className="relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-br from-brand-primary/10 to-transparent rounded-3xl blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
+          <div className="relative bg-client-card border border-client-border rounded-2xl p-5 md:p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-client-text mb-4 flex items-center gap-2">
+              <User size={20} className="text-brand-primary" />
+              Personal Information
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">
+                  First Name
+                </label>
+                <div className="relative group/input">
+                  <User
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                    placeholder="Enter first name"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">
-                Last Name
-              </label>
-              <div className="relative">
-                <User
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter last name"
-                />
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">
+                  Last Name
+                </label>
+                <div className="relative group/input">
+                  <User
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                    placeholder="Enter last name"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">
-                Mobile Number
-              </label>
-              <div className="relative">
-                <Phone
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter mobile number"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">
-                Country
-              </label>
-              <div className="relative">
-                <MapPin
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter country"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">City</label>
-              <div className="relative">
-                <MapPin
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter city"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300">
-                Zip / Postal Code
-              </label>
-              <div className="relative">
-                <MapPin
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  name="zip"
-                  value={formData.zip}
-                  onChange={handleChange}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter zip code"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-zinc-300">
-                Address
-              </label>
-              <div className="relative">
-                <MapPin
-                  className="absolute left-3.5 top-3.5 text-zinc-500"
-                  size={16}
-                />
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={(
-                    e: React.ChangeEvent<
-                      HTMLInputElement | HTMLTextAreaElement
-                    >,
-                  ) => handleChange(e)}
-                  rows={3}
-                  className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all"
-                  placeholder="Enter full address"
-                />
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">
+                  Mobile Number
+                </label>
+                <div className="relative group/input">
+                  <Phone
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="mobile"
+                    value={formData.mobile}
+                    onChange={handleChange}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                    placeholder="Enter mobile number"
+                  />
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="pt-4 flex justify-end">
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex items-center gap-2 py-2.5 px-6 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all rounded-xl text-sm font-bold text-white shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+        {/* Location Details Section */}
+        <div className="relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-bl from-brand-primary/10 to-transparent rounded-3xl blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
+          <div className="relative bg-client-card border border-client-border rounded-2xl p-5 md:p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-client-text mb-4 flex items-center gap-2">
+              <MapPin size={20} className="text-brand-primary" />
+              Location Details
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">
+                  Country
+                </label>
+                <div className="relative group/input">
+                  <Globe
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                    placeholder="Enter country"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">City</label>
+                <div className="relative group/input">
+                  <Building
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                    placeholder="Enter city"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">
+                  Zip / Postal Code
+                </label>
+                <div className="relative group/input">
+                  <Map
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="zip"
+                    value={formData.zip}
+                    onChange={handleChange}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50"
+                    placeholder="Enter zip code"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold text-client-text-secondary ml-1">
+                  Address
+                </label>
+                <div className="relative group/input">
+                  <MapPin
+                    className="absolute left-3.5 top-3.5 text-client-text-secondary group-focus-within/input:text-brand-primary transition-colors"
+                    size={18}
+                  />
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={(
+                      e: React.ChangeEvent<
+                        HTMLInputElement | HTMLTextAreaElement
+                      >,
+                    ) => handleChange(e)}
+                    rows={2}
+                    className="w-full bg-client-bg/50 border border-client-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-client-text placeholder-zinc-500 focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-brand-primary/50 resize-none"
+                    placeholder="Enter full address"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="pt-2 flex justify-end">
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex items-center gap-2 py-2.5 px-8 bg-brand-primary hover:bg-brand-hover active:scale-[0.98] transition-all rounded-xl text-sm font-bold text-client-text shadow-lg shadow-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed group/btn overflow-hidden relative"
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+            <span className="relative z-10 flex items-center gap-2">
               {saving ? (
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={18} className="animate-spin" />
               ) : (
-                <Save size={16} />
+                <Save size={18} />
               )}
-              <span>Save Changes</span>
-            </button>
-          </div>
-        </form>
-      </div>
+              Save Changes
+            </span>
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

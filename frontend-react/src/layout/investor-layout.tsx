@@ -12,7 +12,7 @@ export default function InvestorLayout() {
   const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "--";
 
   return (
-    <div className="flex min-h-screen bg-[#0b0b0b] text-white font-sans overflow-hidden">
+    <div className="flex h-screen bg-client-bg text-client-text font-sans overflow-hidden">
       {/* Sidebar Component */}
       <Sidebar
         role="investor"

@@ -25,9 +25,9 @@ export const requestWithdrawalController = customAsyncWrapper(
       throw new customError('Not authenticated', HttpStatusCode.UNAUTHORIZED);
     }
 
-    const { amount, gateway, type } = req.body; 
+    const { amount, type } = req.body; 
 
-    if (!amount || amount <= 0 || !gateway || !type) {
+    if (!amount || amount <= 0 || !type) {
       throw new customError('Invalid withdrawal details', HttpStatusCode.BAD_REQUEST);
     }
 
@@ -88,7 +88,7 @@ export const requestWithdrawalController = customAsyncWrapper(
         trxId,
         userId: user._id,
         amount,
-        gateway,
+
         charge,
         conversionCurrency: 'USD',
         conversionRate: 1,

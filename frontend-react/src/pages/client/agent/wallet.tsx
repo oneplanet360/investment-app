@@ -48,7 +48,7 @@ export default function AgentWallet() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64 text-orange-500">
+      <div className="flex justify-center items-center h-64 text-brand-primary">
         <Loader2 className="animate-spin" size={32} />
       </div>
     );
@@ -57,60 +57,60 @@ export default function AgentWallet() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-white">
+        <h2 className="text-2xl font-bold tracking-tight text-client-text">
           My Wallet
         </h2>
-        <p className="text-sm text-zinc-400 mt-1">
+        <p className="text-sm text-client-text-secondary mt-1">
           Manage your balances and view recent transactions.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#141414] border border-[#222] rounded-2xl p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-orange-500/20"></div>
+        <div className="bg-client-card border border-client-border rounded-2xl p-6 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-client-bg-secondary rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-brand-primary/20"></div>
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+            <div className="w-12 h-12 rounded-xl bg-client-bg-secondary flex items-center justify-center text-brand-primary">
               <WalletIcon size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-400">
+              <p className="text-sm font-medium text-client-text-secondary">
                 Available Balance
               </p>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-client-text">
                 ${(wallet?.walletBalance as number)?.toFixed(2) || "0.00"}
               </h3>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#141414] border border-[#222] rounded-2xl p-6 relative overflow-hidden group">
+        <div className="bg-client-card border border-client-border rounded-2xl p-6 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-green-500/20"></div>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500">
               <DollarSign size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-400">
+              <p className="text-sm font-medium text-client-text-secondary">
                 Commission Balance
               </p>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-client-text">
                 ${(wallet?.commissionBalance as number)?.toFixed(2) || "0.00"}
               </h3>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#141414] border border-[#222] rounded-2xl p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-blue-500/20"></div>
+        <div className="bg-client-card border border-client-border rounded-2xl p-6 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-client-info/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-client-info/20"></div>
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+            <div className="w-12 h-12 rounded-xl bg-client-info/10 flex items-center justify-center text-brand-primary">
               <ArrowDownLeft size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-400">
+              <p className="text-sm font-medium text-client-text-secondary">
                 Total Withdrawn
               </p>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-client-text">
                 ${(wallet?.totalWithdrawals as number)?.toFixed(2) || "0.00"}
               </h3>
             </div>
@@ -118,33 +118,33 @@ export default function AgentWallet() {
         </div>
       </div>
 
-      <div className="bg-[#141414] border border-[#222] rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-[#222] flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <ListOrdered size={20} className="text-orange-500" />
+      <div className="bg-client-card border border-client-border rounded-2xl overflow-hidden">
+        <div className="p-6 border-b border-client-border flex items-center justify-between">
+          <h3 className="text-lg font-bold text-client-text flex items-center gap-2">
+            <ListOrdered size={20} className="text-brand-primary" />
             Recent Transactions
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#222] bg-[#1a1a1a]">
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+              <tr className="border-b border-client-border bg-client-card">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Transaction ID
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Type
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Amount
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Gateway
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Status
                 </th>
-                <th className="py-4 px-6 font-medium text-sm text-zinc-400">
+                <th className="py-4 px-6 font-medium text-sm text-client-text-secondary">
                   Date
                 </th>
               </tr>
@@ -154,7 +154,7 @@ export default function AgentWallet() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="py-8 text-center text-zinc-500 text-sm"
+                    className="py-8 text-center text-client-text-secondary text-sm"
                   >
                     No transactions found.
                   </td>
@@ -163,25 +163,25 @@ export default function AgentWallet() {
                 transactions.map((tx) => (
                   <tr
                     key={tx._id}
-                    className="border-b border-[#222] hover:bg-[#1a1a1a]/50 transition-colors"
+                    className="border-b border-client-border hover:bg-client-card/50 transition-colors"
                   >
-                    <td className="py-4 px-6 text-sm text-white font-medium">
+                    <td className="py-4 px-6 text-sm text-client-text font-medium">
                       {tx.trxId}
                     </td>
-                    <td className="py-4 px-6 text-sm text-zinc-300 flex items-center gap-2">
+                    <td className="py-4 px-6 text-sm text-client-text-secondary flex items-center gap-2">
                       {tx.transactionType === "DEPOSIT" ? (
                         <ArrowDownLeft size={16} className="text-green-500" />
                       ) : (
-                        <ArrowUpRight size={16} className="text-red-500" />
+                        <ArrowUpRight size={16} className="text-client-error" />
                       )}
                       {tx.transactionType}
                     </td>
                     <td
-                      className={`py-4 px-6 text-sm font-bold ${tx.transactionType === "DEPOSIT" ? "text-green-500" : "text-red-500"}`}
+                      className={`py-4 px-6 text-sm font-bold ${tx.transactionType === "DEPOSIT" ? "text-green-500" : "text-client-error"}`}
                     >
                       {tx.amountDisplay}
                     </td>
-                    <td className="py-4 px-6 text-sm text-zinc-300">
+                    <td className="py-4 px-6 text-sm text-client-text-secondary">
                       {tx.gateway}
                     </td>
                     <td className="py-4 px-6">
@@ -191,13 +191,13 @@ export default function AgentWallet() {
                             ? "bg-green-500/10 text-green-500"
                             : tx.status === "PENDING"
                               ? "bg-yellow-500/10 text-yellow-500"
-                              : "bg-red-500/10 text-red-500"
+                              : "bg-client-error/10 text-client-error"
                         }`}
                       >
                         {tx.status}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-sm text-zinc-400">
+                    <td className="py-4 px-6 text-sm text-client-text-secondary">
                       {new Date(tx.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
