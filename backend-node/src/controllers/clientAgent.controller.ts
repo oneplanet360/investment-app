@@ -3,7 +3,7 @@ import { customAsyncWrapper } from '../utils/custom.asyncWrapper';
 import bcrypt from 'bcryptjs';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
-import { Agent, Investor, UserRole, KycStatus } from '../database/models/user.model';
+import { User, Agent, Investor, UserRole, KycStatus } from '../database/models/user.model';
 import { Commission } from '../database/models/commission.model';
 
 export const searchUnassignedUserController = customAsyncWrapper(
@@ -45,16 +45,16 @@ export const assignAgentController = customAsyncWrapper(
     const { username } = req.body;
     if (!username) throw new customError('Username is required', HttpStatusCode.BAD_REQUEST);
 
-    const subAgent = await Agent.findOne({ username, $or: [{ sponsor: { $exists: false } }, { sponsor: null }] });
+    const subAgent = await User.findOne({ username, $or: [{ sponsor: { $exists: false } }, { sponsor: null }] });
     if (!subAgent) {
       throw new customError('Agent not found or already assigned', HttpStatusCode.NOT_FOUND);
     }
 
-    subAgent.sponsor = sponsor._id;
-    subAgent.level = sponsor.level + 1;
+    (subAgent as any).sponsor = sponsor._id;
+    (subAgent as any).level = (sponsor as any).level + 1;
     await subAgent.save();
 
-    await Agent.findByIdAndUpdate(sponsor._id, { $inc: { downlineCount: 1 } });
+    await User.findByIdAndUpdate(sponsor._id, { $inc: { downlineCount: 1 } });
 
     res.status(HttpStatusCode.OK).json({
       success: true,
@@ -62,7 +62,7 @@ export const assignAgentController = customAsyncWrapper(
       agent: {
         _id: subAgent._id,
         username: subAgent.username,
-        level: subAgent.level,
+        level: (subAgent as any).level,
       }
     });
   }
@@ -87,7 +87,7 @@ export const assignInvestorController = customAsyncWrapper(
     investor.referredBy = req.user._id;
     await investor.save();
 
-    await Agent.findByIdAndUpdate(req.user._id, { $inc: { downlineCount: 1 } });
+    await User.findByIdAndUpdate(req.user._id, { $inc: { downlineCount: 1 } });
 
     // Notify Admins
     const { Notification } = require('../database/models/notification.model');
@@ -114,8 +114,8 @@ export const assignInvestorController = customAsyncWrapper(
 
 export const createInvestorController = customAsyncWrapper(
   async (req: Request, res: Response) => {
-    if (!req.user || req.user.role !== UserRole.AGENT) {
-      throw new customError('Only agents can create investors', HttpStatusCode.UNAUTHORIZED);
+    if (!req.user || req.user.role !== UserRole.SUB_AGENT) {
+      throw new customError('Only sub-agents can create investors', HttpStatusCode.UNAUTHORIZED);
     }
 
     const agent = req.user as any;
@@ -150,7 +150,7 @@ export const createInvestorController = customAsyncWrapper(
 
     await newInvestor.save();
 
-    await Agent.findByIdAndUpdate(agent._id, { $inc: { downlineCount: 1 } });
+    await User.findByIdAndUpdate(agent._id, { $inc: { downlineCount: 1 } });
 
     const { Notification } = require('../database/models/notification.model');
     const AdminModel = require('../database/models/admin.model').Admin;
@@ -202,12 +202,12 @@ export const getAgentTreeController = customAsyncWrapper(
 
     const getDownline = async (agentId: string, currentLevel: number): Promise<any> => {
       const investors = await Investor.find({ referredBy: agentId }).select('name username email kycStatus createdAt');
-      const subAgents = await Agent.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
+      const subAgents = await User.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
       
       const downline = [];
       
       for (const sub of subAgents) {
-        const subAgentData = sub.toObject();
+        const subAgentData = sub.toObject() as any;
         const children = await getDownline(sub._id.toString(), subAgentData.level);
         (subAgentData as any).subAgents = children.subAgents;
         (subAgentData as any).investors = children.investors;
@@ -217,10 +217,10 @@ export const getAgentTreeController = customAsyncWrapper(
       return { subAgents: downline, investors };
     };
 
-    const rootAgent = await Agent.findById(req.user._id).select('name username email level kycStatus createdAt');
+    const rootAgent = await User.findById(req.user._id).select('name username email level kycStatus createdAt');
     if (!rootAgent) throw new customError('Agent not found', 404);
 
-    const tree = rootAgent.toObject();
+    const tree = rootAgent.toObject() as any;
     const children = await getDownline(req.user._id.toString(), tree.level);
     (tree as any).subAgents = children.subAgents;
     (tree as any).investors = children.investors;
@@ -255,7 +255,7 @@ export const getAgentDashboardStatsController = customAsyncWrapper(
       throw new customError('Only agents can view dashboard stats', HttpStatusCode.UNAUTHORIZED);
     }
 
-    const agent = await Agent.findById(req.user._id);
+    const agent = await User.findById(req.user._id);
     if (!agent) {
       throw new customError('Agent not found', HttpStatusCode.NOT_FOUND);
     }
@@ -311,8 +311,8 @@ export const getAgentDashboardStatsController = customAsyncWrapper(
     res.status(HttpStatusCode.OK).json({
       success: true,
       stats: {
-        totalBalance: agent.commissionBalance,
-        activeReferrals: agent.downlineCount,
+        totalBalance: (agent as any).commissionBalance || 0,
+        activeReferrals: (agent as any).downlineCount || 0,
         totalCommissions,
         level1Bonuses: level1Commissions,
         recentCommissions,

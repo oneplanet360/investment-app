@@ -18,7 +18,7 @@ export const getWalletController = customAsyncWrapper(
     // Fetch the correct discriminator based on the user's role
     let userDetails;
     if (req.user.role === UserRole.AGENT) {
-      userDetails = await Agent.findById(req.user._id);
+      userDetails = await User.findById(req.user._id);
     } else {
       userDetails = await Investor.findById(req.user._id);
     }

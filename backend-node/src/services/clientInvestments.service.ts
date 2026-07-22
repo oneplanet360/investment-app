@@ -1,7 +1,7 @@
 import mongoose, { Types } from 'mongoose';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
-import { Investor, Agent } from '../database/models/user.model';
+import { Investor, Agent, User } from '../database/models/user.model';
 import { Investment, InvestmentType, InvestmentStatus } from '../database/models/investment.model';
 import { Setting } from '../database/models/setting.model';
 import { Commission, CommissionStatus } from '../database/models/commission.model';
@@ -112,19 +112,19 @@ export const distributeCommissionService = async (
 
     const levelSetting = settings.commissionLevels.find((lvl) => lvl.level === currentLevel);
     if (!levelSetting || levelSetting.percentage <= 0) {
-      const tempAgent = await Agent.findById(currentAgentId).select('sponsor').session(session);
-      currentAgentId = tempAgent?.sponsor;
+      const tempAgent = await User.findById(currentAgentId).select('sponsor').session(session);
+      currentAgentId = (tempAgent as any)?.sponsor;
       continue;
     }
 
-    const agent = await Agent.findById(currentAgentId).session(session);
+    const agent = await User.findById(currentAgentId).session(session);
     if (!agent) {
       break; 
     }
 
     const commissionAmount = (amount * levelSetting.percentage) / 100;
 
-    await Agent.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       agent._id,
       { $inc: { commissionBalance: commissionAmount } },
       { session }
@@ -143,6 +143,6 @@ export const distributeCommissionService = async (
       status: CommissionStatus.PAID,
     }], { session });
 
-    currentAgentId = agent.sponsor;
+    currentAgentId = (agent as any).sponsor;
   }
 };

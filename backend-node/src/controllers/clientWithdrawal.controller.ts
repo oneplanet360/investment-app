@@ -60,7 +60,7 @@ export const requestWithdrawalController = customAsyncWrapper(
           throw new customError('Only agents can withdraw commissions', HttpStatusCode.BAD_REQUEST);
         }
         
-        const updatedAgent = await Agent.findOneAndUpdate(
+        const updatedAgent = await User.findOneAndUpdate(
           { _id: user._id, commissionBalance: { $gte: amount } },
           { $inc: { commissionBalance: -amount } },
           { new: true, session }

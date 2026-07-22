@@ -130,7 +130,7 @@ export const impersonateAgentController = customAsyncWrapper(
   }
 );
 
-import { Agent, Investor } from '../database/models/user.model';
+import { Agent, Investor, User } from '../database/models/user.model';
 import { customError } from '../utils';
 
 export const getAgentTreeAdminController = customAsyncWrapper(
@@ -143,10 +143,10 @@ export const getAgentTreeAdminController = customAsyncWrapper(
         return investors;
       }
 
-      const subAgents = await Agent.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
+      const subAgents = await User.find({ sponsor: agentId }).select('name username email level kycStatus createdAt');
       const downline = [];
       for (const sub of subAgents) {
-        const subAgentData = sub.toObject();
+        const subAgentData = sub.toObject() as any;
         const children = await getDownline(sub._id.toString(), subAgentData.level);
         if (subAgentData.level === 4) {
           (subAgentData as any).investors = children;
@@ -158,10 +158,10 @@ export const getAgentTreeAdminController = customAsyncWrapper(
       return downline;
     };
 
-    const rootAgent = await Agent.findOne({ username }).select('name username email level kycStatus createdAt');
+    const rootAgent = await User.findOne({ username }).select('name username email level kycStatus createdAt');
     if (!rootAgent) throw new customError('Agent not found', 404);
 
-    const tree = rootAgent.toObject();
+    const tree = rootAgent.toObject() as any;
     const children = await getDownline(rootAgent._id.toString(), tree.level);
     if (tree.level === 4) {
       (tree as any).investors = children;

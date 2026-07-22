@@ -93,7 +93,7 @@ export const updateWithdrawalStatusService = async (
 
     if (status === WithdrawalStatus.REJECTED) {
       if (withdrawal.type === WithdrawalType.COMMISSION) {
-        await Agent.findByIdAndUpdate(
+        await User.findByIdAndUpdate(
           withdrawal.userId,
           { $inc: { commissionBalance: withdrawal.amount } },
           { session }

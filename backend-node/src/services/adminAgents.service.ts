@@ -1,4 +1,5 @@
 import { User, UserRole, IUser } from '../database/models/user.model';
+import { Setting } from '../database/models/setting.model';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
 import bcrypt from 'bcryptjs';
@@ -32,8 +33,14 @@ export const createAgentService = async (
     }
     // Typecast to IAgent to access level
     const sponsorAgent = sponsor as any;
-    if (sponsorAgent.level >= 4) {
-      throw new customError('Cannot create agents under a level 4 agent', HttpStatusCode.BAD_REQUEST);
+    const settings = await Setting.findOne();
+    let maxLevel = 4;
+    if (settings && settings.commissionLevels && settings.commissionLevels.length > 0) {
+      maxLevel = Math.max(...settings.commissionLevels.map((l: any) => l.level));
+    }
+
+    if (sponsorAgent.level > maxLevel) {
+      throw new customError(`Cannot create agents under a level ${sponsorAgent.level} agent`, HttpStatusCode.BAD_REQUEST);
     }
 
     sponsorId = sponsor._id;
@@ -45,11 +52,20 @@ export const createAgentService = async (
     payload.username ||
     'Agent';
 
+  // Determine if it should be a regular AGENT or a SUB_AGENT
+  let maxLvl = 4;
+  const sysSettings = await Setting.findOne();
+  if (sysSettings && sysSettings.commissionLevels && sysSettings.commissionLevels.length > 0) {
+    maxLvl = Math.max(...sysSettings.commissionLevels.map((l: any) => l.level));
+  }
+  
+  const roleToCreate = (sponsorId && (level > maxLvl)) ? UserRole.SUB_AGENT : UserRole.AGENT;
+
   const newAgent = new User({
     ...payload,
     name,
-    role: UserRole.AGENT,
-    referredBy: sponsorId,
+    role: roleToCreate,
+    sponsor: sponsorId, // Use sponsor for agent/subagent relation instead of referredBy which is for investors
     level,
   });
 
@@ -63,7 +79,7 @@ export const getAgentsService = async (
   limit: number = 20,
   search?: string
 ) => {
-  const query: any = { role: UserRole.AGENT };
+  const query: any = { role: { $in: [UserRole.AGENT, UserRole.SUB_AGENT] } };
 
   if (search) {
     const regex = new RegExp(search, 'i');
@@ -102,7 +118,7 @@ export const resetAgentPasswordService = async (
     );
   }
 
-  const agent = await User.findOne({ _id: agentId, role: UserRole.AGENT });
+  const agent = await User.findOne({ _id: agentId, role: { $in: [UserRole.AGENT, UserRole.SUB_AGENT] } });
   if (!agent) {
     throw new customError('Agent not found', HttpStatusCode.NOT_FOUND);
   }

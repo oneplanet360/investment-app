@@ -2,6 +2,7 @@ import { Schema, model, Document, Types } from 'mongoose';
 
 export enum UserRole {
   AGENT = 'AGENT',
+  SUB_AGENT = 'SUB_AGENT',
   INVESTOR = 'INVESTOR',
 }
 
@@ -90,6 +91,26 @@ const agentSchema = new Schema<IAgent>({
 });
 
 export const Agent = User.discriminator<IAgent>(UserRole.AGENT, agentSchema);
+
+// ==========================================
+// SubAgent Discriminator
+// ==========================================
+export interface ISubAgent extends IUser {
+  sponsor?: Types.ObjectId;
+  level: number;
+  downlineCount: number;
+  commissionBalance: number;
+}
+
+const subAgentSchema = new Schema<ISubAgent>({
+  sponsor: { type: Schema.Types.ObjectId, ref: 'User' },
+  level: { type: Number, default: 1 },
+  downlineCount: { type: Number, default: 0 },
+  commissionBalance: { type: Number, default: 0 },
+});
+
+export const SubAgent = User.discriminator<ISubAgent>(UserRole.SUB_AGENT, subAgentSchema);
+
 
 // ==========================================
 // Investor Discriminator
