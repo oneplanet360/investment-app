@@ -5,13 +5,20 @@ import { createInvestmentService, getClientInvestmentsService, closeInvestmentRe
 
 export const createInvestmentController = customAsyncWrapper(
   async (req: Request, res: Response) => {
-    const { amount, type } = req.body;
+    const { amount, type, transactionId } = req.body;
     const paymentProof = req.file?.path;
 
     if (!amount || amount <= 0) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({
         success: false,
         message: 'Invalid investment amount',
+      });
+    }
+
+    if (!transactionId) {
+      return res.status(HttpStatusCode.BAD_REQUEST).json({
+        success: false,
+        message: 'Transaction ID is required',
       });
     }
 
@@ -26,7 +33,8 @@ export const createInvestmentController = customAsyncWrapper(
       req.user!._id.toString(),
       Number(amount),
       type,
-      paymentProof
+      paymentProof,
+      transactionId
     );
 
     return customApiResponse({

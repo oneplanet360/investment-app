@@ -4,7 +4,8 @@ import {
 } from '../database/models/investment.model';
 import { User } from '../database/models/user.model';
 import { Setting } from '../database/models/setting.model';
-import { customError } from '../utils';
+import { Roi, RoiStatus } from '../database/models/roi.model';
+import { customError, generateTransactionId } from '../utils';
 import { HttpStatusCode } from '../constants';
 import mongoose from 'mongoose';
 
@@ -118,16 +119,16 @@ export const updateInvestmentStatusService = async (
       const daysPassed = Math.floor((Date.now() - investment.roiCycleStartDate.getTime()) / msPerDay);
       
       if (daysPassed > 0) {
-        const setting = await Setting.findOne().session(session);
-        const monthlyRoiPercentage = setting?.monthlyRoiPercentage || 5;
-        const dailyRoiPercentage = monthlyRoiPercentage / 30; // Assuming standard 30-day month
-        
-        const proRatedRoi = investment.amount * (dailyRoiPercentage / 100) * daysPassed;
-        
-        if (proRatedRoi > 0) {
-           user.roiBalance = (user.roiBalance || 0) + proRatedRoi;
-           investment.totalReturn = (investment.totalReturn || 0) + proRatedRoi;
-        }
+        // Generate a pending ROI log for the admin to manually approve an amount for this partial cycle
+        await Roi.create([{
+          trxId: generateTransactionId(),
+          investorId: investment.userId,
+          investmentId: investment._id,
+          amount: 0,
+          roiRate: 0,
+          monthIndex: investment.roiLog?.monthIndex ? investment.roiLog.monthIndex + 1 : 1,
+          status: RoiStatus.PENDING
+        }], { session });
       }
 
       await user.save({ session });

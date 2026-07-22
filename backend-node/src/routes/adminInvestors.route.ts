@@ -6,7 +6,8 @@ import {
   resetInvestorPasswordController,
   impersonateInvestorController,
   toggleBanInvestorController,
-  sendNotificationInvestorController
+  sendNotificationInvestorController,
+  updateInvestmentBalanceController
 } from '../controllers/adminInvestors.controller';
 
 const router = Router();
@@ -20,5 +21,6 @@ router.put('/:username/ban', toggleBanInvestorController);
 router.post('/:username/notification', sendNotificationInvestorController);
 router.post('/:username/impersonate', impersonateInvestorController);
 router.put('/:id/password-reset', resetInvestorPasswordController);
+router.post('/:username/investment-balance', updateInvestmentBalanceController);
 
 export default router;

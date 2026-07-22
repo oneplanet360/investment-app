@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { User, UserRole, Agent, Investor } from '../database/models/user.model';
 import { Deposit } from '../database/models/deposit.model';
 import { Withdrawal } from '../database/models/withdrawal.model';
+import { Roi } from '../database/models/roi.model';
+import { Commission } from '../database/models/commission.model';
 import { customAsyncWrapper } from '../utils/custom.asyncWrapper';
 import { customError } from '../utils';
 import { HttpStatusCode } from '../constants';
@@ -63,6 +66,14 @@ export const getWalletTransactionsController = customAsyncWrapper(
       .select('trxId amount gateway status createdAt type')
       .lean();
 
+    const rois = await Roi.find({ investorId: req.user._id, status: 'APPROVED' })
+      .select('trxId amount status createdAt')
+      .lean();
+
+    const commissions = await Commission.find({ receiverId: req.user._id, status: 'APPROVED' })
+      .select('trxId amount status createdAt')
+      .lean();
+
     const formattedDeposits = deposits.map(d => ({
       ...d,
       transactionType: 'DEPOSIT',
@@ -75,7 +86,19 @@ export const getWalletTransactionsController = customAsyncWrapper(
       amountDisplay: `-$${w.amount.toFixed(2)}`
     }));
 
-    const transactions = [...formattedDeposits, ...formattedWithdrawals]
+    const formattedRois = rois.map(r => ({
+      ...r,
+      transactionType: 'ROI',
+      amountDisplay: `+$${r.amount.toFixed(2)}`
+    }));
+
+    const formattedCommissions = commissions.map(c => ({
+      ...c,
+      transactionType: 'COMMISSION',
+      amountDisplay: `+$${c.amount.toFixed(2)}`
+    }));
+
+    const transactions = [...formattedDeposits, ...formattedWithdrawals, ...formattedRois, ...formattedCommissions]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     res.status(HttpStatusCode.OK).json({

@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 export interface ISetting extends Document {
-  monthlyRoiPercentage: number;
+  roiCycleDays: number;
   minInvestmentAmount: number;
   commissionLevels: {
     level: number;
@@ -13,7 +13,7 @@ export interface ISetting extends Document {
 
 const settingSchema = new Schema<ISetting>(
   {
-    monthlyRoiPercentage: { type: Number, required: true, default: 5 }, // e.g. 5 to 7%
+    roiCycleDays: { type: Number, required: true, default: 30 }, // Cycle length in days
     minInvestmentAmount: { type: Number, required: true, default: 100 },
     commissionLevels: [
       {

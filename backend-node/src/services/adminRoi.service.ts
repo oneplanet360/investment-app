@@ -1,13 +1,22 @@
-import { Roi } from '../database/models/roi.model';
-import { User } from '../database/models/user.model';
+import { Roi, RoiStatus } from '../database/models/roi.model';
+import { User, Investor } from '../database/models/user.model';
 import { Investment } from '../database/models/investment.model';
+import mongoose from 'mongoose';
+import { customError } from '../utils';
+import { HttpStatusCode } from '../constants';
+import { distributeCommissionService } from './clientInvestments.service';
 
 export const getRoiLogsService = async (
   page: number = 1,
   limit: number = 20,
-  search?: string
+  search?: string,
+  status?: string
 ) => {
   const query: any = {};
+
+  if (status && status !== 'all') {
+    query.status = status.toUpperCase();
+  }
 
   if (search) {
     const regex = new RegExp(search, 'i');
@@ -42,14 +51,14 @@ export const getRoiLogsService = async (
 
   const creditedCount = await Roi.countDocuments({
     ...query,
-    status: 'CREDITED',
+    status: 'APPROVED',
   });
   const pendingCount = await Roi.countDocuments({
     ...query,
     status: 'PENDING',
   });
   const totalPaidAggr = await Roi.aggregate([
-    { $match: { ...query, status: 'CREDITED' } },
+    { $match: { ...query, status: 'APPROVED' } },
     { $group: { _id: null, total: { $sum: '$amount' } } },
   ]);
   const totalPaid = totalPaidAggr.length > 0 ? totalPaidAggr[0].total : 0;
@@ -68,4 +77,56 @@ export const getRoiLogsService = async (
       },
     },
   };
+};
+
+export const updateRoiStatusService = async (trxId: string, status: RoiStatus, amount?: number) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const roiLog = await Roi.findOne({ trxId }).session(session);
+
+    if (!roiLog) {
+      throw new customError('ROI log not found', HttpStatusCode.NOT_FOUND);
+    }
+
+    if (roiLog.status !== RoiStatus.PENDING) {
+      throw new customError(
+        'Can only update pending ROI logs',
+        HttpStatusCode.BAD_REQUEST
+      );
+    }
+
+    if (status === RoiStatus.APPROVED) {
+      if (amount !== undefined && amount >= 0) {
+        roiLog.amount = amount;
+      }
+
+      // Credit investor
+      await Investor.findByIdAndUpdate(
+        roiLog.investorId,
+        { $inc: { roiBalance: roiLog.amount, walletBalance: roiLog.amount } },
+        { session }
+      );
+
+      // Distribute commissions based on the ROI amount
+      await distributeCommissionService(
+        roiLog.investorId as mongoose.Types.ObjectId,
+        roiLog.investmentId as mongoose.Types.ObjectId,
+        roiLog.amount,
+        session
+      );
+    }
+
+    roiLog.status = status;
+    await roiLog.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+    return roiLog;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };

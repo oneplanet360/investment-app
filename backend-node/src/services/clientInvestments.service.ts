@@ -32,7 +32,8 @@ export const createInvestmentService = async (
   userId: string,
   amount: number,
   type: InvestmentType = InvestmentType.INITIAL,
-  paymentProof: string
+  paymentProof: string,
+  transactionId: string
 ) => {
   if (amount <= 0) {
     throw new customError('Investment amount must be greater than 0', HttpStatusCode.BAD_REQUEST);
@@ -53,12 +54,16 @@ export const createInvestmentService = async (
 
     const trxId = crypto.randomBytes(8).toString('hex').toUpperCase();
 
+    const setting = await Setting.findOne().session(session);
+    const cycleDays = setting?.roiCycleDays || 30;
+
     const nextRoiDate = new Date();
-    nextRoiDate.setMonth(nextRoiDate.getMonth() + 1);
+    nextRoiDate.setDate(nextRoiDate.getDate() + cycleDays);
 
     const investment = await Investment.create([{
       userId: investor._id,
       trxId,
+      transactionId,
       amount,
       type,
       status: InvestmentStatus.PENDING,

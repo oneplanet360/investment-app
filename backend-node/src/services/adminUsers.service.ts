@@ -1,5 +1,5 @@
 import { User } from '../database/models/user.model';
-import { Investment } from '../database/models/investment.model';
+import { Investment, InvestmentStatus } from '../database/models/investment.model';
 import { Deposit } from '../database/models/deposit.model';
 import { Withdrawal } from '../database/models/withdrawal.model';
 import jwt from 'jsonwebtoken';
@@ -102,7 +102,7 @@ export const getAdminUserDetailService = async (username: string, expectedRole: 
     user,
     stats: {
       balance: user.walletBalance || 0,
-      totalInvestments: stats.count || 0,
+      totalInvestments: stats.totalAmount || 0,
       totalContribution: stats.totalContribution || 0,
       closeRequests: stats.closeRequests || 0,
       completedInvestments: stats.completedCount || 0,
@@ -111,4 +111,32 @@ export const getAdminUserDetailService = async (username: string, expectedRole: 
       transactions: depositsCount + wdCount + invCount
     }
   };
+};
+
+export const updateInvestmentBalanceService = async (username: string, action: 'add' | 'deduct', amount: number) => {
+  const user = await User.findOne({ username, role: 'INVESTOR' });
+  if (!user) {
+    throw new customError('Investor not found', HttpStatusCode.NOT_FOUND);
+  }
+
+  const activeInvestment = await Investment.findOne({ userId: user._id, status: InvestmentStatus.ACTIVE }).sort({ createdAt: -1 });
+  if (!activeInvestment) {
+    throw new customError('No active investment found for this investor', HttpStatusCode.NOT_FOUND);
+  }
+
+  if (action === 'add') {
+    activeInvestment.amount += amount;
+    (user as any).investmentBalance = ((user as any).investmentBalance || 0) + amount;
+  } else if (action === 'deduct') {
+    activeInvestment.amount -= amount;
+    (user as any).investmentBalance = Math.max(((user as any).investmentBalance || 0) - amount, 0);
+    if (activeInvestment.amount <= 0) {
+      activeInvestment.amount = 0;
+      activeInvestment.status = InvestmentStatus.CLOSED;
+    }
+  }
+
+  await activeInvestment.save();
+  await user.save();
+  return activeInvestment;
 };

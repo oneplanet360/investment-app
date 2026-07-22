@@ -1,7 +1,9 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
 export enum RoiStatus {
-  CREDITED = 'CREDITED',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export interface IRoi extends Document {
@@ -31,7 +33,7 @@ const roiSchema = new Schema<IRoi>(
     status: {
       type: String,
       enum: Object.values(RoiStatus),
-      default: RoiStatus.CREDITED,
+      default: RoiStatus.PENDING,
     },
   },
   {

@@ -27,7 +27,13 @@ export const getInvestorsController = customAsyncWrapper(
   }
 );
 
-import { getAdminUserDetailService, impersonateUserService, toggleUserBanService, sendNotificationService } from '../services/adminUsers.service';
+import {
+  getAdminUserDetailService,
+  impersonateUserService,
+  toggleUserBanService,
+  sendNotificationService,
+  updateInvestmentBalanceService,
+} from '../services/adminUsers.service';
 import { ParsedEnvVariables } from '../configs';
 
 export const toggleBanInvestorController = customAsyncWrapper(
@@ -111,6 +117,38 @@ export const impersonateInvestorController = customAsyncWrapper(
       response: res,
       statusCode: HttpStatusCode.OK,
       message: 'Investor password reset successfully',
+    });
+  }
+);
+
+export const updateInvestmentBalanceController = customAsyncWrapper(
+  async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const { action, amount } = req.body;
+
+    if (!['add', 'deduct'].includes(action)) {
+      return customApiResponse({
+        response: res,
+        statusCode: HttpStatusCode.BAD_REQUEST,
+        message: 'Invalid action',
+      });
+    }
+
+    if (!amount || amount < 0) {
+      return customApiResponse({
+        response: res,
+        statusCode: HttpStatusCode.BAD_REQUEST,
+        message: 'Amount must be a positive number',
+      });
+    }
+
+    const updatedInvestment = await updateInvestmentBalanceService(username as string, action, Number(amount));
+
+    return customApiResponse({
+      response: res,
+      statusCode: HttpStatusCode.OK,
+      message: `Investment balance ${action === 'add' ? 'added' : 'deducted'} successfully`,
+      data: updatedInvestment,
     });
   }
 );

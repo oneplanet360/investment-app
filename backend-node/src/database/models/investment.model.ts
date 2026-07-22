@@ -17,6 +17,7 @@ export enum InvestmentStatus {
 export interface IInvestment extends Document {
   userId: Types.ObjectId;
   trxId: string;
+  transactionId?: string;
   amount: number; // initial deposit
   contributionAmount: number;
   contributionFrequency: string;
@@ -35,6 +36,7 @@ const investmentSchema = new Schema<IInvestment>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     trxId: { type: String, required: true, unique: true },
+    transactionId: { type: String },
     amount: { type: Number, required: true, min: 0 },
     contributionAmount: { type: Number, default: 0 },
     contributionFrequency: { type: String, default: 'None' },
