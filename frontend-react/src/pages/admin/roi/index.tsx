@@ -45,7 +45,7 @@ export default function RoiLog() {
         {[
           {
             label: "Total ROI Paid",
-            value: `$${stats.totalPaid.toFixed(2)}`,
+            value: `Rs.${stats.totalPaid.toFixed(2)}`,
             color: "text-emerald-600",
             bg: "bg-emerald-50",
           },
@@ -154,7 +154,7 @@ export default function RoiLog() {
                       </p>
                     </td>
                     <td className="px-5 py-3.5 text-right font-semibold text-emerald-600">
-                      ${r.amount.toFixed(2)} USD
+                      ${r.amount.toFixed(2)} INR
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">

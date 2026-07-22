@@ -59,7 +59,7 @@ export default function CommissionsLog() {
             <div key={lvl} className="bg-white rounded-lg shadow-sm p-4">
               <p className="text-xs text-gray-500">Level {lvl} Commissions</p>
               <p className="text-xl font-bold mt-1 text-indigo-600">
-                ${(stats.levelTotals[lvl] || 0).toFixed(2)}
+                Rs.{(stats.levelTotals[lvl] || 0).toFixed(2)}
               </p>
             </div>
           );
@@ -75,7 +75,7 @@ export default function CommissionsLog() {
             <p className="text-xs text-gray-400">
               Total paid:{" "}
               <strong className="text-emerald-600">
-                ${stats.totalPaid.toFixed(2)}
+                Rs.{stats.totalPaid.toFixed(2)}
               </strong>
             </p>
           </div>
@@ -183,7 +183,7 @@ export default function CommissionsLog() {
                       {c.rate}%
                     </td>
                     <td className="px-5 py-3.5 text-right font-semibold text-emerald-600">
-                      ${c.amount.toFixed(2)} USD
+                      Rs.{c.amount.toFixed(2)}
                     </td>
                     <td className="px-5 py-3.5 text-xs text-gray-500 whitespace-nowrap">
                       {fmt(c.createdAt)}

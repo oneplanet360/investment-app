@@ -17,3 +17,15 @@ export const updateAdminSettingsFn = async (
   const response = await axiosInstance.put(ADMINSETTINGS, payload);
   return response.data.data;
 };
+
+export const getInvestmentSettingsFn = async (): Promise<any> => {
+  const response = await axiosInstance.get(`${ADMINSETTINGS}/investment`);
+  return response.data.data;
+};
+
+export const updateInvestmentSettingsFn = async (
+  payload: any,
+): Promise<any> => {
+  const response = await axiosInstance.put(`${ADMINSETTINGS}/investment`, payload);
+  return response.data.data;
+};

@@ -66,8 +66,8 @@ export default function InvestorDashboard() {
     }
   };
 
-  const wallet: any = (walletData as any)?.data || {};
-  const transactions: any[] = (txData as any)?.transactions || [];
+  const wallet: any = walletData || {};
+  const transactions: any[] = (txData as any) || [];
 
   const groupedCashFlow: Record<string, { name: string, deposits: number, withdrawals: number }> = {};
   const groupedEarnings: Record<string, { name: string, roi: number, commission: number }> = {};
@@ -89,17 +89,7 @@ export default function InvestorDashboard() {
   const cashFlowData = Object.values(groupedCashFlow).reverse().slice(-7);
   const earningsData = Object.values(groupedEarnings).reverse().slice(-7);
 
-  // If empty, add mock placeholder for beautiful UI when empty
-  if (cashFlowData.length === 0) {
-    cashFlowData.push({ name: "Mon", deposits: 100, withdrawals: 0 });
-    cashFlowData.push({ name: "Tue", deposits: 250, withdrawals: 50 });
-    cashFlowData.push({ name: "Wed", deposits: 0, withdrawals: 100 });
-  }
-  if (earningsData.length === 0) {
-    earningsData.push({ name: "Mon", roi: 12.5, commission: 0 });
-    earningsData.push({ name: "Tue", roi: 12.5, commission: 50 });
-    earningsData.push({ name: "Wed", roi: 12.5, commission: 0 });
-  }
+  // Removed mock placeholders to prevent confusion when data is actually empty
 
   const renderContent = () => {
     switch (activeTab) {

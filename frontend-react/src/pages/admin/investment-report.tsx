@@ -48,7 +48,7 @@ export default function InvestmentReport() {
         />
         <StatCard
           label="Total Contributions"
-          value={`$${totalContributions.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+          value={`Rs.${totalContributions.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
           bg="bg-purple-700"
           icon={<ArrowDownToLine size={22} className="text-white" />}
         />

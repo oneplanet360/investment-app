@@ -26,7 +26,7 @@ const InvestorResetPassword = lazy(
   () =>
     import("../../pages/admin/investors-management/investor-password-reset"),
 );
-const Subscribers = lazy(() => import("../../pages/admin/subscribers"));
+
 const InvestmentReport = lazy(
   () => import("../../pages/admin/investment-report"),
 );
@@ -78,6 +78,7 @@ const ApprovedNominee = lazy(() => import("../../pages/admin/nominee/approved"))
 const RejectedNominee = lazy(() => import("../../pages/admin/nominee/rejected"));
 const NomineeDetail = lazy(() => import("../../pages/admin/nominee/detail"));
 const RoiLog = lazy(() => import("../../pages/admin/roi"));
+const RoiRequests = lazy(() => import("../../pages/admin/roi/requests"));
 const CommissionsLog = lazy(() => import("../../pages/admin/commissions"));
 const InvestmentSettings = lazy(
   () => import("../../pages/admin/investment-settings"),
@@ -187,7 +188,7 @@ export const protectedRoutesPaths = [
   },
   { path: PROTECTED_ROUTES.ADMININVESTORDETAILS, element: <UserDetail /> },
 
-  { path: PROTECTED_ROUTES.ADMINSUBSCRIBERS, element: <Subscribers /> },
+
   {
     path: PROTECTED_ROUTES.ADMININVESTMENTREPORT,
     element: <InvestmentReport />,
@@ -262,6 +263,7 @@ export const protectedRoutesPaths = [
 
   // ROI
   { path: PROTECTED_ROUTES.ADMINROILOG, element: <RoiLog /> },
+  { path: PROTECTED_ROUTES.ADMINROIREQUESTS, element: <RoiRequests /> },
 
   // Commissions
   { path: PROTECTED_ROUTES.ADMINCOMMISSIONSLOG, element: <CommissionsLog /> },

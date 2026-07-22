@@ -113,8 +113,7 @@ export default function AgentsTable({
                         {timeAgo(agent.createdAt)}
                       </p>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-700">
-                      ${(agent.walletBalance || 0).toFixed(2)} USD
+                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-700"> Rs.{(agent.walletBalance || 0).toFixed(2)} INR
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       <div className="flex items-center justify-center gap-2">

@@ -48,25 +48,25 @@ export default function InvestmentReport() {
         {[
           {
             label: "Total Invested",
-            value: `$${totalInvested.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+            value: `Rs.${totalInvested.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
             icon: <DollarSign size={20} className="text-indigo-600" />,
             bg: "bg-indigo-50",
           },
           {
             label: "Projected Returns",
-            value: `$${totalProjectedReturn.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+            value: `Rs.${totalProjectedReturn.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
             icon: <TrendingUp size={20} className="text-emerald-600" />,
             bg: "bg-emerald-50",
           },
           {
             label: "ROI Paid Out",
-            value: `$${totalRoiPaid.toFixed(2)}`,
+            value: `Rs.${totalRoiPaid.toFixed(2)}`,
             icon: <ArrowUpRight size={20} className="text-green-600" />,
             bg: "bg-green-50",
           },
           {
             label: "Total Top-ups",
-            value: `$${totalTopUps.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+            value: `Rs.${totalTopUps.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
             icon: <BarChart2 size={20} className="text-violet-600" />,
             bg: "bg-violet-50",
           },
@@ -160,8 +160,7 @@ export default function InvestmentReport() {
                   <span className="text-sm text-indigo-500">@{username}</span>
                 </div>
                 <span className="text-sm font-semibold text-gray-800">
-                  $
-                  {amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  Rs. {amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
               </div>
             ))}
@@ -185,8 +184,7 @@ export default function InvestmentReport() {
                 className="text-center p-4 bg-indigo-50 rounded-lg"
               >
                 <p className="text-xs text-gray-500 mb-1">Level {lvl}</p>
-                <p className="text-lg font-bold text-indigo-600">
-                  ${levelData.amount.toFixed(2)}
+                <p className="text-lg font-bold text-indigo-600"> Rs.{levelData.amount.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-400">
                   {levelData.count} transactions
@@ -197,8 +195,7 @@ export default function InvestmentReport() {
         </div>
         <p className="text-xs text-gray-400 mt-3 text-right">
           Total commissions paid:{" "}
-          <strong className="text-emerald-600">
-            ${totalCommissions.toFixed(2)}
+          <strong className="text-emerald-600"> Rs.{totalCommissions.toFixed(2)}
           </strong>
         </p>
       </div>

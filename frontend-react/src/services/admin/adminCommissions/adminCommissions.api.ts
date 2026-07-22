@@ -7,7 +7,7 @@ export const getAdminCommissionLogsApi = async (
   search: string,
   level: string,
 ): Promise<AdminCommissionResponse> => {
-  const { data } = await axiosInstance.get(`/api/v1/admin/commissions`, {
+  const { data } = await axiosInstance.get(`/admin/commissions`, {
     params: { page, limit, search, level },
   });
   return {

@@ -10,9 +10,10 @@ import {
   XCircle,
   Percent,
   Landmark,
-  ArrowUpDown,
+  Clock3,
 } from "lucide-react";
 import { useAdminDashboard } from "../../services/admin/adminDashboard/adminDashboard.query";
+import { useAdminRoiLogs } from "../../services/admin/adminRoi/adminRoi.query";
 
 type StatCardProps = {
   label: string;
@@ -63,21 +64,10 @@ function MiniCard({ label, value, icon, iconBg }: MiniCardProps) {
   );
 }
 
-const statusColors: Record<string, string> = {
-  completed: "bg-green-100 text-green-700",
-  pending: "bg-yellow-100 text-yellow-700",
-  rejected: "bg-red-100 text-red-700",
-};
-
-const typeColors: Record<string, string> = {
-  deposit: "text-green-600",
-  withdrawal: "text-red-600",
-  investment: "text-indigo-600",
-  profit: "text-emerald-600",
-};
 
 export default function Dashboard() {
   const { data, isLoading, isError } = useAdminDashboard();
+  const { data: pendingRoisResponse, isLoading: roisLoading } = useAdminRoiLogs(1, 10, "", "PENDING");
 
   if (isLoading) {
     return (
@@ -96,7 +86,7 @@ export default function Dashboard() {
   }
 
   const s = data.stats;
-  const recentTransactions = data.recentTransactions;
+  const pendingRois = pendingRoisResponse?.data || [];
 
   return (
     <div className="min-h-full bg-[var(--theme-bg)] p-4 sm:p-6 space-y-6">
@@ -122,14 +112,14 @@ export default function Dashboard() {
           icon={<UserPlus size={22} className="text-sky-600" />}
         />
         <StatCard
-          label="Total Business"
-          value={`$${s.totalBusiness.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+          label="Total Investments"
+          value={`Rs.${s.totalBusiness.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
           iconBg="bg-violet-100"
           icon={<TrendingUp size={22} className="text-violet-600" />}
         />
         <StatCard
           label="Total Income Paid"
-          value={`$${s.totalIncomePaid.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+          value={`Rs.${s.totalIncomePaid.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
           iconBg="bg-teal-100"
           icon={<DollarSign size={22} className="text-teal-600" />}
         />
@@ -147,7 +137,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-1">
             <MiniCard
               label="Total Deposited"
-              value={`$${s.totalDeposited.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+              value={`Rs.${s.totalDeposited.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
               iconBg="bg-green-100"
               icon={<ArrowDownToLine size={18} className="text-green-600" />}
             />
@@ -165,7 +155,7 @@ export default function Dashboard() {
             />
             <MiniCard
               label="Deposited Charge"
-              value={`$${s.depositedCharge.toFixed(2)} USD`}
+              value={`Rs.${s.depositedCharge.toFixed(2)} INR`}
               iconBg="bg-violet-100"
               icon={<Percent size={18} className="text-violet-600" />}
             />
@@ -179,7 +169,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-1">
             <MiniCard
               label="Total Withdrawn"
-              value={`$${s.totalWithdrawn.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+              value={`Rs.${s.totalWithdrawn.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
               iconBg="bg-teal-100"
               icon={<Landmark size={18} className="text-teal-600" />}
             />
@@ -197,7 +187,7 @@ export default function Dashboard() {
             />
             <MiniCard
               label="Withdrawal Charge"
-              value={`$${s.withdrawalCharge.toFixed(2)} USD`}
+              value={`Rs.${s.withdrawalCharge.toFixed(2)} INR`}
               iconBg="bg-violet-100"
               icon={<Percent size={18} className="text-violet-600" />}
             />
@@ -207,9 +197,9 @@ export default function Dashboard() {
 
       <div className="bg-white rounded-lg shadow-sm">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
-          <ArrowUpDown size={16} className="text-indigo-500" />
+          <Clock3 size={16} className="text-orange-500" />
           <h2 className="text-sm font-semibold text-gray-700">
-            Recent Transactions
+            Pending ROI Requests
           </h2>
         </div>
         <div className="overflow-x-auto">
@@ -217,49 +207,57 @@ export default function Dashboard() {
             <thead>
               <tr className="bg-indigo-600 text-white">
                 <th className="text-left px-5 py-3 font-medium">User</th>
-                <th className="text-left px-5 py-3 font-medium">Type</th>
+                <th className="text-left px-5 py-3 font-medium">Investment Trx</th>
                 <th className="text-right px-5 py-3 font-medium">Amount</th>
                 <th className="text-center px-5 py-3 font-medium">Status</th>
                 <th className="text-left px-5 py-3 font-medium">Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {recentTransactions.map((tx) => (
-                <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-5 py-3">
-                    <p className="font-medium text-gray-800">{tx.user}</p>
-                    <p className="text-xs text-indigo-500">@{tx.username}</p>
-                  </td>
-                  <td className="px-5 py-3">
-                    <span
-                      className={`font-medium capitalize ${typeColors[tx.type]}`}
-                    >
-                      {tx.type}
-                    </span>
-                  </td>
-                  <td
-                    className={`px-5 py-3 text-right font-semibold ${typeColors[tx.type]}`}
-                  >
-                    ${tx.amount.toFixed(2)} USD
-                  </td>
-                  <td className="px-5 py-3 text-center">
-                    <span
-                      className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${statusColors[tx.status]}`}
-                    >
-                      {tx.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3 text-gray-500 text-xs whitespace-nowrap">
-                    {new Date(tx.date).toLocaleString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </td>
+              {roisLoading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-400">Loading pending requests...</td>
                 </tr>
-              ))}
+              ) : pendingRois.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-400">No pending ROI requests.</td>
+                </tr>
+              ) : (
+                pendingRois.map((roi) => (
+                  <tr key={roi._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-5 py-3">
+                      <p className="font-medium text-gray-800">
+                        {roi.investorId?.firstName || roi.investorId?.lastName
+                          ? `${roi.investorId?.firstName} ${roi.investorId?.lastName}`
+                          : roi.investorId?.name}
+                      </p>
+                      <p className="text-xs text-indigo-500">@{roi.investorId?.username}</p>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="font-mono text-xs text-gray-500">
+                        {roi.investmentId?.trxId}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-right font-semibold text-emerald-600">
+                      Rs.{(roi.amount || 0).toFixed(2)}
+                    </td>
+                    <td className="px-5 py-3 text-center">
+                      <span className="text-xs font-medium px-2.5 py-1 rounded-full capitalize bg-yellow-100 text-yellow-700">
+                        {roi.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-gray-500 text-xs whitespace-nowrap">
+                      {new Date(roi.createdAt).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

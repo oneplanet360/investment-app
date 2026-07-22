@@ -1,5 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
-import { resetInvestorPasswordFn } from "./adminInvestors.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { resetInvestorPasswordFn, updateInvestmentBalanceApi } from "./adminInvestors.api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -17,6 +17,19 @@ export const useResetInvestorPasswordMutation = () => {
         return;
       }
       toast.error("Something went wrong");
+    },
+  });
+};
+
+export const useUpdateInvestmentBalance = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ username, action, amount }: { username: string; action: "add" | "deduct"; amount: number }) =>
+      updateInvestmentBalanceApi(username, action, amount),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["adminInvestorDetail", variables.username],
+      });
     },
   });
 };

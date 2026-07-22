@@ -37,27 +37,27 @@ export default function ClientSignIn() {
       </div>
 
       {/* Right Side: Form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-brand-primary">
         {/* Subtle right-side gradients for flair */}
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-600/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-dark/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="w-full max-w-md space-y-8 relative z-10">
+        <div className="w-full max-w-md space-y-8 relative z-10 text-white">
           <div className="mb-10 text-center lg:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Sign In</h2>
-            <p className="text-zinc-400 mt-2">Enter your credentials to access your account</p>
+            <p className="text-white/80 mt-2">Enter your credentials to access your account</p>
           </div>
 
           {/* Card Panel */}
-          <div className="bg-[#141414] border border-[#222] rounded-2xl p-6 sm:p-8 shadow-2xl">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-2xl">
             <form className="space-y-6" onSubmit={handleLogin}>
               {/* Email Field */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                   Email Address
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
                     <Mail size={18} />
                   </span>
                   <input
@@ -66,18 +66,18 @@ export default function ClientSignIn() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all font-sans"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-11 pr-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-brand-primary transition-all font-sans"
                   />
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                   Password
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
                     <Lock size={18} />
                   </span>
                   <input
@@ -86,12 +86,12 @@ export default function ClientSignIn() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-[#18181b] border border-[#2c2c2c] rounded-xl pl-11 pr-11 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 transition-all font-sans"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-11 pr-11 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-brand-primary transition-all font-sans"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 p-1 rounded-md transition-colors"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 p-1 rounded-md transition-colors"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -103,7 +103,7 @@ export default function ClientSignIn() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full py-3.5 px-4 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 text-sm font-bold text-white rounded-xl shadow-lg shadow-orange-500/10 hover:shadow-orange-500/20 active:scale-[0.99] transition-all duration-200"
+                  className="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-hover disabled:opacity-50 text-sm font-bold text-white rounded-xl shadow-lg shadow-brand-primary/20 active:scale-[0.99] transition-all duration-200"
                 >
                   {isPending ? "Signing in..." : "Sign In"}
                 </button>

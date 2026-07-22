@@ -29,22 +29,22 @@ export default function WithdrawalsReport() {
         {[
           {
             label: "Investor Approved",
-            value: `$${investor.approved.total.toFixed(2)}`,
+            value: `Rs.${investor.approved.total.toFixed(2)}`,
             color: "text-green-600",
           },
           {
             label: "Investor Pending",
-            value: `$${investor.pending.total.toFixed(2)}`,
+            value: `Rs.${investor.pending.total.toFixed(2)}`,
             color: "text-yellow-600",
           },
           {
             label: "Agent Approved",
-            value: `$${agent.approved.total.toFixed(2)}`,
+            value: `Rs.${agent.approved.total.toFixed(2)}`,
             color: "text-indigo-600",
           },
           {
             label: "Agent Pending",
-            value: `$${agent.pending.total.toFixed(2)}`,
+            value: `Rs.${agent.pending.total.toFixed(2)}`,
             color: "text-violet-600",
           },
         ].map((c) => (

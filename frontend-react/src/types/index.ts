@@ -108,6 +108,7 @@ export interface IInvestment {
   nextRoiDate: string;
   createdAt: string;
   updatedAt: string;
+  paymentProof?: string;
 }
 
 export type WithdrawalType = "COMMISSION" | "ROI_WALLET";

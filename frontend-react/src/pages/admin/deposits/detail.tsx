@@ -147,17 +147,16 @@ export default function DepositDetail() {
           </h2>
           <Row
             label="Amount"
-            value={`$${dep.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+            value={`Rs.${dep.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
           />
           <Row
             label="Charge"
             value={
               <span className="text-orange-500 font-semibold">
-                $
-                {dep.charge.toLocaleString("en-US", {
+                Rs. {dep.charge.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 })}{" "}
-                USD
+                INR
               </span>
             }
           />
@@ -165,11 +164,10 @@ export default function DepositDetail() {
             label="Total Amount"
             value={
               <span className="font-bold text-gray-900">
-                $
-                {(dep.amount + (dep.charge || 0)).toLocaleString("en-US", {
+                Rs. {(dep.amount + (dep.charge || 0)).toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 })}{" "}
-                USD
+                INR
               </span>
             }
           />
@@ -181,7 +179,7 @@ export default function DepositDetail() {
           </h2>
           <Row
             label="Rate"
-            value={`$1.00 USD = 1.00 ${dep.conversionCurrency}`}
+            value={`Rs.1.00 INR = 1.00 ${dep.conversionCurrency}`}
           />
           <Row
             label="Converted Amount"

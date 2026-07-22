@@ -119,16 +119,15 @@ export default function DepositTable({
                       </p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm">
-                      <p className="font-semibold text-gray-700">
-                        ${d.amount.toFixed(2)}
+                      <p className="font-semibold text-gray-700"> Rs.{d.amount.toFixed(2)}
                       </p>
                       <p className="text-xs text-orange-500">
-                        + ${d.charge.toFixed(2)}
+                        + Rs.{d.charge.toFixed(2)}
                       </p>
                     </td>
                     <td className="px-5 py-3.5 text-sm text-gray-600">
                       <p>
-                        1 USD = {d.conversionRate} {d.conversionCurrency}
+                        1 INR = {d.conversionRate} {d.conversionCurrency}
                       </p>
                       <p className="font-semibold text-gray-800">
                         {d.convertedAmount.toFixed(2)} {d.conversionCurrency}

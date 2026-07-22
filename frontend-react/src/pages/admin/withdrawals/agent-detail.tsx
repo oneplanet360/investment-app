@@ -97,7 +97,7 @@ export default function AgentWithdrawalDetail() {
               ],
               ["Agent Username", `@${withdrawal.userId?.username}`],
               ["Email", withdrawal.userId?.email || "-"],
-              ["Requested Amount", `$${withdrawal.amount.toFixed(2)}`],
+              ["Requested Amount", `Rs.${withdrawal.amount.toFixed(2)}`],
               [
                 "Charge",
                 <span className="text-orange-500">

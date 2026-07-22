@@ -70,3 +70,8 @@ export const sendNotificationInvestorApi = async ({
   );
   return data;
 };
+
+export const updateInvestmentBalanceApi = async (username: string, action: 'add' | 'deduct', amount: number) => {
+  const { data } = await axiosInstance.post(`/investors/${username}/investment-balance`, { action, amount });
+  return data;
+};

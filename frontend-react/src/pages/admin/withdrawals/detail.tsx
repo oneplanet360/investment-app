@@ -143,15 +143,14 @@ export default function WithdrawalDetail() {
           </h2>
           <Row
             label="Amount"
-            value={`$${w.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`}
+            value={`Rs.${w.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
           />
           <Row
             label="Charge"
             value={
               <span className="text-orange-500 font-semibold">
-                $
-                {w.charge.toLocaleString("en-US", { minimumFractionDigits: 2 })}{" "}
-                USD
+                Rs. {w.charge.toLocaleString("en-US", { minimumFractionDigits: 2 })}{" "}
+                INR
               </span>
             }
           />
@@ -159,11 +158,10 @@ export default function WithdrawalDetail() {
             label="Net Amount"
             value={
               <span className="font-bold text-gray-900">
-                $
-                {(w.amount - (w.charge || 0)).toLocaleString("en-US", {
+                Rs. {(w.amount - (w.charge || 0)).toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 })}{" "}
-                USD
+                INR
               </span>
             }
           />
@@ -175,7 +173,7 @@ export default function WithdrawalDetail() {
           </h2>
           <Row
             label="Rate"
-            value={`$1.00 USD = ${w.conversionRate.toFixed(2)} ${w.conversionCurrency}`}
+            value={`Rs.1.00 INR = ${w.conversionRate.toFixed(2)} ${w.conversionCurrency}`}
           />
           <Row
             label="Converted Amount"

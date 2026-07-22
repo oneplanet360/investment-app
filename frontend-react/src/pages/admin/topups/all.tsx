@@ -56,7 +56,7 @@ export default function AllTopUps() {
         {[
           {
             label: "Total Top-up Volume",
-            value: `$${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+            value: `Rs.${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
             color: "text-emerald-600",
           },
           {
@@ -146,11 +146,10 @@ export default function AllTopUps() {
                       {t.investmentTrxId}
                     </td>
                     <td className="px-5 py-3.5 text-right font-semibold text-gray-700">
-                      $
-                      {t.amount.toLocaleString("en-US", {
+                      Rs. {t.amount.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                       })}{" "}
-                      USD
+                      INR
                     </td>
                     <td className="px-5 py-3.5 text-xs text-gray-500 whitespace-nowrap">
                       {fmt(t.roiCycleStart)}

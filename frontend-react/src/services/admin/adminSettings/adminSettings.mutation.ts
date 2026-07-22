@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateAdminSettingsFn } from "./adminSettings.api";
+import { updateAdminSettingsFn, updateInvestmentSettingsFn } from "./adminSettings.api";
 import { toast } from "sonner";
 import type { AdminSettingsPayload } from "./adminSettings.types";
 import { AxiosError } from "axios";
@@ -22,6 +22,18 @@ export const useAdminSettingsMutation = () => {
         return;
       }
       toast.error("Something went wrong");
+    },
+  });
+};
+
+export const useUpdateInvestmentSettings = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateInvestmentSettingsFn,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["investmentSettings"], data);
+      queryClient.invalidateQueries({ queryKey: ["investmentSettings"] });
     },
   });
 };

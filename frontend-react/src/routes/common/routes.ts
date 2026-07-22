@@ -18,7 +18,7 @@ export const PROTECTED_ROUTES = {
   ADMININVESTORPASSWORDRESET: "/admin/investors/password-reset",
   ADMININVESTORDETAILS: "/admin/investors/:username",
 
-  ADMINSUBSCRIBERS: "/admin/subscribers",
+
   ADMININVESTMENTREPORT: "/admin/investment-report",
 
   // Investments
@@ -65,6 +65,7 @@ export const PROTECTED_ROUTES = {
 
   // ROI
   ADMINROILOG: "/admin/roi",
+  ADMINROIREQUESTS: "/admin/roi/requests",
 
   // Commissions
   ADMINCOMMISSIONSLOG: "/admin/commissions",

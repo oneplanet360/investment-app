@@ -10,6 +10,7 @@ export default function Investments() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [closeConfirmId, setCloseConfirmId] = useState<string | null>(null);
   const [amount, setAmount] = useState("");
+  const [transactionId, setTransactionId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -23,11 +24,13 @@ export default function Investments() {
     formData.append("amount", amount);
     formData.append("type", "INITIAL");
     formData.append("paymentProof", file);
+    formData.append("transactionId", transactionId);
 
     createInvestment(formData, {
       onSuccess: () => {
         setIsModalOpen(false);
         setAmount("");
+        setTransactionId("");
         setFile(null);
       },
     });
@@ -137,6 +140,20 @@ export default function Investments() {
 
               <div>
                 <label className="block text-sm font-medium text-client-text-secondary mb-1.5">
+                  Transaction ID
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  placeholder="Enter Transaction ID"
+                  className="w-full bg-client-card border border-client-border text-client-text rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-client-text-secondary mb-1.5">
                   Payment Proof (Image)
                 </label>
                 <div 
@@ -168,7 +185,7 @@ export default function Investments() {
                 </button>
                 <button
                   type="submit"
-                  disabled={isCreating || !amount || !file}
+                  disabled={isCreating || !amount || !file || !transactionId}
                   className="px-6 py-2.5 bg-brand-primary hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-xl text-sm font-semibold text-client-text"
                 >
                   {isCreating ? "Processing..." : "Submit Investment"}

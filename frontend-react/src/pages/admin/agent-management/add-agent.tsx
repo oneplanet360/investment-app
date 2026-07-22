@@ -85,6 +85,17 @@ export default function AddAgent() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobile: "",
+      username: "",
+      password: "",
+      referredBy: "",
+      address: "",
+      city: "",
+      state: "",
+      zip: "",
       isActive: true,
       country: "",
     },

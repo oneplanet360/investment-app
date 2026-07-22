@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import {
   DollarSign,
@@ -25,8 +25,11 @@ import {
   useToggleBanInvestor,
   useSendNotificationInvestor,
 } from "../../services/admin/adminInvestors/adminInvestors.query";
+import {
+  useUpdateInvestmentBalance,
+} from "../../services/admin/adminInvestors/adminInvestors.mutation";
 import type { IUserDetailResponse } from "../../services/admin/adminUsers.types";
-import { useEffect } from "react";
+import { toast } from "sonner";
 
 type ColorCard = {
   label: string;
@@ -54,10 +57,10 @@ type Tab = "balance-add" | "balance-sub";
 const tabs: { id: Tab; label: string; color: string }[] = [
   {
     id: "balance-add",
-    label: "Balance",
-    color: "bg-green-500 hover:bg-green-600",
+    label: "+ Balance",
+    color: "bg-emerald-500 hover:bg-emerald-600",
   },
-  { id: "balance-sub", label: "Balance", color: "bg-red-500 hover:bg-red-600" },
+  { id: "balance-sub", label: "- Balance", color: "bg-red-500 hover:bg-red-600" },
 ];
 
 const countries = [
@@ -191,8 +194,36 @@ export default function UserDetail() {
     }
   };
 
+  const [activeTab, setActiveTab] = useState<Tab>("balance-add");
   const [showNotifModal, setShowNotifModal] = useState(false);
+  const [showBalanceModal, setShowBalanceModal] = useState<'add' | 'deduct' | null>(null);
+  const [balanceAmount, setBalanceAmount] = useState("");
   const [notifForm, setNotifForm] = useState({ title: "", message: "" });
+
+  const { mutate: updateBalance, isPending: balancePending } = useUpdateInvestmentBalance();
+
+  const handleUpdateBalance = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username || !showBalanceModal) return;
+    if (isNaN(Number(balanceAmount)) || Number(balanceAmount) < 0) {
+      toast.error("Please enter a valid positive amount");
+      return;
+    }
+    updateBalance({
+      username,
+      action: showBalanceModal,
+      amount: Number(balanceAmount)
+    }, {
+      onSuccess: () => {
+        toast.success(`Investment balance successfully ${showBalanceModal === 'add' ? 'increased' : 'decreased'}`);
+        setShowBalanceModal(null);
+        setBalanceAmount("");
+      },
+      onError: (err: any) => {
+        toast.error(err.response?.data?.message || "Failed to update investment balance");
+      }
+    });
+  };
 
   const handleSendNotification = (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,7 +247,7 @@ export default function UserDetail() {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<Tab>("balance-add");
+
 
   const [form, setForm] = useState({
     firstName: "",
@@ -301,7 +332,7 @@ export default function UserDetail() {
         />
         <ColorCard
           label="Total Investments"
-          value={stats.totalInvestments}
+          value={`Rs.${(stats.totalInvestments || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} INR`}
           bg="bg-indigo-700"
           icon={<Briefcase size={22} className="text-white" />}
         />
@@ -347,8 +378,14 @@ export default function UserDetail() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded transition-colors ${tab.color} ${activeTab === tab.id ? "ring-2 ring-offset-1 ring-current opacity-100" : "opacity-80"}`}
+            onClick={() => {
+              if (!isAgent) {
+                setShowBalanceModal(tab.id === "balance-add" ? "add" : "deduct");
+              } else {
+                setActiveTab(tab.id);
+              }
+            }}
+            className={`flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded transition-colors ${tab.color} ${activeTab === tab.id && isAgent ? "ring-2 ring-offset-1 ring-current opacity-100" : "opacity-80"}`}
           >
             {tab.id === "balance-add" && <Wallet size={14} />}
             {tab.id === "balance-sub" && <Wallet size={14} />}
@@ -610,6 +647,60 @@ export default function UserDetail() {
                   {sendNotifAgentPending || sendNotifInvestorPending
                     ? "Sending..."
                     : "Send"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showBalanceModal && !isAgent && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-gray-100">
+              <h3 className="font-semibold text-gray-800">
+                {showBalanceModal === 'add' ? 'Add Investment Balance' : 'Deduct Investment Balance'}
+              </h3>
+              <button
+                onClick={() => setShowBalanceModal(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                &times;
+              </button>
+            </div>
+            <form onSubmit={handleUpdateBalance} className="p-4 space-y-4">
+              <p className="text-sm text-gray-600">
+                Current Total Investment: <strong>Rs.{(stats.totalInvestments || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} INR</strong>
+              </p>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Amount (INR)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  required
+                  value={balanceAmount}
+                  onChange={(e) => setBalanceAmount(e.target.value)}
+                  className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-indigo-500 outline-none"
+                  placeholder="Enter amount"
+                />
+              </div>
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowBalanceModal(null)}
+                  className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={balancePending}
+                  className={`px-4 py-2 text-sm text-white rounded transition-colors disabled:opacity-50 ${showBalanceModal === 'add' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}
+                >
+                  {balancePending ? "Saving..." : showBalanceModal === 'add' ? "Add Amount" : "Deduct Amount"}
                 </button>
               </div>
             </form>

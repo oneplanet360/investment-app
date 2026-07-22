@@ -21,6 +21,7 @@ export interface IInvestment {
   nextRoiDate: string;
   createdAt: string;
   updatedAt: string;
+  paymentProof?: string;
 }
 
 export interface IInvestmentResponse {

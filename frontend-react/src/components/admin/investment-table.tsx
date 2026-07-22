@@ -123,11 +123,10 @@ export default function InvestmentTable({
                       </p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-700">
-                      $
-                      {(inv.amount || 0).toLocaleString("en-US", {
+                      Rs. {(inv.amount || 0).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                       })}{" "}
-                      USD
+                      INR
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       <span

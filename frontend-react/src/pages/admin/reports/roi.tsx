@@ -27,7 +27,7 @@ export default function RoiReport() {
         {[
           {
             label: "Total ROI Paid",
-            value: `$${totalPaid.toFixed(2)}`,
+            value: `Rs.${totalPaid.toFixed(2)}`,
             color: "text-emerald-600",
           },
           {

@@ -61,7 +61,7 @@ export default function TopUpDetail() {
       "Top-up Amount",
       <span className="font-semibold text-gray-800">
         ${topUp.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}{" "}
-        USD
+        INR
       </span>,
     ],
     ["ROI Cycle Start", fmt(topUp.roiCycleStart)],

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAdminInvestmentDetail } from "../../../services/admin/adminInvestments/adminInvestments.query";
 import { useUpdateInvestmentStatusMutation } from "../../../services/admin/adminInvestments/adminInvestments.mutation";
@@ -32,7 +31,6 @@ export default function InvestmentDetail() {
     trxId || "",
   );
   const inv = data?.data;
-  const [mode, setMode] = useState("auto");
 
   if (isLoading) {
     return (
@@ -102,70 +100,13 @@ export default function InvestmentDetail() {
                 {inv.userId?.email || "-"}
               </span>
             </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">
-            Contribution Details
-          </h2>
-          <div className="divide-y divide-gray-50 text-sm">
             <div className="flex items-center justify-between py-2.5">
               <span className="text-gray-500">Initial Deposit</span>
               <span className="font-semibold text-gray-800">
-                $
-                {(inv.amount || 0).toLocaleString("en-US", {
+                Rs. {(inv.amount || 0).toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 })}{" "}
-                USD
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Recurring Contribution</span>
-              <span className="font-semibold text-gray-800">
-                $
-                {inv.contributionAmount.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}{" "}
-                USD
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Contribution Frequency</span>
-              <span className="font-semibold text-indigo-600">
-                {inv.contributionFrequency}
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Next Contribution Date</span>
-              <span className="font-semibold text-gray-800 text-xs">
-                {fmt(inv.nextRoiDate || inv.createdAt)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Years to Grow</span>
-              <span className="font-semibold text-gray-800">1 years</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">
-            Returns & Growth
-          </h2>
-          <div className="divide-y divide-gray-50 text-sm">
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Annual Return Rate</span>
-              <span className="font-semibold text-indigo-600">8.0%</span>
-            </div>
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Total Return Amount</span>
-              <span className="font-semibold text-gray-800">
-                $
-                {inv.totalReturn.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}{" "}
-                USD
+                INR
               </span>
             </div>
             <div className="flex items-center justify-between py-2.5">
@@ -178,17 +119,23 @@ export default function InvestmentDetail() {
               <span className="text-gray-500">End Date</span>
               <span className="font-semibold text-gray-800 text-xs">-</span>
             </div>
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-gray-500">Total Paid Contributions</span>
-              <span className="font-semibold text-gray-800">
-                12{" "}
-                <span className="text-gray-400 font-normal text-xs">
-                  (Out of 12)
-                </span>
-              </span>
-            </div>
           </div>
         </div>
+
+        {inv.paymentProof && (
+          <div className="bg-white rounded-lg shadow-sm p-5 lg:col-span-2">
+            <h2 className="text-sm font-semibold text-gray-700 mb-4">
+              Payment Proof
+            </h2>
+            <div className="flex justify-center bg-gray-50 rounded-lg p-4 border border-gray-100">
+              <img 
+                src={inv.paymentProof} 
+                alt="Payment Proof" 
+                className="max-h-96 w-auto object-contain rounded shadow-sm" 
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {inv.status === "CLOSE_REQUEST" && (
@@ -221,33 +168,7 @@ export default function InvestmentDetail() {
               Reject Investment
             </button>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-gray-700">Mode:</span>
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value)}
-              className="text-sm border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-indigo-400 bg-transparent cursor-pointer hover:border-gray-400 transition-colors"
-            >
-              <option value="auto">Auto</option>
-              <option value="manual">Manual</option>
-            </select>
-          </div>
-          {mode === "manual" && (
-            <div className="flex flex-col sm:flex-row gap-4 mt-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer border border-gray-200 rounded px-4 py-2 hover:bg-gray-50 transition-colors">
-                <input type="radio" name="manualPaymentMethod" value="card" className="cursor-pointer accent-indigo-600" />
-                Card
-              </label>
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer border border-gray-200 rounded px-4 py-2 hover:bg-gray-50 transition-colors">
-                <input type="radio" name="manualPaymentMethod" value="upi" className="cursor-pointer accent-indigo-600" />
-                UPI
-              </label>
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer border border-gray-200 rounded px-4 py-2 hover:bg-gray-50 transition-colors">
-                <input type="radio" name="manualPaymentMethod" value="bank_transfer" className="cursor-pointer accent-indigo-600" />
-                Bank Transfer
-              </label>
-            </div>
-          )}
+
         </div>
       )}
     </div>

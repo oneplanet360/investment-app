@@ -5,6 +5,9 @@ import {
   commissionSettings,
 } from "../../lib/data";
 import { toast } from "sonner";
+import { useInvestmentSettings } from "../../services/admin/adminSettings/adminSettings.query";
+import { useUpdateInvestmentSettings } from "../../services/admin/adminSettings/adminSettings.mutation";
+import { useEffect } from "react";
 import {
   Save,
   Globe,
@@ -54,8 +57,23 @@ const Field = ({
 
 export default function InvestmentSettings() {
   const [sys, setSys] = useState({ ...systemSettings });
-  const [roi, setRoi] = useState({ ...roiSettings });
+  const [roi, setRoi] = useState({ ...roiSettings, cycleDays: 30 });
   const [com, setCom] = useState([...commissionSettings]);
+
+  const { data: invSettings } = useInvestmentSettings();
+  const { mutate: updateSettings, isPending } = useUpdateInvestmentSettings();
+
+  useEffect(() => {
+    if (invSettings) {
+      setRoi((prev) => ({ ...prev, cycleDays: invSettings.roiCycleDays || 30 }));
+      if (invSettings.minInvestmentAmount) {
+        setSys((prev) => ({ ...prev, minInvestment: invSettings.minInvestmentAmount }));
+      }
+      if (invSettings.commissionLevels && invSettings.commissionLevels.length > 0) {
+        setCom(invSettings.commissionLevels);
+      }
+    }
+  }, [invSettings]);
 
   const setSysField = (k: keyof typeof sys, v: string | boolean) =>
     setSys((p) => ({
@@ -74,7 +92,18 @@ export default function InvestmentSettings() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Settings saved successfully.");
+    updateSettings({
+      roiCycleDays: roi.cycleDays,
+      minInvestmentAmount: sys.minInvestment,
+      commissionLevels: com
+    }, {
+      onSuccess: () => {
+        toast.success("Settings saved successfully.");
+      },
+      onError: () => {
+        toast.error("Failed to save settings.");
+      }
+    });
   };
 
   const inputCls =
@@ -147,7 +176,7 @@ export default function InvestmentSettings() {
         <Section icon={<Landmark size={16} />} title="Investment Limits">
           <div className="grid grid-cols-2 gap-4">
             <Field
-              label="Minimum Investment (USD)"
+              label="Minimum Investment (INR)"
               desc="Minimum amount an investor can invest"
             >
               <input
@@ -159,7 +188,7 @@ export default function InvestmentSettings() {
               />
             </Field>
             <Field
-              label="Maximum Investment (USD)"
+              label="Maximum Investment (INR)"
               desc="Maximum amount per investment"
             >
               <input
@@ -176,42 +205,6 @@ export default function InvestmentSettings() {
         {/* ROI Settings */}
         <Section icon={<TrendingUp size={16} />} title="ROI Settings">
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Min ROI Rate (%)">
-              <input
-                className={inputCls}
-                type="number"
-                step="0.01"
-                min="0"
-                value={roi.minRate}
-                onChange={(e) =>
-                  setRoi((p) => ({ ...p, minRate: +e.target.value }))
-                }
-              />
-            </Field>
-            <Field label="Max ROI Rate (%)">
-              <input
-                className={inputCls}
-                type="number"
-                step="0.01"
-                min="0"
-                value={roi.maxRate}
-                onChange={(e) =>
-                  setRoi((p) => ({ ...p, maxRate: +e.target.value }))
-                }
-              />
-            </Field>
-            <Field label="Current Rate (%)">
-              <input
-                className={inputCls}
-                type="number"
-                step="0.01"
-                min="0"
-                value={roi.currentRate}
-                onChange={(e) =>
-                  setRoi((p) => ({ ...p, currentRate: +e.target.value }))
-                }
-              />
-            </Field>
             <Field label="Cycle Days" desc="Days between ROI credits">
               <input
                 className={inputCls}
@@ -321,12 +314,14 @@ export default function InvestmentSettings() {
           </Field>
         </Section>
 
-        <button
-          type="submit"
-          className="flex items-center gap-2 bg-indigo-600 text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-        >
-          <Save size={15} /> Save All Settings
-        </button>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            <Save size={16} />
+            {isPending ? "Saving..." : "Save Settings"}
+          </button>
       </form>
     </div>
   );

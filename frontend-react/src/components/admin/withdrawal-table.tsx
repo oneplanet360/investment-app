@@ -113,16 +113,15 @@ export default function WithdrawalTable({
                       </p>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm">
-                      <p className="font-semibold text-gray-700">
-                        ${w.amount.toFixed(2)}
+                      <p className="font-semibold text-gray-700"> Rs.{w.amount.toFixed(2)}
                       </p>
                       <p className="text-xs text-orange-500">
-                        - ${w.charge.toFixed(2)}
+                        - Rs.{w.charge.toFixed(2)}
                       </p>
                     </td>
                     <td className="px-5 py-3.5 text-sm text-gray-600">
                       <p>
-                        1 USD = {w.conversionRate} {w.conversionCurrency}
+                        1 INR = {w.conversionRate} {w.conversionCurrency}
                       </p>
                       <p className="font-semibold text-gray-800">
                         {w.convertedAmount.toFixed(2)} {w.conversionCurrency}

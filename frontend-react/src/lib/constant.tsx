@@ -15,7 +15,7 @@ import {
   Percent,
   Coins,
   PieChart,
-  Mail,
+
   Settings,
   Network,
   type LucideIcon,
@@ -90,9 +90,12 @@ export const sidebarMenu: SidebarMenuItem[] = [
     ],
   },
   {
-    label: "ROI Log",
-    href: "/admin/roi",
+    label: "ROI Management",
     icon: Percent,
+    children: [
+      { label: "All ROI", href: "/admin/roi", icon: List },
+      { label: "Pending Requests", href: "/admin/roi/requests", icon: Clock },
+    ],
   },
   {
     label: "Commission Log",
@@ -166,11 +169,6 @@ export const sidebarMenu: SidebarMenuItem[] = [
         icon: Landmark,
       },
     ],
-  },
-  {
-    label: "Subscribers",
-    icon: Mail,
-    href: "/admin/subscribers",
   },
   {
     label: "System Settings",
